@@ -1,9 +1,13 @@
-use hodge_engine::{HodgeDiamond, RiemannHodgeAudit};
+use hodge_engine::{
+    HodgeDiamond, RiemannHodgeAudit, RiemannPeriodMatrix,
+    SiuLelongCurrentAudit, Sl2LefschetzAlgebra, SiuRationalCycleSolver,
+};
 use nalgebra::{DMatrix, DVector};
 
 fn main() {
     println!("================================================================================");
     println!(" AUDIT HODGE: KÄHLER MANIFOLDS, HODGE DIAMONDS & RIEMANN-HODGE POSITIVITY");
+    println!(" HIGH-PRECISION SPECTRAL & ALGEBRAIC CERTIFICATION SUITE");
     println!("================================================================================");
 
     // 1. K3 Surface
@@ -37,20 +41,25 @@ fn main() {
     println!("    Hodge (2,2) Cycles Space:  {}", ab4.get(2, 2));
     assert!(ab4.verify_hodge_symmetry() && ab4.euler_characteristic() == 0);
 
-    // 4. Riemann-Hodge Bilinear Relations Audit on Primitive Cohomology
-    println!("\n[4] Auditing Riemann-Hodge Bilinear Relations on Primitive Cycles:");
-    let prim_mat = DMatrix::from_diagonal(&DVector::from_vec(vec![1.0, 1.0, 1.0]));
+    // 4. Riemann-Hodge Bilinear Relations: Full Jacobi Spectral Diagonalization
+    println!("\n[4] Auditing Riemann-Hodge Bilinear Relations & Exact Jacobi Spectrum:");
+    let prim_mat = DMatrix::from_row_slice(3, 3, &[
+        2.0, 0.4, 0.1,
+        0.4, 2.5, 0.3,
+        0.1, 0.3, 1.8,
+    ]);
     let auditor = RiemannHodgeAudit::new(3, prim_mat);
     let sample_prim = DVector::from_vec(vec![1.0, 0.5, 0.2]);
     let (pos, val) = auditor.verify_second_relation_positivity(&sample_prim);
-    println!("    Riemann-Hodge Second Relation: strictly positive");
-    println!("    Quadratic Norm Value:          {:.6}", val);
-    println!("    Positive Definiteness Status:  {}", pos);
-    assert!(pos);
+    let (spectral_ok, lambda_min, eigs) = auditor.audit_full_spectrum(1.0);
+    println!("    Riemann-Hodge Quadratic Norm:          {:.6}", val);
+    println!("    Rayleigh Coercivity Floor (λ_min):     {:.6}", lambda_min);
+    println!("    Full Jacobi Eigenvalues σ(Q):          {:?}", eigs);
+    println!("    Positive Definiteness Certification:   {}", spectral_ok && pos);
+    assert!(spectral_ok && pos);
 
     // 5. Riemann Period Matrix Polarized Audit (Siegel Upper Half Space H_g)
     println!("\n[5] Auditing Riemann Period Matrix & Siegel Positivity on Abelian Variety (g=2):");
-    use hodge_engine::RiemannPeriodMatrix;
     let tau_sym = DMatrix::from_row_slice(2, 2, &[2.0, 0.5, 0.5, 3.0]);
     let rpm = RiemannPeriodMatrix::new_principally_polarized(2, tau_sym.clone());
     let sym_pass = rpm.verify_riemann_symmetry(1e-12);
@@ -60,9 +69,34 @@ fn main() {
     println!("    Siegel Metric Polarization Certified:  {}", pos_pass);
     assert!(sym_pass && pos_pass);
 
-    // 6. Siu-Lelong Stratification & dd^c psi Potential Regularization Audit
-    println!("\n[6] Auditing Siu-Lelong Analytic Stratum via dd^c psi Potential:");
-    use hodge_engine::SiuLelongCurrentAudit;
+    // 6. sl2(C) Lie Algebra & Primitive Lefschetz Decomposition
+    println!("\n[6] Auditing sl₂(ℂ) Lie Algebra & Primitive Lefschetz Decomposition:");
+    let sl2 = Sl2LefschetzAlgebra::new_irreducible_chain(2); // Spin 2 chain, dim 5
+    let (lie_ok, lie_err) = sl2.verify_lie_brackets(1e-12);
+    let prim_dim = sl2.primitive_subspace_dimension(1e-10);
+    println!("    sl₂(ℂ) Commutator Error ‖[L,Λ]-H‖:     {:.2e}", lie_err);
+    println!("    Lie Algebra Relations Certified:       {}", lie_ok);
+    println!("    Calculated Primitive Subspace Dim:     {}", prim_dim);
+    assert!(lie_ok && prim_dim == 1);
+
+    // 7. Siu Rational Cycle Solver & Lelong R -> Q Collapse
+    println!("\n[7] Auditing Siu Rational Intersection Solver & Lelong R -> Q Collapse:");
+    let int_mat = DMatrix::from_row_slice(3, 3, &[
+        4.0, 1.0, 0.0,
+        1.0, 3.0, 1.0,
+        0.0, 1.0, 2.0,
+    ]);
+    let siu_solver = SiuRationalCycleSolver::new(int_mat);
+    let rational_periods = DVector::from_vec(vec![3.5, 4.0, 2.5]); // Rational Hodge periods
+    let (rat_ok, nu_sol, residual) = siu_solver.solve_rational_lelong_numbers(&rational_periods);
+    println!("    Target Rational Periods α · [Γ_k]:     {:?}", rational_periods.as_slice());
+    println!("    Computed Lelong Numbers ν_j:           {:?}", nu_sol.as_slice());
+    println!("    Intersection Residual ‖Mν - α‖:        {:.2e}", residual);
+    println!("    Rationality Collapse (ν_j ∈ ℚ):        {}", rat_ok);
+    assert!(rat_ok && residual < 1e-10);
+
+    // 8. Siu-Lelong Stratification & dd^c psi Potential Regularization Audit
+    println!("\n[8] Auditing Siu-Lelong Analytic Stratum via dd^c psi Potential:");
     let numbers = vec![0.12, 1.05, 0.45, 2.30, 0.08, 1.00];
     let stratum_auditor = SiuLelongCurrentAudit::new(3, numbers, 1.0);
     let analytic_stratum = stratum_auditor.compute_siu_analytic_stratum();
@@ -73,6 +107,6 @@ fn main() {
     assert_eq!(analytic_stratum.len(), 3);
 
     println!("\n================================================================================");
-    println!(" [SUCCESS] ALL HODGE TOPOLOGICAL & SPECTRAL INVARIANTS AUDITED AND CERTIFIED!");
+    println!(" [SUCCESS] ALL HODGE TOPOLOGICAL, SPECTRAL & ALGEBRAIC INVARIANTS CERTIFIED!");
     println!("================================================================================");
 }
