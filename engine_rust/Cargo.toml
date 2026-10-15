@@ -1,0 +1,18 @@
+[package]
+name = "hodge_engine"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nalgebra = "0.33"
+rayon = "1.10"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[[bin]]
+name = "audit_hodge"
+path = "src/main.rs"
+
+[lib]
+name = "hodge_engine"
+path = "src/lib.rs"
