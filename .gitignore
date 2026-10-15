@@ -1,0 +1,6 @@
+target/
+.lake/
+*.aux
+*.log
+*.out
+*.toc
