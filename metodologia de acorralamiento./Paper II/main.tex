@@ -1,0 +1,898 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% PACKAGES
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{mathrsfs}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{booktabs}
+
+\geometry{margin=1in}
+
+% ============================================================
+% THEOREM ENVIRONMENTS (inherited)
+% ============================================================
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}[definition]{Axiom}
+\newtheorem{example}[definition]{Example}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{convention}[definition]{Convention}
+\newtheorem{construction}[definition]{Construction}
+\newtheorem{problem}[definition]{Problem}
+
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+
+% ============================================================
+% MACROS (inherited from Papers I / framework)
+% ============================================================
+\newcommand{\Lam}{\Lambda}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\Ge}{\mathrm{Ge}}
+\newcommand{\To}{\mathrm{To}}
+\newcommand{\Al}{\mathrm{Al}}
+\newcommand{\Nu}{\mathrm{Nu}}
+\newcommand{\Fo}{\mathrm{Fo}}
+\newcommand{\Cl}{\mathrm{Cl}}
+\newcommand{\Corr}{\mathrm{Corr}}
+\newcommand{\An}{\mathrm{An}}
+\newcommand{\Ob}{\mathfrak{O}}
+\newcommand{\Ocal}{\mathcal{O}}
+\newcommand{\Rcal}{\mathcal{R}}
+\newcommand{\Ccal}{\mathcal{C}}
+\newcommand{\Xcal}{\mathcal{X}}
+\newcommand{\Ycal}{\mathcal{Y}}
+\newcommand{\Pcal}{\mathcal{P}}
+\newcommand{\Mfrak}{\mathfrak{M}}
+\newcommand{\Rfrak}{\mathfrak{R}}
+\newcommand{\Phimap}{\Phi}
+\newcommand{\simadm}{\sim}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\op}[1]{\operatorname{#1}}
+\newcommand{\spec}{\sigma}
+\newcommand{\Norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\Abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+
+% ============================================================
+% TITLE
+% ============================================================
+\title{%
+  \textbf{On the Limits of Structural Constraining:}\\[4pt]
+  \large Separation, Coherence, and the Emergence of New Representations
+}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+The companion paper \cite{paperI} develops a
+multirepresentational methodology in which a mathematical model is
+progressively constrained by successive layers---spectral,
+geometric, topological, algebraic, numerical, analytic---until the
+admissible class reduces to the model itself. The present paper
+addresses a question left open there: \emph{how far can the
+constraining procedure go?} We formalise the closure of the
+methodology as the injectivity of a representation map $\Phimap$
+modulo an admissible equivalence relation, and we classify the
+possible failures into three types: representational rupture
+(recoverable by emergence), informational rupture (recoverable by
+adding independent representations), and fundamental rupture
+(recoverable only by introducing genuinely new structure). We
+formalise the cross-coherence of layers as a subspace $\Rfrak_{\rm
+coh} \subset \prod_i \Rcal_i$ rather than a product, and we give a
+dynamic account of representation expansion in which the residue of
+the constraining chain generates pressure for the introduction of
+the next representation. We close with the open problem of
+\emph{coherent indistinguishability}: does there exist a pair of
+non-isomorphic mathematical structures indistinguishable under all
+coherent representations?
+\end{abstract}
+
+\tableofcontents
+
+% ------------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+% ------------------------------------------------------------
+
+\subsection{Context}
+
+The companion paper \cite{paperI} introduces a multirepresentational
+methodology in which a mathematical model $P$ is constrained
+successively by spectral, geometric, topological, algebraic,
+numerical, analytic, and formal layers. Each layer $\lambda$ defines
+a constrained model space $\Ccal_\lambda$, and the methodology's
+output is the intersection
+\[
+  \Ccal_\ast = \bigcap_{\lambda \in \Lam} \Ccal_\lambda .
+\]
+
+The companion paper establishes three structural principles:
+\emph{constraining}, \emph{spectral emergence}, and
+\emph{discrepancy classification}. It also gives four worked
+examples (Dirichlet Laplacian, path-vs-cycle bifurcation, erroneous
+diffusion, nonlinear $p$-Laplacian).
+
+\subsection{The question left open}
+
+The companion paper does not address a foundational question: 
+\emph{is the constraining procedure guaranteed to determine the
+model?} That is, does the intersection $\Ccal_\ast$ collapse to a
+singleton (or to a single equivalence class), or can it remain
+larger even after all layers have been applied?
+
+The present paper answers this question by:
+\begin{enumerate}[label=(\roman*)]
+  \item formalising the closure criterion as the injectivity of a
+        representation map (\S\ref{sec:separation});
+  \item classifying the possible failures into three types
+        (\S\ref{sec:rupture});
+  \item formalising cross-coherence of layers
+        (\S\ref{sec:coherence});
+  \item giving a dynamic account of representation expansion
+        (\S\ref{sec:expansion});
+  \item stating the open problem of coherent indistinguishability
+        (\S\ref{sec:open}).
+\end{enumerate}
+
+\subsection{Contributions}
+
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Separation criterion} (\S\ref{sec:separation}): the
+        methodology closes if and only if $\Phimap$ is injective
+        modulo the admissible equivalence $\simadm$.
+  \item \textbf{Three-type rupture classification}
+        (\S\ref{sec:rupture}): a classification of failure modes
+        with distinct diagnostic and remedial signatures.
+  \item \textbf{Cross-coherence} (\S\ref{sec:coherence}): the
+        admissible representation space is a subspace of the
+        product, not the product itself.
+  \item \textbf{Dynamic expansion} (\S\ref{sec:expansion}): the
+        residue of the chain at level $n$ generates pressure for
+        the introduction of the next representation.
+  \item \textbf{Open problem} (\S\ref{sec:open}): the existence of
+        a pair of non-isomorphic structures indistinguishable under
+        all coherent representations.
+\end{enumerate}
+
+% ------------------------------------------------------------
+\section{The Separation Criterion}
+\label{sec:separation}
+% ------------------------------------------------------------
+
+\subsection{The Representation Map}
+
+\begin{definition}[Representation family]\label{def:rep-family}
+Let $\Xcal$ be a class of mathematical structures and let
+\[
+  \Rfrak = \{ R_i : \Xcal \to \Rcal_i \}_{i \in I}
+\]
+be a family of \emph{representations}, where each $\Rcal_i$ is a
+codomain (a category, a set, a space, or a formal theory). The
+\emph{representation map} associated with $\Rfrak$ is
+\[
+  \Phimap_{\Rfrak} : \Xcal \longrightarrow \prod_{i \in I} \Rcal_i,
+  \qquad
+  \Phimap_{\Rfrak}(X) = (R_i(X))_{i \in I}.
+\]
+\end{definition}
+
+\begin{convention}
+We write $\Phimap$ for $\Phimap_{\Rfrak}$ when $\Rfrak$ is clear
+from context.
+\end{convention}
+
+\subsection{The Admissible Equivalence}
+
+\begin{definition}[Admissible equivalence]\label{def:adm-equiv}
+An \emph{admissible equivalence} on $\Xcal$ is an equivalence
+relation $\simadm$ such that $X \simadm Y$ iff $X$ and $Y$ represent
+the same mathematical structure modulo change of coordinates,
+gauge, isomorphism, diffeomorphism, or any other transformation
+declared to be structure-preserving.
+\end{definition}
+
+\begin{example}
+For Riemannian manifolds, $\simadm$ is isometry. For operators on a
+fixed Hilbert space, $\simadm$ is unitary equivalence. For groups,
+$\simadm$ is isomorphism.
+\end{example}
+
+\subsection{The Closure Criterion}
+
+\begin{definition}[Separation]\label{def:separation}
+The family $\Rfrak$ \emph{separates} $\Xcal$ modulo $\simadm$ if
+\[
+  \Phimap(X) = \Phimap(Y)
+  \;\Longrightarrow\;
+  X \simadm Y .
+\]
+Equivalently, the induced map
+\[
+  \overline{\Phimap} : \Xcal / \simadm \longrightarrow \prod_i \Rcal_i
+\]
+is injective.
+\end{definition}
+
+\begin{theorem}[Closure criterion]\label{thm:closure}
+The multirepresentational methodology of \cite{paperI} closes on a
+class $\Xcal$ if and only if the representation family
+$\Rfrak = \{R_\lambda\}_{\lambda \in \Lam}$ separates $\Xcal$
+modulo $\simadm$.
+\end{theorem}
+
+\begin{proof}
+$(\Rightarrow)$ Suppose the methodology closes: the constrained
+model space $\Ccal_\ast$ reduces to a single equivalence class.
+Then any two models $X, Y$ with the same representation data must
+belong to the same constrained space, hence to the same
+$\simadm$-class. Therefore $\Phimap(X) = \Phimap(Y)$ implies
+$X \simadm Y$.
+
+$(\Leftarrow)$ Suppose $\Phimap$ separates $\Xcal$ modulo
+$\simadm$. Let $X \in \Ccal_\ast$. Every $Y \in \Ccal_\ast$ has
+$\Phimap(Y) = \Phimap(X)$ by definition of $\Ccal_\ast$ (each layer
+sees the same data). Separation then gives $Y \simadm X$, so
+$\Ccal_\ast$ is a single equivalence class.
+\end{proof}
+
+\begin{remark}
+The closure criterion is a statement about the \emph{family}
+$\Rfrak$, not about any individual representation. A single layer
+$R_i$ may fail to be injective; only the joint map $\Phimap$
+matters.
+\end{remark}
+
+\subsection{The Diagonal Case}
+
+\begin{proposition}[Failure of separation]\label{prop:failure-sep}
+$\Rfrak$ fails to separate $\Xcal$ modulo $\simadm$ if and only if
+there exist $X \not\simadm Y$ with
+\[
+  R_i(X) = R_i(Y) \qquad \forall i \in I .
+\]
+\end{proposition}
+
+\begin{proof}
+Immediate from Definition~\ref{def:separation}.
+\end{proof}
+
+\begin{remark}
+A failure of separation on a \emph{single} representation
+$R_i$---e.g.\ iso-spectral non-isometric manifolds, or two
+nonlinear equations with the same linearisation---is \emph{not} a
+failure of the methodology. It is a signal that $R_i$ alone is
+insufficient, which is exactly what the methodology anticipates.
+The genuine failure is the one stated in
+Proposition~\ref{prop:failure-sep}: indistinguishability under
+\emph{all} representations simultaneously.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Three Types of Rupture}
+\label{sec:rupture}
+% ------------------------------------------------------------
+
+The methodology may fail in three structurally distinct ways. The
+distinction is diagnostic: each type has a different signature and
+a different remedy.
+
+\subsection{Type I: Representational Rupture}
+
+\begin{definition}[Representational rupture]\label{def:rupture-I}
+A layer $\lambda$ exhibits a \emph{representational rupture} if the
+representation $R_\lambda$ does not exist in the initially sought
+form.
+\end{definition}
+
+\begin{example}[Nonlinear spectral layer]
+For a nonlinear evolution equation $u_t = \Ncal(u)$, no global
+spectral layer exists in the linear sense. However, Fr\'echet
+linearisation at an equilibrium $u_\ast$ produces an emergent
+spectral layer
+\[
+  R_\Sp^{\rm emg} = \spec(D\Ncal[u_\ast]).
+\]
+The rupture is \emph{Type~I}: the sought representation is
+constructed, not assumed.
+\end{example}
+
+\begin{proposition}[Remedy for Type I]\label{prop:remedy-I}
+A representational rupture is remedied by construction: the missing
+representation is produced from the existing layers via an
+appropriate emergent construction (linearisation, completion,
+localisation, or regularisation).
+\end{proposition}
+
+\begin{proof}
+By definition of Type~I, the rupture concerns the \emph{existence}
+of the representation. If a construction produces it, the rupture
+is resolved. The framework paper's emergent spectral layer is the
+canonical example.
+\end{proof}
+
+\subsection{Type II: Informational Rupture}
+
+\begin{definition}[Informational rupture]\label{def:rupture-II}
+A layer $\lambda$ exhibits an \emph{informational rupture} if
+$R_\lambda$ exists but is not injective on $\Xcal$ modulo $\simadm$:
+\[
+  \exists X \not\simadm Y, \quad R_\lambda(X) = R_\lambda(Y).
+\]
+\end{definition}
+
+\begin{example}[Isospectrality]
+There exist Riemannian manifolds $M \not\cong N$ with
+$\spec(\Delta_M) = \spec(\Delta_N)$ (Gordon--Webb--Wolpert). The
+spectral layer is informative but not injective.
+\end{example}
+
+\begin{example}[Linearisation]
+The equations
+\[
+  u_t = u_{xx} - u^3, \qquad u_t = u_{xx} - 2 u^3
+\]
+have the same Fr\'echet linearisation at $u = 0$, hence the same
+emergent spectrum, but are distinct nonlinear evolution equations.
+\end{example}
+
+\begin{proposition}[Remedy for Type II]\label{prop:remedy-II}
+An informational rupture is remedied by adding an independent
+representation $R_\mu$ such that the pair $(R_\lambda, R_\mu)$ is
+injective modulo $\simadm$ on $\Xcal$.
+\end{proposition}
+
+\begin{proof}
+If $R_\lambda$ fails injectivity on a pair $(X, Y)$, we require
+$R_\mu(X) \neq R_\mu(Y)$ for some additional representation
+$R_\mu$. The combined map $X \mapsto (R_\lambda(X), R_\mu(X))$ is
+then injective on that pair, and by iteration, on $\Xcal$.
+\end{proof}
+
+\begin{example}[Remedy for the linearisation example]
+The variational layer distinguishes the two equations above: the
+functionals
+\[
+  E_1[u] = \int \left( \tfrac{1}{2} u_x^2 + \tfrac{1}{4} u^4 \right),
+  \quad
+  E_2[u] = \int \left( \tfrac{1}{2} u_x^2 + \tfrac{1}{2} u^4 \right)
+\]
+differ. The pair (spectral, variational) separates them.
+\end{example}
+
+\subsection{Type III: Fundamental Rupture}
+
+\begin{definition}[Fundamental rupture]\label{def:rupture-III}
+A family $\Rfrak$ exhibits a \emph{fundamental rupture} if
+\[
+  \exists X \not\simadm Y : \quad R_i(X) = R_i(Y) \quad \forall i \in I,
+\]
+and no admissible extension of $\Rfrak$ within the declared
+representation class separates $X$ from $Y$.
+\end{definition}
+
+\begin{remark}
+Type~III is the genuine failure of the methodology. Type~I is
+surmountable by construction; Type~II is surmountable by addition;
+Type~III requires a genuinely new kind of representation, outside
+the declared class.
+\end{remark}
+
+\subsection{Classification Table}
+
+\begin{center}
+\begin{tabular}{c|c|c|c}
+  \toprule
+  Type & Signature & Remedy & Status \\
+  \midrule
+  I & $R_\lambda$ does not exist & construction
+    & surmountable \\
+  II & $R_\lambda$ not injective & add $R_\mu$
+    & surmountable \\
+  III & $\Phimap$ not injective, class saturated & new class
+    & open \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\begin{proposition}[Hierarchy of ruptures]\label{prop:hierarchy}
+Type~I rupture may give rise to Type~II (once the representation
+exists, it may fail injectivity). Type~II rupture may give rise to
+Type~III (if no admissible extension separates). The three types
+are strictly nested:
+\[
+  \text{Type I} \;\subsetneq\; \text{Type II} \;\subsetneq\;
+  \text{Type III}.
+\]
+\end{proposition}
+
+\begin{proof}
+Immediate from the definitions.
+\end{proof}
+
+% ------------------------------------------------------------
+\section{Cross-Coherence Constraints}
+\label{sec:coherence}
+% ------------------------------------------------------------
+
+\subsection{The Naive Product is Wrong}
+
+A naive view treats the representations as independent:
+\[
+  \Phimap(X) \in \prod_{i \in I} \Rcal_i
+  \qquad \text{(naive)}.
+\]
+But the representations of a mathematical object are not
+independent. Spectral data constrain geometric data, geometric data
+constrain topological data, topological data constrain algebraic
+data, and so on. The admissible space is a \emph{subspace}, not the
+full product.
+
+\begin{definition}[Cross-coherence]\label{def:cross-coherence}
+A \emph{coherence relation} on the family $\{R_i\}_{i \in I}$ is a
+subset
+\[
+  \Rfrak_{\rm coh} \;\subset\; \prod_{i \in I} \Rcal_i
+\]
+defined by compatibility conditions of the form
+\[
+  C_{ij} \subset \Rcal_i \times \Rcal_j,
+  \qquad (i, j) \in I \times I,
+\]
+such that
+\[
+  \Rfrak_{\rm coh}
+  =
+  \bigl\{ (r_i)_{i \in I} : (r_i, r_j) \in C_{ij} \;\;
+  \forall i, j \bigr\}.
+\]
+\end{definition}
+
+\begin{example}[Spectral--geometric coherence]
+The isospectrality of a manifold determines a class of admissible
+metrics. The pair (spectrum, metric) must lie in the coherence
+subset determined by the inverse spectral problem:
+\[
+  C_{\Sp\Ge} = \{(\spec(\Delta_g), g) : g \text{ Riemannian}, \;
+  \spec(\Delta_g) = \spec\}.
+\]
+\end{example}
+
+\subsection{Constrained Representation}
+
+\begin{definition}[Coherent representation map]\label{def:coherent-map}
+The \emph{coherent representation map} is
+\[
+  \Phimap_{\rm coh} : \Xcal \longrightarrow \Rfrak_{\rm coh},
+  \qquad
+  \Phimap_{\rm coh}(X) = \Phimap(X) \text{ if } \Phimap(X) \in \Rfrak_{\rm coh}.
+\]
+\end{definition}
+
+\begin{theorem}[Coherence strengthens separation]\label{thm:coherence-strengthens}
+If $\Phimap$ fails to separate $\Xcal$ modulo $\simadm$ but
+$\Phimap_{\rm coh}$ separates, then the constraining has been
+completed by the coherence relations.
+\end{theorem}
+
+\begin{proof}
+Suppose $\Phimap(X) = \Phimap(Y)$ with $X \not\simadm Y$. If
+$\Phimap_{\rm coh}$ separates, then at least one component of the
+tuple $\Phimap(X)$ violates a coherence constraint that
+$\Phimap(Y)$ satisfies, so $\Phimap_{\rm coh}(X) \neq
+\Phimap_{\rm coh}(Y)$.
+\end{proof}
+
+\begin{remark}
+This is the formal content of the intuition that ``layers
+\emph{force} each other.'' The coherence relations are what turn a
+collection of invariants into a mutually constraining system.
+\end{remark}
+
+\subsection{Coherence as a Subspace}
+
+The admissible space is
+\[
+  \Rfrak_{\rm coh}
+  =
+  \bigcap_{(i,j)} \pi_{ij}^{-1}(C_{ij}),
+\]
+where $\pi_{ij} : \prod_k \Rcal_k \to \Rcal_i \times \Rcal_j$ is
+the projection. The coherence structure is therefore a
+\emph{fibered} constraint system.
+
+\begin{proposition}[Coherence is not a product]\label{prop:not-product}
+In general, $\Rfrak_{\rm coh} \neq \prod_{i} \Rcal_i$.
+\end{proposition}
+
+\begin{proof}
+The compatibility conditions $C_{ij}$ are nontrivial proper subsets
+of $\Rcal_i \times \Rcal_j$ in any non-degenerate application.
+\end{proof}
+
+% ------------------------------------------------------------
+\section{Dynamic Representation Expansion}
+\label{sec:expansion}
+% ------------------------------------------------------------
+
+\subsection{The Residue}
+
+\begin{definition}[Residue of the constraining chain]\label{def:residue}
+Given a representation family $\Rfrak_n = \{R_1, \ldots, R_n\}$ and
+observed data $(r_1, \ldots, r_n)$, the \emph{residue} is
+\[
+  \Ccal_\infty^{(n)}
+  =
+  \bigl\{ X \in \Xcal :
+    \Phimap_{\Rfrak_n}(X) = (r_1, \ldots, r_n) \bigr\}
+  \big/ \simadm .
+\]
+\end{definition}
+
+The residue measures the information still undetermined by the
+current representation family.
+
+\subsection{Residue-Driven Expansion}
+
+\begin{axiom}[Expansion axiom]\label{ax:expansion}
+If the residue $\Ccal_\infty^{(n)}$ contains more than one
+equivalence class, the methodology is \emph{not closed}. The next
+representation $R_{n+1}$ is chosen so as to reduce the residue:
+\[
+  \Rfrak_{n+1} = \Rfrak_n \cup \{R_{n+1}\},
+  \qquad
+  \Ccal_\infty^{(n+1)} \subsetneq \Ccal_\infty^{(n)}.
+\]
+\end{axiom}
+
+\begin{proposition}[Monotonicity]\label{prop:monotonicity}
+The residue is monotone decreasing under expansion:
+\[
+  \Ccal_\infty^{(1)}
+  \;\supseteq\;
+  \Ccal_\infty^{(2)}
+  \;\supseteq\;
+  \cdots
+  \;\supseteq\;
+  \Ccal_\infty^{(n)}
+  \;\supseteq\;
+  \cdots
+\]
+\end{proposition}
+
+\begin{proof}
+Immediate: adding a representation adds a constraint, which cannot
+enlarge the residue.
+\end{proof}
+
+\subsection{The Diagnostic Role of the Residue}
+
+\begin{proposition}[Residue as diagnostic]\label{prop:residue-diagnostic}
+The residue $\Ccal_\infty^{(n)}$ identifies the \emph{type} of
+information missing at level $n$:
+\begin{enumerate}[label=(\roman*)]
+  \item if $\Ccal_\infty^{(n)}$ is a single equivalence class, the
+        methodology is closed;
+  \item if $\Ccal_\infty^{(n)}$ is a $\simadm$-invariant family with
+        known parametrisation, the missing information is of
+        Type~II (add the parametrising representation);
+  \item if $\Ccal_\infty^{(n)}$ is not classifiable within the
+        current theory, the missing information is of Type~III
+        (a new class of representations is required).
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+By inspection of the possibilities.
+\end{proof}
+
+\subsection{The Dynamic Diagram}
+
+\begin{equation}
+\begin{tikzcd}[row sep=large, column sep=large]
+  \Xcal \arrow[r, "\Phimap_{\Rfrak_0}"] \arrow[dr, "\Phimap_{\Rfrak_1}"']
+    & \Rcal_0 \arrow[d, "\text{residue}"] \\
+  & \Ccal_\infty^{(0)}
+    \arrow[d, "\text{expansion}"] \\
+  & \Rfrak_1 = \Rfrak_0 \cup \{R_{\rm new}\}
+    \arrow[d, "\text{iterate}"] \\
+  & \Ccal_\infty^{(1)} \subsetneq \Ccal_\infty^{(0)}
+\end{tikzcd}
+\end{equation}
+
+\begin{remark}
+The dynamic account of representation expansion removes the naive
+assumption that the layer set $\Lam$ is fixed in advance. The layer
+set is \emph{discovered} through the constraining procedure. This
+is a strengthening of the framework paper, in which $\Lam$ was
+introduced axiomatically.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{The Open Problem of Coherent Indistinguishability}
+\label{sec:open}
+% ------------------------------------------------------------
+
+\subsection{Formulation}
+
+\begin{problem}[Coherent indistinguishability]\label{prob:indist}
+Does there exist a class $\Xcal$ of mathematical structures and a
+coherent representation family $\Rfrak_{\rm coh}$ such that
+\[
+  \exists X, Y \in \Xcal : \quad
+  X \not\simadm Y, \quad
+  \Phimap_{\rm coh}(X) = \Phimap_{\rm coh}(Y),
+\]
+where $\Phimap_{\rm coh}$ is the coherent representation map of
+Definition~\ref{def:coherent-map}?
+\end{problem}
+
+\begin{remark}
+The problem is not whether a \emph{single} representation fails to
+be injective. It asks whether the \emph{entire coherent system} can
+fail, i.e.\ whether there exist two genuinely different structures
+that every coherently compatible representation family
+identifies.
+\end{remark}
+
+\subsection{Necessary Conditions for a Counterexample}
+
+\begin{proposition}[Necessary conditions]\label{prop:necessary}
+If $X \not\simadm Y$ is a solution to
+Problem~\ref{prob:indist}, then:
+\begin{enumerate}[label=(\roman*)]
+  \item $X$ and $Y$ have the same spectrum under every natural
+        Laplacian-type operator;
+  \item $X$ and $Y$ are homeomorphic, and in fact homotopy
+        equivalent;
+  \item $X$ and $Y$ have isomorphic algebraic invariants
+        (cohomology rings, $K$-theory, etc.);
+  \item the nonlinear structure of any natural evolution equation
+        on $X$ and $Y$ agrees to all orders accessible by
+        observation;
+  \item the numerical behaviour of any reasonable discretisation of
+        a natural equation on $X$ and $Y$ agrees asymptotically.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Each condition is a component of the coherence tuple. If any one
+were violated, the corresponding representation would distinguish
+$X$ from $Y$, contradicting indistinguishability.
+\end{proof}
+
+\begin{remark}
+The necessary conditions are extremely restrictive. No known
+example satisfies all of them. This suggests, but does not prove,
+that Problem~\ref{prob:indist} may have a negative answer for
+sufficiently rich $\Xcal$.
+\end{remark}
+
+\subsection{Relation to Established Non-Identifiability Results}
+
+\begin{example}[Isospectrality]
+Gordon--Webb--Wolpert give Riemannian manifolds $M \not\cong N$
+with $\spec(\Delta_M) = \spec(\Delta_N)$. But $M$ and $N$ are
+distinguished by their topological layer if their fundamental
+groups differ (which in the GWW example they do not, since the
+manifolds are homeomorphic), or by their geometric layer if their
+metrics differ in curvature. Isospectrality is a Type~II rupture.
+\end{example}
+
+\begin{example}[Same linearisation, different nonlinearity]
+The equations $u_t = u_{xx} - u^3$ and $u_t = u_{xx} - 2u^3$ have
+the same Fr\'echet linearisation at $u = 0$ but are distinguished
+by the variational layer. This is also a Type~II rupture.
+\end{example}
+
+\begin{example}[Same jets at a point, different global functions]
+The functions
+\[
+  f(x) = \begin{cases} e^{-1/x^2} & x > 0 \\ 0 & x \leq 0
+  \end{cases}, \qquad g \equiv 0
+\]
+have all derivatives equal at $x = 0$ but are globally distinct.
+The jet map is not injective; the global analytic layer
+distinguishes them. Again Type~II.
+\end{example}
+
+\begin{remark}
+All known non-identifiability results are Type~II. Problem~\ref{prob:indist}
+asks for a Type~III example. No such example is known.
+\end{remark}
+
+\subsection{A Conjecture}
+
+\begin{conjecture}[Injectivity of coherent representation]\label{conj:injectivity}
+For the class $\Xcal$ of smooth compact Riemannian manifolds
+equipped with a natural Laplace-type operator, and for the coherent
+representation family
+\[
+  \Rfrak_{\rm coh}
+  =
+  \{\text{spectral}, \text{geometric}, \text{topological},
+    \text{algebraic}, \text{analytic}\},
+\]
+the map $\Phimap_{\rm coh}$ is injective modulo isometry.
+\end{conjecture}
+
+\begin{remark}
+Conjecture~\ref{conj:injectivity} is plausible because the
+geometric layer alone is already injective modulo isometry (the
+metric determines the manifold). The content of the conjecture is
+that the constraining can be \emph{achieved} by the coherent
+representation family, not merely by the trivial representation
+$g \mapsto g$.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Epistemological Implications}
+\label{sec:epistemology}
+% ------------------------------------------------------------
+
+\subsection{The Two Roles of a Representation}
+
+Each representation $R_i$ plays two distinct roles in the
+methodology:
+\begin{enumerate}[label=(\roman*)]
+  \item a \emph{descriptive} role: it records a piece of structure
+        of $X$;
+  \item a \emph{constraining} role: it eliminates candidate
+        structures incompatible with $r_i$.
+\end{enumerate}
+
+The constraining role is the operational content of the
+methodology. A representation that is descriptive but not
+constraining (e.g.\ a redundant invariant) does not contribute to
+separation.
+
+\begin{proposition}[Non-redundancy]\label{prop:non-redundancy}
+A representation $R_i$ is \emph{non-redundant} with respect to
+$\Rfrak \setminus \{R_i\}$ if and only if
+\[
+  \Ccal_\infty^{(\Rfrak)} \subsetneq
+  \Ccal_\infty^{(\Rfrak \setminus \{R_i\})}.
+\]
+\end{proposition}
+
+\begin{proof}
+Immediate: removing $R_i$ leaves a strictly larger residue.
+\end{proof}
+
+\subsection{The Epistemological Limit}
+
+\begin{proposition}[Non-constructive visibility]\label{prop:visibility}
+A structure $X \not\simadm Y$ that satisfies
+$\Phimap_{\rm coh}(X) = \Phimap_{\rm coh}(Y)$ for a given coherent
+family $\Rfrak_{\rm coh}$ is \emph{invisible} to that family. It may
+exist without being detectable by any representation in
+$\Rfrak_{\rm coh}$.
+\end{proposition}
+
+\begin{proof}
+By definition of indistinguishability.
+\end{proof}
+
+\begin{remark}
+This is the precise formal content of the intuition that some
+mathematical structures may exist without being epistemologically
+accessible until a new class of representations is introduced. The
+framework is not committed to the claim that such structures
+exist; it merely provides the language in which the question can be
+asked.
+\end{remark}
+
+\subsection{The Dynamic of Discovery}
+
+The dynamic account of \S\ref{sec:expansion} suggests a
+general picture of mathematical discovery:
+\[
+  \text{problem} \to \text{known representations}
+  \to \text{residue} \to \text{new representation}
+  \to \text{reduced residue} \to \cdots
+\]
+The residue is the operational pressure that drives discovery. This
+is consistent with historical cases (e.g.\ the development of
+topology, group theory, or spectral theory from problems in which
+these structures were implicit but not yet formalised).
+
+\subsection{Closing Remark}
+
+The methodology developed in \cite{paperI} and extended here is
+best described as a \emph{structural constraining procedure with
+dynamic expansion}. Its central criterion is not the existence of
+any individual representation, but the \emph{separation} of the
+representation family modulo admissible equivalence. Its central
+open problem is whether separation can always be achieved, or
+whether there exist coherently indistinguishable but
+non-isomorphic structures.
+
+The question, in one line:
+
+\begin{quote}
+\emph{Can the structure of a mathematical object always be
+recovered from its coherent representations, or does mathematics
+admit coherently invisible pairs?}
+\end{quote}
+
+% ------------------------------------------------------------
+\appendix
+% ------------------------------------------------------------
+
+\section{Notation Summary}
+\label{app:notation}
+
+\begin{center}
+\begin{tabular}{c l}
+  \toprule
+  Symbol & Meaning \\
+  \midrule
+  $\Xcal$ & Class of mathematical structures \\
+  $\Rcal_i$ & Codomain of representation $R_i$ \\
+  $\Rfrak$ & Family of representations \\
+  $\Phimap$ & Representation map $\Xcal \to \prod_i \Rcal_i$ \\
+  $\simadm$ & Admissible equivalence on $\Xcal$ \\
+  $\Rfrak_{\rm coh}$ & Coherence subspace of $\prod_i \Rcal_i$ \\
+  $\Ccal_\infty^{(n)}$ & Residue at level $n$ \\
+  Type I/II/III & Rupture classification \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\section{Bibliography}
+\label{app:biblio}
+
+\begin{thebibliography}{99}
+
+\bibitem{paperI}
+[Companion paper],
+\emph{Structural Constraining and Spectral Emergence: A
+Multirepresentational Methodology for Nonlinear Evolution
+Equations}, 2024.
+
+\bibitem{framework}
+[Framework paper],
+\emph{A Multirepresentational Construction--Reconstruction
+Methodology for Mathematical Structures}, Parts I--V, 2024.
+
+\bibitem{gordon}
+C.~Gordon, D.~Webb, S.~Wolpert,
+Isospectral plane domains and surfaces via Riemannian orbifolds,
+\emph{Invent.~Math.}~110 (1992), 1--22.
+
+\bibitem{kac}
+M.~Kac,
+Can one hear the shape of a drum?
+\emph{Amer.~Math.~Monthly}~73 (1966), 1--23.
+
+\bibitem{engl}
+H.~W.~Engl, M.~Hanke, A.~Neubauer,
+\emph{Regularization of Inverse Problems}, Kluwer, 1996.
+
+\bibitem{reed-simon-1}
+M.~Reed, B.~Simon,
+\emph{Methods of Modern Mathematical Physics, Vol.~I},
+Academic Press, 1980.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,810 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% PACKAGES
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{mathrsfs}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{csquotes}
+
+\geometry{margin=1in}
+
+% ============================================================
+% THEOREM ENVIRONMENTS (lighter — this is a position paper)
+% ============================================================
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{principle}[definition]{Principle}
+\newtheorem{example}[definition]{Example}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{objection}[definition]{Objection}
+\newtheorem{reply}[definition]{Reply}
+
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{thesis}[definition]{Thesis}
+
+% ============================================================
+% MACROS (inherited, light)
+% ============================================================
+\newcommand{\Ccal}{\mathcal{C}}
+\newcommand{\Xcal}{\mathcal{X}}
+\newcommand{\Rcal}{\mathcal{R}}
+\newcommand{\Tcal}{\mathcal{T}}
+\newcommand{\Dcal}{\mathcal{D}}
+\newcommand{\Ecal}{\mathcal{E}}
+\newcommand{\Vcal}{\mathcal{V}}
+\newcommand{\Hcal}{\mathcal{H}}
+\newcommand{\Acal}{\mathcal{A}}
+\newcommand{\Norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\op}[1]{\operatorname{#1}}
+\newcommand{\Phimap}{\Phi}
+
+% ============================================================
+% TITLE
+% ============================================================
+\title{%
+  \textbf{Structural Auditability in Mathematical Construction:}\\[4pt]
+  \large A Methodological Position
+}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+We argue that a central methodological question in mathematical
+practice is not only \emph{whether} a construction is correct, but
+\emph{whether it is auditable}---that is, whether each step of the
+construction contains within itself the means to anticipate and
+localise objections. Building on two companion papers on a
+multirepresentational constraining methodology, we formalise
+\emph{structural wear} as the mechanism by which a construction is
+successively tested against independent representations, and we
+introduce the \emph{certification trace} as the record of this
+process. We develop a multi-level taxonomy of methodological
+outcomes, distinguishing proof, formalisation, extension,
+characterisation, numerical evidence with identified limits, and
+structural obstruction. We argue that this taxonomy replaces the
+binary success/failure framework with a finer-grained account of
+what a construction delivers. We close with a set of objections and
+replies, and with a discussion of the relationship between
+auditability and external peer review.
+\end{abstract}
+
+\tableofcontents
+
+% ------------------------------------------------------------
+\section{From Proof to Architecture}
+\label{sec:intro}
+% ------------------------------------------------------------
+
+\subsection{The Standard Picture}
+
+The standard picture of mathematical work is broadly deductive:
+a \emph{definition} is followed by a \emph{lemma}, which is
+followed by a \emph{theorem}, which is followed by a
+\emph{corollary}. Correctness is measured by the validity of the
+deductive chain, and the chain is audited by peer review. If the
+chain contains a gap, the reviewer identifies it and the author
+either closes it or retracts the claim.
+
+This picture is extraordinarily effective. It has produced
+mathematics of immense depth, and it is the operational standard
+against which formal work is judged.
+
+\subsection{A Complementary Question}
+
+The picture is, however, incomplete as a description of
+\emph{how mathematical knowledge is constructed}. Before the
+deductive chain exists, there is a phase of construction in which
+representations are chosen, transformations are applied, and the
+shape of the eventual theorem is progressively determined. The
+question that governs this phase is not
+
+\begin{quote}
+\emph{Is this step valid?}
+\end{quote}
+
+but
+
+\begin{quote}
+\emph{If this step is wrong, how will I know?}
+\end{quote}
+
+This is the question of \emph{auditability}. It is not a
+replacement for deductive rigour; it is the design principle that
+governs how a construction should be organised so that deductive
+rigour can eventually be applied.
+
+\subsection{Thesis}
+
+\begin{thesis}[Auditability]\label{th:audit}
+A mathematical construction should be designed so that each step
+contains the means to audit the previous step. The strength of a
+construction is measured not only by the correctness of its final
+claim, but by the redundancy, coherence, and auditability of the
+chain that produces that claim.
+\end{thesis}
+
+\subsection{Plan}
+
+Section~\ref{sec:audit-classical} analyses the audit relationship
+in classical mathematics. Section~\ref{sec:wear} introduces
+\emph{structural wear} as the mechanism of auditability.
+Section~\ref{sec:redundancy} develops the notions of redundancy and
+coherence. Section~\ref{sec:taxonomy} presents the multi-level
+taxonomy of methodological outcomes. Section~\ref{sec:trace}
+introduces the certification trace.
+Section~\ref{sec:cycle} describes the self-auditing cycle.
+Section~\ref{sec:objections} treats objections and replies.
+Section~\ref{sec:relationship} relates the position to two
+companion papers \cite{paperI,paperII}.
+
+% ------------------------------------------------------------
+\section{The Audit Relationship}
+\label{sec:audit-classical}
+% ------------------------------------------------------------
+
+\subsection{The Classical Model}
+
+In the classical model, the relationship between author and
+auditor is:
+\[
+  \text{author} \;\longrightarrow\; \text{construction}
+  \;\longrightarrow\; \text{auditor} \;\longrightarrow\;
+  \begin{cases} \text{accept} \\ \text{reject} \end{cases}
+\]
+The auditor's role is adversarial: to find gaps, hidden
+hypotheses, unjustified steps, and counterexamples. The author's
+role is defensive: to present a construction that resists the
+auditor's attacks.
+
+\subsection{The Cost of the Classical Model}
+
+The classical model has two costs.
+
+First, it is \emph{post hoc}: the auditor sees only the final
+construction, not the process. Hidden assumptions that were
+resolved internally are invisible; unresolved ones appear as
+gaps.
+
+Second, it is \emph{asymmetric}: the author knows the construction
+better than the auditor, but has no obligation to expose the
+structure of the argument. A well-written paper can hide a weak
+foundation behind elegant presentation.
+
+\subsection{What Auditability Adds}
+
+Auditability adds a design constraint on the author:
+\[
+  \boxed{
+    \text{Construct as if the auditor were present at every step.}
+  }
+\]
+The author is not required to eliminate the auditor. The author is
+required to \emph{anticipate} the auditor's questions and to
+provide, at each step, the means to answer them.
+
+\begin{principle}[Anticipated audit]\label{pr:anticipated}
+Each step of a construction should be presented together with the
+questions a competent auditor would ask about it and the answers
+available at that step.
+\end{principle}
+
+% ------------------------------------------------------------
+\section{Structural Wear}
+\label{sec:wear}
+% ------------------------------------------------------------
+
+\subsection{The Mechanism}
+
+A construction is not made stronger by adding more of the same
+representation. It is made stronger by subjecting it to
+\emph{structurally diverse} representations, each of which tests a
+different aspect of the construction.
+
+\begin{definition}[Structural wear]\label{def:wear}
+Given a construction $X$ and a family of representations
+$\Rcal = \{R_i\}_{i \in I}$, the \emph{structural wear} of $X$
+under $\Rcal$ is the process
+\[
+  X
+  \;\xrightarrow{R_1}\;
+  X_1
+  \;\xrightarrow{R_2}\;
+  X_2
+  \;\longrightarrow\;
+  \cdots
+  \;\xrightarrow{R_n}\;
+  X_n
+\]
+together with the requirement that
+\[
+  X_k \simeq X
+  \qquad \text{(structurally, for each } k \text{)}.
+\]
+\end{definition}
+
+\subsection{What Wear Eliminates}
+
+Wear does not destroy the object. It eliminates the degrees of
+freedom that are not compatible with the represented constraints.
+In the language of the companion papers \cite{paperI,paperII}:
+\[
+  \Ccal_0 \supseteq \Ccal_1 \supseteq \cdots \supseteq \Ccal_n,
+\]
+and the surviving structure is
+\[
+  \Ccal_\infty = \bigcap_i \Ccal_i .
+\]
+
+\subsection{Why the Metaphor of Wear is Appropriate}
+
+The metaphor is appropriate because each representation is
+\emph{hostile} to the construction. It does not confirm; it tests.
+The construction must survive the test, and survival is measured
+by structural identity:
+\[
+  R_i(X) \neq \varnothing
+  \quad\text{and}\quad
+  R_i^{-1}(R_i(X)) \simeq X.
+\]
+
+\begin{principle}[Hostile representation]\label{pr:hostile}
+Each representation should be applied as if its purpose were to
+destroy the construction. The construction is retained only if it
+survives.
+\end{principle}
+
+% ------------------------------------------------------------
+\section{Redundancy and Coherence}
+\label{sec:redundancy}
+% ------------------------------------------------------------
+
+\subsection{Three Types of Redundancy}
+
+Redundancy in mathematical construction has three levels.
+
+\begin{definition}[Weak redundancy]\label{def:weak-red}
+Representations $R_1, R_2, \ldots, R_k$ are \emph{weakly
+redundant} if they transmit essentially the same information
+expressed in different languages.
+\end{definition}
+
+\begin{definition}[Structural redundancy]\label{def:strong-red}
+Representations are \emph{structurally redundant} if they impose
+different and jointly compatible constraints on the same object.
+\end{definition}
+
+\begin{definition}[Cross redundancy]\label{def:cross-red}
+Representations are \emph{cross redundant} if there exist mutual
+implications
+\[
+  R_i \Rightarrow R_j
+  \quad\text{and}\quad
+  R_j \Rightarrow R_i
+\]
+in the sense that a constraint from one representation can be
+derived from a constraint of the other.
+\end{definition}
+
+\subsection{The Strength Ordering}
+
+The strength of a construction increases with the type of
+redundancy employed:
+\[
+  \text{weak} \;<\; \text{structural} \;<\; \text{cross}.
+\]
+
+\begin{proposition}[Cross redundancy as auditability]\label{pr:cross-audit}
+Cross redundancy is the strongest form of auditability available
+within a representation family, because it allows each
+representation to check the other without external intervention.
+\end{proposition}
+
+\subsection{Coherence}
+
+Coherence is the requirement that the representations of a single
+object are mutually consistent. In the language of the companion
+paper \cite{paperII}:
+\[
+  \Rcal_{\rm coh} \subset \prod_i \Rcal_i .
+\]
+The admissible space of representations is a subspace, not a
+product: some combinations of individual representations are
+compatible, others are not.
+
+\begin{principle}[Coherence as constraint]\label{pr:coherence}
+The representations of a construction should be chosen so that
+their compatibility relations constrain the object beyond what any
+individual representation determines.
+\end{principle}
+
+% ------------------------------------------------------------
+\section{The Multi-Level Output Taxonomy}
+\label{sec:taxonomy}
+% ------------------------------------------------------------
+
+\subsection{The Binary Framework and its Limits}
+
+The classical framework classifies a construction as either
+\emph{correct} or \emph{incorrect}. This binary framework is
+adequate for finished theorems but inadequate for constructions in
+progress.
+
+\begin{remark}
+A construction that does not yield a proof may nonetheless yield
+substantial mathematical knowledge: a rigorous characterisation of
+an obstruction, an identified bottleneck, a set of numerical
+evidence with controlled error, or an extension of an existing
+theory.
+\end{remark}
+
+\subsection{The Six Levels}
+
+\begin{definition}[Output taxonomy]\label{def:taxonomy}
+The outcome of a construction falls into one of six levels:
+\begin{enumerate}[label=\textbf{Level \Roman*.}]
+  \item \textbf{Complete proof:} the construction closes with a
+        theorem and its proof.
+  \item \textbf{Rigorous formalisation:} the construction is
+        expressed in a formal system with all definitions, lemmas,
+        and derivations explicit.
+  \item \textbf{Extension of existing theory:} the construction
+        produces a generalisation or strengthening of a known
+        result.
+  \item \textbf{Structural characterisation:} the construction
+        determines the object up to an explicitly declared
+        equivalence.
+  \item \textbf{Numerical evidence with identified limits:} the
+        construction produces controlled numerical evidence
+        together with an explicit statement of where the evidence
+        stops and what would be required to continue.
+  \item \textbf{Structural obstruction:} the construction
+        identifies an obstruction that prevents further progress,
+        and localises the obstruction at a specific layer,
+        criterion, or hypothesis.
+\end{enumerate}
+\end{definition}
+
+\subsection{Why Six Levels}
+
+The six levels are not a hierarchy of decreasing value. They are a
+classification of \emph{what kind of knowledge} the construction
+produces.
+
+\begin{proposition}[Non-subordination]\label{pr:non-sub}
+Level~\RomanVI{} (structural obstruction) is not inferior to
+Level~\RomanI{} (complete proof). A rigorous identification of an
+obstruction is often more valuable than a proof of a special case,
+because it explains \emph{why} the general case resists proof.
+\end{proposition}
+
+\begin{remark}
+This is the formal content of the informal observation that
+``knowing why a problem is hard'' is itself a mathematical
+achievement. The taxonomy makes this observation precise.
+\end{remark}
+
+\subsection{Examples}
+
+\begin{example}[Level~\RomanI]
+The Dirichlet Laplacian on $[0,1]$ closes with an explicit
+spectral theorem. Complete proof.
+\end{example}
+
+\begin{example}[Level~\RomanIV]
+The classification of surfaces up to homeomorphism is a structural
+characterisation: the object is determined up to the declared
+equivalence.
+\end{example}
+
+\begin{example}[Level~\RomanVI]
+The failure of injectivity of the inverse spectral map (Gordon--Webb--Wolpert)
+is a structural obstruction: it localises the failure of
+identifiability at the spectral layer.
+\end{example}
+
+% ------------------------------------------------------------
+\section{The Certification Trace}
+\label{sec:trace}
+% ------------------------------------------------------------
+
+\subsection{Motivation}
+
+A finished construction carries with it a history: definitions
+were chosen, hypotheses were declared, representations were
+applied, restrictions were imposed, evidence was gathered,
+verifications were performed, and corrections were made. In the
+classical framework, this history is largely invisible.
+
+\begin{definition}[Certification trace]\label{def:trace}
+The \emph{certification trace} of a construction $X$ is the tuple
+\[
+  \Tcal(X)
+  =
+  (D, H, C, R, E, V, A),
+\]
+where
+\begin{itemize}
+  \item $D$ = the set of definitions used;
+  \item $H$ = the set of hypotheses declared;
+  \item $C$ = the set of constructions performed;
+  \item $R$ = the set of representations applied;
+  \item $E$ = the set of estimates and evidence gathered;
+  \item $V$ = the set of cross-verifications performed;
+  \item $A$ = the set of audits and corrections recorded.
+\end{itemize}
+\end{definition}
+
+\subsection{What the Trace Records}
+
+The trace is not a proof. It is a record of the process by which
+the proof was produced. It is intended to answer, for any step of
+the final construction, the questions:
+\begin{itemize}
+  \item Where did this definition come from?
+  \item What hypothesis does this step rely on?
+  \item Which representation is being applied?
+  \item What evidence supports this step?
+  \item Which other representation confirms it?
+  \item Has this step been audited?
+\end{itemize}
+
+\begin{principle}[Trace completeness]\label{pr:trace}
+A construction is \emph{trace-complete} if every step of the final
+proof is covered by at least one entry in the certification trace.
+\end{principle}
+
+\subsection{Trace as Math Object}
+
+\begin{remark}
+The certification trace is itself a mathematical object: it is a
+finite structured tuple that can be manipulated, compared, and
+formalised. In particular, it can be encoded in a proof assistant,
+where the entries become proof obligations.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{The Self-Auditing Cycle}
+\label{sec:cycle}
+% ------------------------------------------------------------
+
+\subsection{The Cycle}
+
+The self-auditing cycle is:
+\[
+  \boxed{
+    \text{construct}
+    \to
+    \text{represent}
+    \to
+    \text{constrain}
+    \to
+    \text{audit}
+    \to
+    \text{correct}
+    \to
+    \text{reconstruct}.
+  }
+\]
+
+Each arrow is a distinct operation:
+\begin{itemize}
+  \item \textbf{construct}: produce a candidate model;
+  \item \textbf{represent}: apply a layer representation;
+  \item \textbf{constrain}: intersect with the admissible model space;
+  \item \textbf{audit}: test for cross-coherence;
+  \item \textbf{correct}: localise and repair inconsistencies;
+  \item \textbf{reconstruct}: return to the original object via
+        inverse representation.
+\end{itemize}
+
+\subsection{Correction as Information}
+
+\begin{principle}[Correction as information]\label{pr:correction}
+When a contradiction between representations is found, it is
+recorded as a structural feature of the construction, not hidden.
+The contradiction localises the missing information.
+\end{principle}
+
+\begin{proposition}[Diagnostic value of contradiction]\label{pr:diagnostic}
+If representations $R_i$ and $R_j$ fail to be cross-coherent on a
+construction $X$, the failure identifies a specific structural
+feature of $X$ that one of the representations does not capture.
+\end{proposition}
+
+\subsection{Relationship to External Audit}
+
+The self-auditing cycle does not eliminate the external auditor.
+It changes the state of the construction at the time of external
+audit:
+
+\begin{quote}
+\emph{Classical:} the auditor sees a finished construction and
+must find its flaws.\\[2mm]
+\emph{Self-audited:} the auditor sees a construction whose
+anticipated flaws have been addressed, and must find the
+remaining ones.
+\end{quote}
+
+\begin{remark}
+The self-auditing cycle is a \emph{reduction} of the external
+auditor's workload, not a substitution for it.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Objections and Replies}
+\label{sec:objections}
+% ------------------------------------------------------------
+
+\subsection{Objection 1: This is Just Careful Mathematics}
+
+\begin{objection}
+Everything described here is what good mathematicians already do:
+choose diverse representations, check for consistency, identify
+where proofs fail.
+\end{objection}
+
+\begin{reply}
+The observation is correct. The contribution of this position paper
+is not the invention of a new practice, but the \emph{explicit
+formalisation} of a practice that is currently implicit. Making the
+practice explicit allows:
+\begin{itemize}
+  \item (a) the design of a \emph{certification trace} that can be
+        mechanically checked;
+  \item (b) the definition of \emph{multi-level outputs} that
+        classify partial results;
+  \item (c) the \emph{quantification} of redundancy and coherence.
+\end{itemize}
+Implicit practice cannot be formalised; explicit practice can.
+\end{reply}
+
+\subsection{Objection 2: This Does Not Prove Anything}
+
+\begin{objection}
+The methodology produces evidence, characterisations, and
+obstructions. None of these is a proof. Therefore the methodology
+does not contribute to mathematical knowledge.
+\end{objection}
+
+\begin{reply}
+The premise is that only proofs contribute to mathematical
+knowledge. The position paper argues the contrary: the \emph{levels
+taxonomy} of \S\ref{sec:taxonomy} classifies six distinct types of
+contribution, of which complete proof is only one. A rigorous
+characterisation of an obstruction (Level~\RomanVI) is a
+mathematical contribution even when no proof exists.
+\end{reply}
+
+\subsection{Objection 3: Auditability is Not Measurable}
+
+\begin{objection}
+``Auditability'' is a vague term. Without a quantitative measure,
+the principle cannot be applied.
+\end{objection}
+
+\begin{reply}
+Auditability can be made quantitative via the \emph{certification
+trace} $\Tcal(X)$. A construction is trace-complete (Principle~\ref{pr:trace})
+if every step of the final proof is covered by an entry in the
+trace. The trace is finite and structured, and can be counted,
+compared, and formalised. Its completeness is a checkable property.
+\end{reply}
+
+\subsection{Objection 4: This Does Not Apply to All Mathematics}
+
+\begin{objection}
+Some mathematics does not admit multiple representations. The
+methodology is inapplicable in such cases.
+\end{objection}
+
+\begin{reply}
+The methodology is a \emph{design principle}, not a universal
+requirement. It applies when multiple representations are available
+and cross-coherent. In contexts where only one representation is
+available, the methodology reduces to the classical framework. The
+position paper does not claim universality.
+\end{reply}
+
+\subsection{Objection 5: Why Bother Formalising Implicit Practice?}
+
+\begin{objection}
+If the practice is already effective, why formalise it?
+\end{objection}
+
+\begin{reply}
+Because formalisation enables three things that implicit practice
+cannot achieve:
+\begin{itemize}
+  \item \emph{Teaching}: implicit practice can only be transmitted
+        by apprenticeship; explicit practice can be taught.
+  \item \emph{Mechanical verification}: implicit practice cannot be
+        encoded in a proof assistant; explicit practice can.
+  \item \emph{Extension}: implicit practice cannot be systematically
+        extended; explicit practice can be generalised to new
+        domains.
+\end{itemize}
+\end{reply}
+
+% ------------------------------------------------------------
+\section{Relationship to Companion Papers}
+\label{sec:relationship}
+% ------------------------------------------------------------
+
+\subsection{The Triad}
+
+The three papers form a triad:
+
+\begin{center}
+\begin{tabular}{c|c|c}
+  \toprule
+  Paper & Question & Answer \\
+  \midrule
+  \cite{paperI} & How does the method work?
+    & Constraining, spectral emergence, discrepancy classification \\
+  \cite{paperII} & When does it fail?
+    & Separation, three-type rupture, coherence subspace \\
+  This paper & What does success mean?
+    & Auditability, wear, taxonomy, trace \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Independence of the Papers}
+
+Each paper is independent of the others:
+\begin{itemize}
+  \item Paper~\cite{paperI} can be read as a methodology of
+        construction with concrete toys.
+  \item Paper~\cite{paperII} can be read as a meta-theory of the
+        limits of constraining.
+  \item This paper can be read as an epistemological position on
+        what mathematical construction should be.
+\end{itemize}
+Together they form a coherent programme.
+
+\subsection{The Shared Vocabulary}
+
+The three papers share:
+\begin{itemize}
+  \item the master object $\mathfrak O$;
+  \item the layer set $\Lambda$;
+  \item the transition morphisms $\phi_{\lambda\mu}$;
+  \item the validation matrix $\mathbf V$;
+  \item the epistemic states $\{P, N, O, F\}$.
+\end{itemize}
+This shared vocabulary is the technical backbone of the programme.
+
+% ------------------------------------------------------------
+\section{Conclusion}
+\label{sec:conclusion}
+% ------------------------------------------------------------
+
+The position defended in this paper is:
+
+\begin{thesis}[Restated]
+Mathematical construction should be designed so that each step
+contains the means to audit the previous step. Success is not
+binary: it is a multi-level outcome classified by the taxonomy of
+\S\ref{sec:taxonomy}.
+\end{thesis}
+
+The mechanism by which auditability is achieved is \emph{structural
+wear}: successive applications of independent, cross-coherent
+representations, each of which tests the construction against a
+different aspect of its structure.
+
+The record of the process is the \emph{certification trace}, a
+finite structured object that can be manipulated, compared, and
+formalised.
+
+The self-auditing cycle is the operational realisation of the
+principle: it does not replace external audit, but reduces its
+workload by anticipating its questions.
+
+\medskip
+
+The methodological slogan, in one line:
+
+\begin{quote}
+\emph{Build so that the auditor is present at every step.}
+\end{quote}
+
+Or, more precisely:
+
+\begin{quote}
+\emph{A mathematical construction is well-designed when each of its
+steps contains the means to anticipate and answer the questions a
+competent auditor would ask about it.}
+\end{quote}
+
+% ------------------------------------------------------------
+\appendix
+% ------------------------------------------------------------
+
+\section{Summary of Principles}
+\label{app:principles}
+
+\begin{center}
+\begin{tabular}{c l}
+  \toprule
+  Principle & Statement \\
+  \midrule
+  \ref{pr:anticipated} & Anticipated audit \\
+  \ref{pr:hostile} & Hostile representation \\
+  \ref{pr:coherence} & Coherence as constraint \\
+  \ref{pr:trace} & Trace completeness \\
+  \ref{pr:correction} & Correction as information \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\section{Bibliography}
+\label{app:biblio}
+
+\begin{thebibliography}{99}
+
+\bibitem{paperI}
+[Companion paper I],
+\emph{Structural Constraining and Spectral Emergence: A
+Multirepresentational Methodology for Nonlinear Evolution
+Equations}, 2024.
+
+\bibitem{paperII}
+[Companion paper II],
+\emph{On the Limits of Structural Constraining: Separation,
+Coherence, and the Emergence of New Representations}, 2024.
+
+\bibitem{framework}
+[Framework paper],
+\emph{A Multirepresentational Construction--Reconstruction
+Methodology for Mathematical Structures}, Parts I--V, 2024.
+
+\bibitem{polya}
+G.~Polya,
+\emph{How to Solve It}, Princeton University Press, 1945.
+
+\bibitem{lakatos}
+I.~Lakatos,
+\emph{Proofs and Refutations}, Cambridge University Press, 1976.
+
+\bibitem{thurston}
+W.~P.~Thurston,
+On proof and progress in mathematics,
+\emph{Bull.~Amer.~Math.~Soc.}~30 (1994), 161--177.
+
+\bibitem{hamming}
+R.~W.~Hamming,
+The unreasonable effectiveness of mathematics,
+\emph{Amer.~Math.~Monthly}~87 (1980), 81--90.
+
+\bibitem{tao}
+T.~Tao,
+\emph{There's more to mathematics than rigour and proofs},
+blog post, 2007.
+
+\bibitem{mathlib}
+The Mathlib Community,
+\emph{Mathlib: A unified library of mathematics formalized in Lean},
+2024.
+
+\end{thebibliography}
+
+\end{document}

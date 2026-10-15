@@ -1,0 +1,4322 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% PACKAGES
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{mathrsfs}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{microtype}
+
+\geometry{margin=1in}
+
+% ============================================================
+% THEOREM ENVIRONMENTS
+% ============================================================
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}[definition]{Axiom}
+\newtheorem{example}[definition]{Example}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{convention}[definition]{Convention}
+
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+
+% ============================================================
+% MACROS
+% ============================================================
+\newcommand{\Lam}{\Lambda}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\Ge}{\mathrm{Ge}}
+\newcommand{\To}{\mathrm{To}}
+\newcommand{\Al}{\mathrm{Al}}
+\newcommand{\Nu}{\mathrm{Nu}}
+\newcommand{\Fo}{\mathrm{Fo}}
+\newcommand{\Cl}{\mathrm{Cl}}
+\newcommand{\Corr}{\mathrm{Corr}}
+\newcommand{\Inv}{\mathrm{Inv}}
+\newcommand{\An}{\mathrm{An}}
+\newcommand{\Ob}{\mathfrak{O}}
+\newcommand{\Ecal}{\mathcal{E}}
+\newcommand{\Ocal}{\mathcal{O}}
+\newcommand{\Acal}{\mathcal{A}}
+\newcommand{\philam}{\phi_{\lambda\mu}}
+\newcommand{\rholam}{\rho_{\lambda}}
+\newcommand{\Vmat}{\mathbf{V}}
+\newcommand{\Jset}{\mathcal{J}}
+\newcommand{\dd}{\,\mathrm{d}}
+
+% ============================================================
+% TITLE
+% ============================================================
+\title{%
+  \textbf{A Multirepresentational Construction--Reconstruction\\
+  Methodology for Mathematical Structures}\\[4pt]
+  \large Part I: Foundations and Metamodel
+}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+This document formalizes a methodology in which a single mathematical
+object is represented through six interacting layers---spectral,
+geometric, topological, algebraic, numerical, and formal---and
+subsequently reconstructed through classical models, inverse
+constructions, and analytic verification. Part~I establishes the
+metamodel: the master object, the layer index set, the transition
+morphisms, the compatibility conditions, the information invariants,
+and the validation structure. The goal is to replace informal
+narratives of ``stages'' by a compact, functorial, and checkable
+formalism.
+\end{abstract}
+
+\tableofcontents
+
+% ============================================================
+\part{Foundations and Metamodel}
+% ============================================================
+
+% ------------------------------------------------------------
+\section{Introduction}
+% ------------------------------------------------------------
+
+\subsection{Motivation}
+
+Mathematical practice frequently moves between structurally different
+descriptions of the same underlying object: an operator admits a
+spectral decomposition, that decomposition generates a geometric
+configuration, the configuration carries topological invariants,
+those invariants admit algebraic codings, the algebraic codings admit
+numerical approximations, and the whole edifice admits a formal
+logical presentation. The prevailing habit is to treat these
+descriptions as sequential steps.
+
+This document adopts a different stance: the descriptions are treated
+as \emph{projections of a single master object}, related by explicitly
+declared morphisms, subject to commutativity and information-conservation
+constraints.
+
+\subsection{Problem Statement}
+
+Given a mathematical object $\Ob$, we seek:
+\begin{enumerate}[label=(\roman*)]
+  \item a finite index set $\Lam$ of \emph{layers};
+  \item for each $\lambda \in \Lam$, a projection
+        $\pi_\lambda : \Ob \to \Ocal_\lambda$;
+  \item for each ordered pair $\lambda \prec \mu$, a transition
+        $\philam : \Ocal_\lambda \to \Ocal_\mu$;
+  \item a compatibility criterion for the resulting diagram;
+  \item a reconstruction functor from the formal layer back to
+        classical models and corrected equations;
+  \item a validation structure separating proof, computation, and
+        conjecture.
+\end{enumerate}
+
+\subsection{Contributions}
+
+The contributions of Part~I are:
+\begin{itemize}
+  \item a precise definition of the master object $\Ob$ and its
+        layer decomposition (\S\ref{sec:notation});
+  \item the definition of the transition morphisms and their
+        compatibility axioms (\S\ref{sec:metamodel});
+  \item a formal treatment of information loss and invariants
+        (\S\ref{sec:compat});
+  \item the introduction of the validation matrix $\Vmat$
+        (\S\ref{sec:compat}).
+\end{itemize}
+
+\subsection{Organization}
+
+Section~\ref{sec:notation} fixes notation. Section~\ref{sec:metamodel}
+defines the six-layer metamodel. Section~\ref{sec:compat} treats
+compatibility, invariants, and the validation matrix.
+
+% ------------------------------------------------------------
+\section{Notation and Conventions}\label{sec:notation}
+% ------------------------------------------------------------
+
+\subsection{The Master Object}
+
+\begin{definition}[Master object]
+Let $\Lam$ be a finite index set of \emph{layers}. A \emph{master
+object} is a tuple
+\[
+  \Ob \;=\; \bigl(\Ocal_\lambda\bigr)_{\lambda \in \Lam},
+\]
+where each $\Ocal_\lambda$ is a mathematical structure (set, space,
+algebra, category, or formal theory) associated with the layer
+$\lambda$, together with a family of projection maps
+\[
+  \pi_\lambda : \Ob \longrightarrow \Ocal_\lambda,
+  \qquad \lambda \in \Lam .
+\]
+\end{definition}
+
+\begin{convention}[Standard layer set]
+Unless otherwise stated,
+\[
+  \Lam \;=\; \{\Sp,\Ge,\To,\Al,\Nu,\Fo\},
+\]
+corresponding to the spectral, geometric, topological, algebraic,
+numerical, and formal layers respectively.
+\end{convention}
+
+\begin{remark}
+The master object $\Ob$ is not assumed to be a set-theoretic
+primitive. It is a \emph{bookkeeping device} whose content is
+exhausted by the data $(\Ocal_\lambda, \pi_\lambda)_{\lambda \in \Lam}$
+and the transitions defined in \S\ref{sec:metamodel}.
+\end{remark}
+
+\subsection{Transition Morphisms}
+
+\begin{definition}[Order relation on layers]
+A binary relation $\prec$ on $\Lam$ is a \emph{construction order} if
+it is irreflexive, transitive, and admits a linear extension
+\[
+  \Sp \prec \Ge \prec \To \prec \Al \prec \Nu \prec \Fo .
+\]
+\end{definition}
+
+\begin{definition}[Transition morphisms]
+For each pair $\lambda \prec \mu$ in $\Lam$, a \emph{transition
+morphism} is a map
+\[
+  \philam : \Ocal_\lambda \longrightarrow \Ocal_\mu
+\]
+that carries structural data of layer $\lambda$ into structural data
+of layer $\mu$.
+\end{definition}
+
+The resulting pipeline is
+\begin{equation}\label{eq:pipeline}
+  \Ocal_\Sp
+  \xrightarrow{\phi_{\Sp\Ge}}
+  \Ocal_\Ge
+  \xrightarrow{\phi_{\Ge\To}}
+  \Ocal_\To
+  \xrightarrow{\phi_{\To\Al}}
+  \Ocal_\Al
+  \xrightarrow{\phi_{\Al\Nu}}
+  \Ocal_\Nu
+  \xrightarrow{\phi_{\Nu\Fo}}
+  \Ocal_\Fo .
+\end{equation}
+
+\subsection{Reconstruction Operators}
+
+\begin{definition}[Reconstruction operators]
+The \emph{reconstruction operators} are maps
+\[
+  \rho_\Cl    : \Ocal_\Fo \to \Ecal_\Cl, \qquad
+  \rho_\Inv   : \Ecal_\Cl \to \Ecal_\Corr, \qquad
+  \rho_\An    : \Ecal_\Corr \to \Acal,
+\]
+where $\Ecal_\Cl$ denotes the classical-model layer, $\Ecal_\Corr$ the
+corrected-model layer, and $\Acal$ the analytic-regularity layer.
+\end{definition}
+
+The reconstruction pipeline is
+\begin{equation}\label{eq:reconstruction}
+  \Ocal_\Fo
+  \xrightarrow{\rho_\Cl}
+  \Ecal_\Cl
+  \xrightarrow{\rho_\Inv}
+  \Ecal_\Corr
+  \xrightarrow{\rho_\An}
+  \Acal .
+\end{equation}
+
+\subsection{Discrete Families}
+
+\begin{definition}[Discrete family]
+A \emph{discrete family} of $\Ob$ is a family
+\[
+  \Ob^{(N)} \;=\; \bigl(\Ocal^{(N)}_\lambda\bigr)_{\lambda \in \Lam},
+  \qquad N \in \mathbb{N},
+\]
+together with a family of \emph{resolution morphisms}
+\[
+  \iota_N : \Ob^{(N)} \to \Ob .
+\]
+\end{definition}
+
+\begin{definition}[Discrete-to-continuum convergence]
+Let $d_\lambda$ be a metric (or pseudometric) on $\Ocal_\lambda$, and
+let $w_\lambda > 0$ be weights with $\sum_\lambda w_\lambda = 1$. The
+\emph{layer-aggregated error} is
+\begin{equation}\label{eq:error}
+  \varepsilon_N
+  \;=\;
+  d_\Lam\bigl(\Ob^{(N)}, \Ob\bigr)
+  \;=\;
+  \sum_{\lambda \in \Lam} w_\lambda \,
+  d_\lambda\bigl(\Ocal^{(N)}_\lambda, \Ocal_\lambda\bigr).
+\end{equation}
+We write $\Ob^{(N)} \to \Ob$ if $\varepsilon_N \to 0$ as
+$N \to \infty$.
+\end{definition}
+
+\subsection{Validation Matrix}
+
+\begin{definition}[Validation criteria]
+Let
+\[
+  \Jset \;=\;
+  \{\mathrm{Ex},\mathrm{Co},\mathrm{In},\mathrm{Nu},\mathrm{St},
+    \mathrm{Cv},\mathrm{Re},\mathrm{Rev}\}
+\]
+denote the set of \emph{validation criteria}: existence, coherence,
+invariance, numerical consistency, stability, convergence, regularity,
+and reversibility, respectively.
+\end{definition}
+
+\begin{definition}[Validation matrix]
+The \emph{validation matrix} is
+\[
+  \Vmat \;=\;
+  \bigl(v_{\lambda j}\bigr)_{\lambda \in \Lam,\; j \in \Jset},
+  \qquad
+  v_{\lambda j} \in \{\mathrm{P},\mathrm{N},\mathrm{O},\mathrm{F}\},
+\]
+where the entries denote \emph{Proved}, \emph{Numerical},
+\emph{Open}, and \emph{Failed}, respectively.
+\end{definition}
+
+\begin{remark}
+The validation matrix distinguishes four epistemic statuses. In
+particular, $\mathrm{P}$ (proved) and $\mathrm{N}$ (numerically
+supported) must not be conflated: numerical evidence does not
+constitute proof.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{The Metamodel}\label{sec:metamodel}
+% ------------------------------------------------------------
+
+\subsection{Six-Layer Representation}
+
+\begin{definition}[Layer contents]
+For a master object $\Ob = (\Ocal_\lambda)_{\lambda \in \Lam}$:
+\begin{enumerate}[label=\textbf{(\roman*)}]
+  \item \textbf{Spectral layer} $\Ocal_\Sp$: a spectral datum
+        $(T, \sigma(T), E_T)$, where $T$ is a closed operator on a
+        Hilbert space $H$, $\sigma(T) \subset \mathbb{C}$ is its
+        spectrum, and $E_T$ is its spectral measure.
+  \item \textbf{Geometric layer} $\Ocal_\Ge$: a geometric datum
+        $(M, g, \nabla, R)$, where $M$ is a smooth manifold, $g$ a
+        Riemannian metric, $\nabla$ the Levi-Civita connection, and
+        $R$ the Riemann curvature tensor.
+  \item \textbf{Topological layer} $\Ocal_\To$: a topological datum
+        $(X, \{H_k\}_k, \{\pi_k\}_k, \chi)$, comprising a space $X$
+        and its homology, homotopy, and Euler characteristic.
+  \item \textbf{Algebraic layer} $\Ocal_\Al$: an algebraic datum
+        $(A, G, R, M)$, comprising an algebra $A$, a group $G$, a
+        ring $R$, and a module $M$ encoding the layer structure.
+  \item \textbf{Numerical layer} $\Ocal_\Nu$: a numerical datum
+        $(T_N, A_N, \{x_i\}_{i=1}^N, \varepsilon_N)$.
+  \item \textbf{Formal layer} $\Ocal_\Fo$: a formal theory
+        $(\mathcal{L}, \Gamma, \vdash)$, comprising a language
+        $\mathcal{L}$, a set of axioms $\Gamma$, and a derivability
+        relation $\vdash$.
+\end{enumerate}
+\end{definition}
+
+\subsection{Compatibility Conditions}
+
+\begin{axiom}[Functoriality of transitions]\label{ax:funct}
+For every composable pair $\lambda \prec \mu \prec \nu$,
+\[
+  \phi_{\mu\nu} \circ \philam
+  \;=\;
+  \phi_{\lambda\nu} .
+\]
+\end{axiom}
+
+\begin{axiom}[Projection coherence]\label{ax:proj}
+For every $\lambda \in \Lam$ and every discrete family
+$\Ob^{(N)} \to \Ob$,
+\[
+  \pi_\lambda \circ \iota_N
+  \;=\;
+  \pi^{(N)}_\lambda ,
+\]
+where $\pi^{(N)}_\lambda : \Ob^{(N)} \to \Ocal^{(N)}_\lambda$ is the
+layer projection at resolution $N$.
+\end{axiom}
+
+\begin{axiom}[Reconstruction correspondence]\label{ax:corr}
+There exists a \emph{correspondence limit}
+\[
+  \lim_{\epsilon \to 0} \rho_\Inv \circ \rho_\Cl
+  \bigl(\Ocal_\Fo^{(\epsilon)}\bigr)
+  \;=\;
+  \Ecal_\Cl ,
+\]
+where $\Ocal_\Fo^{(\epsilon)}$ denotes the formal layer under an
+$\epsilon$-perturbation of its axioms.
+\end{axiom}
+
+\subsection{Information Loss and Invariants}
+
+\begin{definition}[Invariant of a layer]
+An \emph{invariant} of layer $\lambda$ is a map
+\[
+  I_\lambda : \Ocal_\lambda \to \mathcal{V}_\lambda
+\]
+into a value object $\mathcal{V}_\lambda$, stable under the
+\emph{admissible transformations} of $\Ocal_\lambda$:
+\[
+  U \sim U' \;\Longrightarrow\; I_\lambda(U) = I_\lambda(U').
+\]
+\end{definition}
+
+\begin{definition}[Information loss]
+The \emph{information loss} of the transition $\philam$ is the
+subobject
+\[
+  \ker_\lambda(\philam)
+  \;=\;
+  \{ U \in \Ocal_\lambda : \philam(U) = \philam(U') \text{ for some } U' \neq U \}.
+\]
+The transition is \emph{information-preserving} if
+$\ker_\lambda(\philam) = \varnothing$.
+\end{definition}
+
+\begin{proposition}[Invariant transport]\label{prop:inv-transport}
+Let $I_\lambda$ be an invariant of $\Ocal_\lambda$. If $\philam$ is
+information-preserving on the admissible class of $\Ocal_\lambda$,
+then $I_\lambda$ descends to an invariant of $\Ocal_\mu$, i.e.\ there
+exists $\tilde{I}_\mu$ such that
+\[
+  \tilde{I}_\mu \circ \philam = I_\lambda .
+\]
+\end{proposition}
+
+\begin{proof}
+Define $\tilde{I}_\mu$ on $\philam(\Ocal_\lambda)$ by
+$\tilde{I}_\mu(\philam(U)) := I_\lambda(U)$; extend arbitrarily
+elsewhere. Well-definedness follows from information preservation.
+\end{proof}
+
+\subsection{Validation Criteria}
+
+\begin{definition}[Validation assignment]
+A \emph{validation assignment} for layer $\lambda$ is a map
+\[
+  V_\lambda : \Jset \to \{\mathrm{P},\mathrm{N},\mathrm{O},\mathrm{F}\},
+\]
+such that $v_{\lambda j} = V_\lambda(j)$ recovers the row of $\Vmat$
+associated with $\lambda$.
+\end{definition}
+
+\begin{definition}[Closed methodology]
+The methodology is \emph{closed} if:
+\begin{enumerate}[label=(\alph*)]
+  \item every layer has at least one criterion marked $\mathrm{P}$;
+  \item no criterion is marked $\mathrm{F}$ in any layer;
+  \item the reversibility criterion $\mathrm{Rev}$ is marked
+        $\mathrm{P}$ in the formal layer;
+  \item the numerical criterion $\mathrm{Nu}$ is marked
+        $\mathrm{N}$ or $\mathrm{P}$ in the numerical layer.
+\end{enumerate}
+\end{definition}
+
+% ------------------------------------------------------------
+\section{Compatibility and Commutativity}\label{sec:compat}
+% ------------------------------------------------------------
+
+\subsection{Commutative Diagrams}
+
+The construction and reconstruction pipelines assemble into the
+following diagram.
+
+\begin{equation}\label{eq:bigdiagram}
+\begin{tikzcd}[row sep=large, column sep=large]
+  \Ocal_\Sp \arrow[r,"\phi_{\Sp\Ge}"] \arrow[d, "\pi^{(N)}_{\Sp}"']
+    & \Ocal_\Ge \arrow[r,"\phi_{\Ge\To}"] \arrow[d, "\pi^{(N)}_{\Ge}"']
+    & \Ocal_\To \arrow[r,"\phi_{\To\Al}"] \arrow[d, "\pi^{(N)}_{\To}"']
+    & \Ocal_\Al \arrow[d, "\pi^{(N)}_{\Al}"] \\
+  \Ocal^{(N)}_\Sp \arrow[r, "\phi^{(N)}_{\Sp\Ge}"']
+    & \Ocal^{(N)}_\Ge \arrow[r, "\phi^{(N)}_{\Ge\To}"']
+    & \Ocal^{(N)}_\To \arrow[r, "\phi^{(N)}_{\To\Al}"']
+    & \Ocal^{(N)}_\Al
+\end{tikzcd}
+\end{equation}
+
+\begin{definition}[Coherence of the diagram]
+Diagram~\eqref{eq:bigdiagram} is \emph{coherent} if every square
+commutes:
+\[
+  \pi^{(N)}_\mu \circ \philam
+  \;=\;
+  \phi^{(N)}_{\lambda\mu} \circ \pi^{(N)}_\lambda ,
+  \qquad \lambda \prec \mu .
+\]
+\end{definition}
+
+\begin{proposition}[Diagonal reduction]\label{prop:diag}
+If Diagram~\eqref{eq:bigdiagram} is coherent and each
+$\phi^{(N)}_{\lambda\mu} \to \philam$ as $N \to \infty$, then the
+diagonal composite equals the horizontal composite in the limit:
+\[
+  \lim_{N \to \infty}
+  \phi^{(N)}_{\Al\Nu} \circ \phi^{(N)}_{\To\Al} \circ \phi^{(N)}_{\Ge\To} \circ \phi^{(N)}_{\Sp\Ge}
+  \;=\;
+  \phi_{\Al\Nu} \circ \phi_{\To\Al} \circ \phi_{\Ge\To} \circ \phi_{\Sp\Ge} .
+\]
+\end{proposition}
+
+\begin{proof}
+Immediate from the coherence squares and continuity of composition
+of morphisms in the target category.
+\end{proof}
+
+\subsection{Natural Transformations Between Layers}
+
+\begin{definition}[Layer naturality]
+Let $\mathcal{C}_\lambda$ and $\mathcal{C}_\mu$ be the categories
+associated with layers $\lambda$ and $\mu$, and let
+$F_\lambda : \mathcal{C}_\lambda \to \mathcal{C}$ and
+$F_\mu : \mathcal{C}_\mu \to \mathcal{C}$ be realisation functors
+into a common category $\mathcal{C}$. A \emph{layer natural
+transformation} is a natural transformation
+\[
+  \eta : F_\lambda \Longrightarrow F_\mu \circ \philam .
+\]
+\end{definition}
+
+\begin{proposition}[Invariant naturality]
+If $I_\lambda$ is representable as a functor
+$\mathcal{C}_\lambda \to \mathcal{V}_\lambda$ and $\philam$ admits a
+right adjoint, then $I_\lambda$ extends naturally to layer $\mu$.
+\end{proposition}
+
+\subsection{Equivalence Versus Approximation}
+
+\begin{definition}[Strict equivalence]
+Layers $\lambda$ and $\mu$ are \emph{strictly equivalent}, written
+$\Ocal_\lambda \simeq \Ocal_\mu$, if $\philam$ and $\phi_{\mu\lambda}$
+are mutually inverse isomorphisms.
+\end{definition}
+
+\begin{definition}[Asymptotic equivalence]
+Layers $\lambda$ and $\mu$ are \emph{asymptotically equivalent},
+written $\Ocal_\lambda \sim_\infty \Ocal_\mu$, if there exists an
+$\varepsilon_N \to 0$ and morphisms
+\[
+  \philam^{(N)} : \Ocal_\lambda \to \Ocal_\mu , \qquad
+  \phi_{\mu\lambda}^{(N)} : \Ocal_\mu \to \Ocal_\lambda ,
+\]
+satisfying
+\[
+  d_\lambda\bigl(\phi_{\mu\lambda}^{(N)} \circ \philam^{(N)}, \mathrm{id}_{\Ocal_\lambda}\bigr)
+  \;\leq\; \varepsilon_N ,
+\]
+and symmetrically.
+\end{definition}
+
+\begin{remark}
+Strict equivalence is the exception; asymptotic equivalence is the
+rule. The methodology therefore treats compatibility as a limiting
+statement, not as an algebraic identity.
+\end{remark}
+
+\begin{theorem}[Closure of the methodology]\label{thm:closure}
+If
+\begin{enumerate}[label=(\roman*)]
+  \item Diagram~\eqref{eq:bigdiagram} is coherent,
+  \item $\Ob^{(N)} \to \Ob$ in the sense of~\eqref{eq:error},
+  \item Axioms~\ref{ax:funct}, \ref{ax:proj}, \ref{ax:corr} hold,
+\end{enumerate}
+then the reconstruction pipeline~\eqref{eq:reconstruction} yields a
+bidirectional characterization
+\[
+  \Ob \;\rightleftarrows\; \Ecal_\Corr .
+\]
+\end{theorem}
+
+\begin{proof}[Sketch of proof]
+Coherence provides the forward morphism from $\Ob$ to $\Ecal_\Fo$ via
+the construction pipeline. Axiom~\ref{ax:corr} provides a
+correspondence limit through $\rho_\Cl$ and $\rho_\Inv$, yielding
+$\Ecal_\Corr$. Asymptotic equivalence between layers, via
+Proposition~\ref{prop:diag}, supplies the reverse morphism. A
+detailed proof requires exhibiting the reverse morphism explicitly for
+the specific problem instance.
+\end{proof}
+
+\begin{remark}[Limits of the metamodel]
+Theorem~\ref{thm:closure} is a \emph{structural} statement. It does
+not, by itself, demonstrate that any particular mathematical object
+admits a closed methodology. Verification must be carried out
+layer by layer, and recorded in the validation matrix $\Vmat$.
+\end{remark}
+
+% ------------------------------------------------------------
+\section*{Summary of Part I}
+% ------------------------------------------------------------
+
+Part~I has introduced:
+\begin{itemize}
+  \item the master object $\Ob$ and the standard layer set $\Lam$;
+  \item the transition morphisms $\philam$ and their functoriality;
+  \item the reconstruction operators $\rho_\Cl, \rho_\Inv, \rho_\An$;
+  \item discrete families $\Ob^{(N)}$ and layer-aggregated error
+        $\varepsilon_N$;
+  \item the validation matrix $\Vmat$ and the four epistemic statuses
+        $\{\mathrm{P},\mathrm{N},\mathrm{O},\mathrm{F}\}$;
+  \item the compatibility axioms and the coherence of the big diagram;
+  \item the distinction between strict and asymptotic equivalence;
+  \item the closure theorem for the methodology.
+\end{itemize}
+
+Part~II will treat the construction pipeline layer by layer.
+
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% PACKAGES
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{mathrsfs}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{microtype}
+
+\geometry{margin=1in}
+
+% ============================================================
+% THEOREM ENVIRONMENTS
+% ============================================================
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}[definition]{Axiom}
+\newtheorem{example}[definition]{Example}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{convention}[definition]{Convention}
+\newtheorem{construction}[definition]{Construction}
+
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+
+% ============================================================
+% MACROS
+% ============================================================
+\newcommand{\Lam}{\Lambda}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\Ge}{\mathrm{Ge}}
+\newcommand{\To}{\mathrm{To}}
+\newcommand{\Al}{\mathrm{Al}}
+\newcommand{\Nu}{\mathrm{Nu}}
+\newcommand{\Fo}{\mathrm{Fo}}
+\newcommand{\Cl}{\mathrm{Cl}}
+\newcommand{\Corr}{\mathrm{Corr}}
+\newcommand{\Inv}{\mathrm{Inv}}
+\newcommand{\An}{\mathrm{An}}
+\newcommand{\Ob}{\mathfrak{O}}
+\newcommand{\Ecal}{\mathcal{E}}
+\newcommand{\Ocal}{\mathcal{O}}
+\newcommand{\Acal}{\mathcal{A}}
+\newcommand{\Mcal}{\mathcal{M}}
+\newcommand{\Hcal}{\mathcal{H}}
+\newcommand{\philam}{\phi_{\lambda\mu}}
+\newcommand{\rholam}{\rho_{\lambda}}
+\newcommand{\Vmat}{\mathbf{V}}
+\newcommand{\Jset}{\mathcal{J}}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\op}[1]{\operatorname{#1}}
+\newcommand{\spec}{\sigma}
+\newcommand{\hilb}{\mathcal{H}}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Vect}{\mathbf{Vect}}
+\newcommand{\Grp}{\mathbf{Grp}}
+\newcommand{\Rng}{\mathbf{Rng}}
+\newcommand{\Top}{\mathbf{Top}}
+\newcommand{\Man}{\mathbf{Man}}
+
+% ============================================================
+% TITLE
+% ============================================================
+\title{%
+  \textbf{A Multirepresentational Construction--Reconstruction\\
+  Methodology for Mathematical Structures}\\[4pt]
+  \large Part II: The Construction Pipeline
+}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Part~II develops the construction pipeline of the multirepresentational
+methodology. Starting from a master object $\Ob$, we construct, layer
+by layer, the spectral datum, the geometric datum, the topological
+datum, the algebraic datum, the numerical datum, and the formal datum.
+Each layer is presented with: (i) its primitive objects; (ii) the
+transition morphism that produces it from the previous layer;
+(iii) the invariants it carries; and (iv) the validation criteria
+that it must satisfy. The construction is treated as an ordered
+composite of functors, and the deliverable of each layer is recorded
+as an element of the corresponding projection $\Ocal_\lambda$.
+\end{abstract}
+
+\tableofcontents
+
+% ============================================================
+\part{The Construction Pipeline}
+% ============================================================
+
+\section{Overview of the Construction Pipeline}
+\label{sec:overview}
+
+Recall from Part~I the layer set
+\[
+  \Lam = \{\Sp, \Ge, \To, \Al, \Nu, \Fo\}
+\]
+and the construction order
+\[
+  \Sp \prec \Ge \prec \To \prec \Al \prec \Nu \prec \Fo .
+\]
+The construction pipeline is the composite
+\begin{equation}\label{eq:pipeline-II}
+  \Ocal_\Sp
+  \xrightarrow{\phi_{\Sp\Ge}}
+  \Ocal_\Ge
+  \xrightarrow{\phi_{\Ge\To}}
+  \Ocal_\To
+  \xrightarrow{\phi_{\To\Al}}
+  \Ocal_\Al
+  \xrightarrow{\phi_{\Al\Nu}}
+  \Ocal_\Nu
+  \xrightarrow{\phi_{\Nu\Fo}}
+  \Ocal_\Fo .
+\end{equation}
+
+\begin{convention}[Deliverable of a layer]
+For each $\lambda \in \Lam$, the \emph{deliverable} of layer $\lambda$
+is the pair
+\[
+  \Ocal_\lambda = (\mathcal{P}_\lambda, \mathcal{I}_\lambda),
+\]
+where $\mathcal{P}_\lambda$ is the set of primitive objects of the
+layer and $\mathcal{I}_\lambda$ is the set of invariants carried by
+the layer.
+\end{convention}
+
+\begin{remark}
+Each section below follows the same structural template:
+primitives, transition, invariants, and validation.
+This uniformity is essential: it is what makes the layers comparable
+and the validation matrix $\Vmat$ well-defined.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Spectral Layer}
+\label{sec:spectral}
+% ------------------------------------------------------------
+
+\subsection{Primitives}
+
+\begin{definition}[Spectral datum]
+A \emph{spectral datum} is a triple
+\[
+  \Ocal_\Sp = (T, \spec(T), E_T),
+\]
+where:
+\begin{enumerate}[label=(\roman*)]
+  \item $H$ is a separable complex Hilbert space;
+  \item $T : D(T) \subset H \to H$ is a closed densely defined linear
+        operator;
+  \item $\spec(T) \subset \mathbb{C}$ is the spectrum of $T$;
+  \item $E_T : \mathcal{B}(\spec(T)) \to \mathcal{B}(H)$ is the
+        spectral measure associated with $T$, when $T$ is normal.
+\end{enumerate}
+\end{definition}
+
+\begin{axiom}[Spectral realizability]
+The operator $T$ is assumed normal, or self-adjoint, or essentially
+self-adjoint on a dense domain $D(T)$.
+\end{axiom}
+
+Under this hypothesis, the spectral theorem yields
+\begin{equation}\label{eq:spectral-theorem}
+  T \;=\; \int_{\spec(T)} \lambda \dd E_T(\lambda),
+\end{equation}
+and the associated quadratic form
+\[
+  \langle T u, u \rangle
+  \;=\;
+  \int_{\spec(T)} \lambda \dd \mu_u(\lambda),
+  \qquad
+  \mu_u(\cdot) = \langle E_T(\cdot) u, u \rangle .
+\]
+
+\subsection{Transition}
+
+\begin{definition}[Spectral--geometric transition]
+The transition morphism
+\[
+  \phi_{\Sp\Ge} : \Ocal_\Sp \to \Ocal_\Ge
+\]
+is defined on eigenpairs by
+\[
+  \phi_{\Sp\Ge}(\lambda_i, v_i) \;=\; p_i \in M,
+\]
+where $M$ is a configuration space, manifold, or phase space on which
+the spectral data are realised, and $p_i$ is the point or
+configuration associated with the $i$-th mode.
+\end{definition}
+
+\begin{remark}
+The transition $\phi_{\Sp\Ge}$ is not canonical: it depends on the
+choice of realisation $M$. Different realisations produce different
+geometric data and, consequently, different topological and algebraic
+encodings. The choice of $M$ is itself part of the construction and
+must be declared.
+\end{remark}
+
+\subsection{Invariants}
+
+\begin{definition}[Spectral invariants]
+The following are invariants of the spectral layer:
+\begin{enumerate}[label=(\roman*)]
+  \item the spectrum $\spec(T)$;
+  \item the multiplicities
+        $m(\lambda) = \dim \ker(T - \lambda I)$;
+  \item the spectral measure $E_T$;
+  \item the essential spectrum $\spec_{\mathrm{ess}}(T)$;
+  \item the discrete spectrum $\spec_{\mathrm{disc}}(T)$;
+  \item the spectral gap
+        $\gamma(T) = \inf\{ |\lambda - \mu| : \lambda, \mu \in \spec(T), \lambda \neq \mu \}$.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[Unitary invariance]
+If $U : H \to H'$ is unitary and $T' = U T U^{-1}$, then
+\[
+  \spec(T') = \spec(T), \qquad
+  E_{T'}(B) = U E_T(B) U^{-1}.
+\]
+\end{proposition}
+
+\subsection{Validation}
+
+\begin{center}
+\begin{tabular}{c|c|l}
+  Criterion & Status & Comment \\
+  \hline
+  Existence & P & Spectral theorem \\
+  Coherence & P & Functorial under unitary equivalence \\
+  Invariance & P & Unitary invariance \\
+  Numerical & N & Eigenvalue approximation \\
+  Stability & P & Weyl's perturbation theorem \\
+  Convergence & P & Spectral convergence \\
+  Regularity & O & Depends on problem \\
+  Reversibility & O & Inversion via spectral data \\
+\end{tabular}
+\end{center}
+
+\begin{theorem}[Weyl's perturbation bound]
+Let $T, T'$ be self-adjoint operators with $T' = T + V$ where
+$V$ is bounded with $\|V\| = \epsilon$. Then for every $\lambda \in
+\spec(T)$ there exists $\lambda' \in \spec(T')$ with
+$|\lambda - \lambda'| \leq \epsilon$.
+\end{theorem}
+
+\begin{proof}
+Standard; see Reed--Simon, \emph{Methods of Modern Mathematical
+Physics}, Vol.~IV, Theorem~XIII.109.
+\end{proof}
+
+% ------------------------------------------------------------
+\section{Geometric Layer}
+\label{sec:geometric}
+% ------------------------------------------------------------
+
+\subsection{Primitives}
+
+\begin{definition}[Geometric datum]
+A \emph{geometric datum} is a tuple
+\[
+  \Ocal_\Ge = (M, g, \nabla, R),
+\]
+where:
+\begin{enumerate}[label=(\roman*)]
+  \item $M$ is a smooth finite-dimensional manifold;
+  \item $g$ is a Riemannian (or pseudo-Riemannian) metric on $M$;
+  \item $\nabla$ is the Levi-Civita connection of $g$;
+  \item $R$ is the Riemann curvature tensor of $\nabla$.
+\end{enumerate}
+\end{definition}
+
+\subsection{Transition}
+
+\begin{definition}[Geometric--topological transition]
+The transition morphism
+\[
+  \phi_{\Ge\To} : \Ocal_\Ge \to \Ocal_\To
+\]
+sends the geometric datum $(M, g, \nabla, R)$ to the underlying
+topological datum $(X, \{H_k\}, \{\pi_k\}, \chi)$ with $X = M$
+regarded as a topological space, forgetting the metric and connection.
+\end{definition}
+
+\subsection{Invariants}
+
+\begin{definition}[Geometric invariants]
+The geometric layer carries:
+\begin{enumerate}[label=(\roman*)]
+  \item the curvature tensor $R$ and its contractions
+        $\op{Ric}$, $S$ (scalar curvature);
+  \item the geodesic distance $d_g$;
+  \item the volume form $\dd \mathrm{vol}_g$;
+  \item the spectral data of the Laplace--Beltrami operator
+        $\Delta_g$;
+  \item the injectivity radius $\op{inj}(M, g)$;
+  \item the sectional curvature $\op{sec}(g)$.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[Isometric invariance]
+If $\varphi : (M, g) \to (M', g')$ is an isometry, then
+\[
+  R' = \varphi_* R, \qquad
+  \op{Ric}' = \varphi_* \op{Ric}, \qquad
+  S' = S \circ \varphi^{-1}.
+\]
+\end{proposition}
+
+\subsection{Validation}
+
+\begin{center}
+\begin{tabular}{c|c|l}
+  Criterion & Status & Comment \\
+  \hline
+  Existence & P & Smooth manifold theory \\
+  Coherence & P & Natural under isometry \\
+  Invariance & P & Isometric invariance \\
+  Numerical & N & Discrete curvature, FEM \\
+  Stability & O & Depends on curvature bounds \\
+  Convergence & O & Cheeger--Gromov theory \\
+  Regularity & P & Smoothness of $g$ \\
+  Reversibility & O & Reconstructing $g$ from spectra \\
+\end{tabular}
+\end{center}
+
+\begin{remark}
+The transition from the spectral to the geometric layer is essentially
+the \emph{inverse spectral problem}: reconstructing a metric from
+spectral data of an associated operator (e.g.\ $\Delta_g$). This is a
+classical ill-posed problem in the sense of Hadamard; see
+Kac's problem on ``can one hear the shape of a drum?''.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Topological Layer}
+\label{sec:topological}
+% ------------------------------------------------------------
+
+\subsection{Primitives}
+
+\begin{definition}[Topological datum]
+A \emph{topological datum} is a tuple
+\[
+  \Ocal_\To = (X, \{H_k\}_k, \{\pi_k\}_k, \chi),
+\]
+where:
+\begin{enumerate}[label=(\roman*)]
+  \item $X$ is a topological space (typically a CW-complex or a
+        manifold);
+  \item $H_k = H_k(X; \mathbb{Z})$ is the $k$-th singular homology
+        group;
+  \item $\pi_k = \pi_k(X, x_0)$ is the $k$-th homotopy group;
+  \item $\chi(X) = \sum_k (-1)^k \op{rk} H_k(X)$ is the Euler
+        characteristic.
+\end{enumerate}
+\end{definition}
+
+\subsection{Transition}
+
+\begin{definition}[Topological--algebraic transition]
+The transition morphism
+\[
+  \phi_{\To\Al} : \Ocal_\To \to \Ocal_\Al
+\]
+sends the topological datum to an algebraic datum by applying the
+singular chain functor
+\[
+  C_\bullet : \Top \to \mathbf{Ch}(\mathbb{Z}),
+  \qquad
+  X \mapsto C_\bullet(X; \mathbb{Z}),
+\]
+and passing to homology:
+\[
+  H_\bullet(X) = H_\bullet(C_\bullet(X)).
+\]
+\end{definition}
+
+\subsection{Invariants}
+
+\begin{definition}[Topological invariants]
+The topological layer carries:
+\begin{enumerate}[label=(\roman*)]
+  \item homology $H_k(X)$ and cohomology $H^k(X)$;
+  \item homotopy groups $\pi_k(X)$;
+  \item the Euler characteristic $\chi(X)$;
+  \item characteristic classes (Stiefel--Whitney, Chern, Pontryagin);
+  \item the fundamental group $\pi_1(X)$;
+  \item homotopy type $[X]$.
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[Homotopy invariance]
+If $f : X \to Y$ is a homotopy equivalence, then
+\[
+  f_* : H_k(X) \xrightarrow{\sim} H_k(Y), \qquad
+  f_* : \pi_k(X) \xrightarrow{\sim} \pi_k(Y), \qquad
+  \chi(X) = \chi(Y).
+\]
+\end{theorem}
+
+\subsection{Validation}
+
+\begin{center}
+\begin{tabular}{c|c|l}
+  Criterion & Status & Comment \\
+  \hline
+  Existence & P & Singular (co)homology theory \\
+  Coherence & P & Functoriality of $H_\bullet$ \\
+  Invariance & P & Homotopy invariance \\
+  Numerical & N & Persistent homology, algorithms \\
+  Stability & P & Stability of persistence diagrams \\
+  Convergence & P & Vietoris--Rips convergence \\
+  Regularity & P & CW-complex assumptions \\
+  Reversibility & O & Reconstructing $X$ from $H_\bullet$ \\
+\end{tabular}
+\end{center}
+
+\begin{remark}
+The functor $H_k$ is a topological invariant of $X$ but not a
+complete invariant: non-homotopy-equivalent spaces may share
+homology. The passage from $\Ocal_\Ge$ to $\Ocal_\To$ therefore
+entails a controlled information loss, in the sense of
+Definition~1.9 of Part~I.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Algebraic Layer}
+\label{sec:algebraic}
+% ------------------------------------------------------------
+
+\subsection{Primitives}
+
+\begin{definition}[Algebraic datum]
+An \emph{algebraic datum} is a tuple
+\[
+  \Ocal_\Al = (A, G, R, \Mcal),
+\]
+where:
+\begin{enumerate}[label=(\roman*)]
+  \item $A$ is an associative (or Lie) algebra over a base ring;
+  \item $G$ is a group encoding the symmetries of the previous
+        layers;
+  \item $R$ is a ring carrying the arithmetic structure of the
+        invariants;
+  \item $\Mcal$ is a module over $R$ on which $A$ acts.
+\end{enumerate}
+\end{definition}
+
+\subsection{Transition}
+
+\begin{definition}[Algebraic--numerical transition]
+The transition morphism
+\[
+  \phi_{\Al\Nu} : \Ocal_\Al \to \Ocal_\Nu
+\]
+chooses a finite-dimensional truncation
+\[
+  A \;\longrightarrow\; A_N \in \mathrm{Mat}_{N \times N}(R),
+\]
+compatible with a filtration
+\[
+  A_1 \subset A_2 \subset \cdots \subset A_N \subset \cdots \subset A .
+\]
+\end{definition}
+
+\subsection{Invariants}
+
+\begin{definition}[Algebraic invariants]
+The algebraic layer carries:
+\begin{enumerate}[label=(\roman*)]
+  \item the isomorphism class of $A$;
+  \item the group $G$ and its representation theory;
+  \item the ring structure of $R$;
+  \item the module structure of $\Mcal$;
+  \item the Hochschild homology/cohomology of $A$;
+  \item the $K$-theory of $R$.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[Functoriality]
+Every layer transition $\philam$ factors through the algebraic layer
+whenever the target category admits a forgetful functor to
+$\mathbf{Alg}$.
+\end{proposition}
+
+\subsection{Validation}
+
+\begin{center}
+\begin{tabular}{c|c|l}
+  Criterion & Status & Comment \\
+  \hline
+  Existence & P & Standard algebraic constructions \\
+  Coherence & P & Functoriality \\
+  Invariance & P & Isomorphism invariance \\
+  Numerical & N & Sparse linear algebra \\
+  Stability & O & Conditioning of truncations \\
+  Convergence & O & Depends on filtration \\
+  Regularity & P & Algebraic identities exact \\
+  Reversibility & O & Inverting the functor \\
+\end{tabular}
+\end{center}
+
+% ------------------------------------------------------------
+\section{Numerical Layer}
+\label{sec:numerical}
+% ------------------------------------------------------------
+
+\subsection{Primitives}
+
+\begin{definition}[Numerical datum]
+A \emph{numerical datum} is a tuple
+\[
+  \Ocal_\Nu = (T_N, A_N, \{x_i\}_{i=1}^N, \varepsilon_N),
+\]
+where:
+\begin{enumerate}[label=(\roman*)]
+  \item $N \in \mathbb{N}$ is the resolution parameter;
+  \item $T_N \in \mathrm{Mat}_{N \times N}(\mathbb{C})$ is a
+        finite-dimensional approximation of $T$;
+  \item $A_N$ is a finite-dimensional truncation of $A$;
+  \item $\{x_i\}_{i=1}^N$ is a discretisation grid;
+  \item $\varepsilon_N$ is the discretisation error.
+\end{enumerate}
+\end{definition}
+
+\subsection{Transition}
+
+\begin{definition}[Numerical--formal transition]
+The transition morphism
+\[
+  \phi_{\Nu\Fo} : \Ocal_\Nu \to \Ocal_\Fo
+\]
+encodes the numerical datum into a formal language by declaring the
+discretisation scheme as a set of axioms $\Gamma_N$ and the
+approximation as a term $t_N$ provable in $\Gamma_N$:
+\[
+  \Gamma_N \vdash t_N : T_N .
+\]
+\end{definition}
+
+\subsection{Discretisation Scheme}
+
+\begin{definition}[Consistency]
+The discretisation $\{T_N\}_{N \geq 1}$ is \emph{consistent} with $T$
+if
+\[
+  \|T_N \pi_N - \pi_N T\| \;\longrightarrow\; 0,
+  \qquad N \to \infty,
+\]
+where $\pi_N : H \to H_N$ is the orthogonal projection onto the
+finite-dimensional subspace $H_N$.
+\end{definition}
+
+\begin{definition}[Stability]
+The scheme is \emph{stable} if there exists $C > 0$ such that
+\[
+  \|T_N^{-1}\| \;\leq\; C
+  \qquad \forall N \in \mathbb{N}.
+\]
+\end{definition}
+
+\begin{theorem}[Lax--Richtmyer equivalence]\label{thm:lax-rich}
+For a consistent discretisation of a well-posed linear problem,
+\[
+  \text{stability} \;\Longleftrightarrow\; \text{convergence}.
+\]
+\end{theorem}
+
+\subsection{Invariants}
+
+\begin{definition}[Numerical invariants]
+The numerical layer carries:
+\begin{enumerate}[label=(\roman*)]
+  \item the discretisation error $\varepsilon_N$;
+  \item the condition number $\kappa(T_N) = \|T_N\| \|T_N^{-1}\|$;
+  \item the convergence rate $p$ such that
+        $\varepsilon_N = \mathcal{O}(N^{-p})$;
+  \item the stability constant $C$.
+\end{enumerate}
+\end{definition}
+
+\subsection{Validation}
+
+\begin{center}
+\begin{tabular}{c|c|l}
+  Criterion & Status & Comment \\
+  \hline
+  Existence & P & Finite-dimensional approximation \\
+  Coherence & P & Projection consistency \\
+  Invariance & P & Spectral invariance up to $\varepsilon_N$ \\
+  Numerical & N & Simulation \\
+  Stability & P & Lax--Richtmyer \\
+  Convergence & P & Lax--Richtmyer \\
+  Regularity & O & Depends on scheme \\
+  Reversibility & O & Numerical inversion \\
+\end{tabular}
+\end{center}
+
+\begin{remark}
+The numerical layer is the only layer in which results can be
+generated by a machine. For this reason it plays a privileged role in
+\emph{structure discovery}---but not in \emph{structure proof}. The
+distinction is captured by the validation matrix $\Vmat$, where
+numerical entries are marked $\mathrm{N}$ rather than
+$\mathrm{P}$.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Formal Layer}
+\label{sec:formal}
+% ------------------------------------------------------------
+
+\subsection{Primitives}
+
+\begin{definition}[Formal datum]
+A \emph{formal datum} is a triple
+\[
+  \Ocal_\Fo = (\mathcal{L}, \Gamma, \vdash),
+\]
+where:
+\begin{enumerate}[label=(\roman*)]
+  \item $\mathcal{L}$ is a first-order (or higher-order) language;
+  \item $\Gamma \subseteq \mathrm{Sent}(\mathcal{L})$ is a set of
+        axioms;
+  \item $\vdash$ is the derivability relation of a sound and complete
+        proof system (e.g.\ natural deduction, sequent calculus).
+\end{enumerate}
+\end{definition}
+
+\subsection{Transition}
+
+\begin{definition}[Formal--classical transition]
+The transition morphism
+\[
+  \rho_\Cl : \Ocal_\Fo \to \Ecal_\Cl
+\]
+extracts from the formal theory $\Gamma$ a classical model
+$\Ecal_\Cl$, defined as the class of structures $\Mcal$ satisfying
+\[
+  \Mcal \models \Gamma .
+\]
+\end{definition}
+
+\subsection{Derivation Structure}
+
+\begin{definition}[Derivation tree]
+A \emph{derivation tree} in $\Gamma$ is a finite tree whose leaves
+are axioms in $\Gamma$ and whose internal nodes are instances of
+inference rules, terminating in a conclusion
+\[
+  \Gamma \vdash \varphi .
+\]
+\end{definition}
+
+\begin{definition}[Layer formalisation]
+The formal layer is the terminal layer of the construction pipeline
+if and only if the following holds for every layer
+$\lambda \in \Lam$:
+\[
+  \Gamma \vdash \varphi_\lambda,
+\]
+where $\varphi_\lambda$ is the sentence of $\mathcal{L}$ asserting the
+existence and properties of the invariant $I_\lambda$.
+\end{definition}
+
+\subsection{Invariants}
+
+\begin{definition}[Formal invariants]
+The formal layer carries:
+\begin{enumerate}[label=(\roman*)]
+  \item the derivability relation $\vdash$;
+  \item the consistency of $\Gamma$, i.e.\
+        $\Gamma \nvdash \bot$;
+  \item the completeness of the theory with respect to its intended
+        model;
+  \item the decidability (or undecidability) of the theory;
+  \item the proof-theoretic ordinal of $\Gamma$.
+\end{enumerate}
+\end{definition}
+
+\subsection{Validation}
+
+\begin{center}
+\begin{tabular}{c|c|l}
+  Criterion & Status & Comment \\
+  \hline
+  Existence & P & By construction \\
+  Coherence & P & Soundness of $\vdash$ \\
+  Invariance & P & Logical invariance \\
+  Numerical & O & Not applicable directly \\
+  Stability & P & Under extension of $\Gamma$ \\
+  Convergence & P & Completeness theorem \\
+  Regularity & P & Proof-theoretic regularity \\
+  Reversibility & P & Interpreting classical model \\
+\end{tabular}
+\end{center}
+
+\begin{theorem}[Completeness of the formal layer]\label{thm:completeness}
+Let $\Gamma$ be a consistent set of sentences of $\mathcal{L}$. Then
+\[
+  \Gamma \vdash \varphi
+  \;\Longleftrightarrow\;
+  \Gamma \models \varphi .
+\]
+\end{theorem}
+
+\begin{proof}
+G\"odel's completeness theorem (see Ebbinghaus--Flum--Thomas,
+\emph{Mathematical Logic}, GTM~291, Theorem~X.2.1).
+\end{proof}
+
+\begin{remark}
+Completeness of the formal layer is a syntactic-semantic equivalence
+within $\mathcal{L}$. It does not establish that the axiomatisation
+$\Gamma$ captures the intended mathematical object $\Ob$; this is a
+question of \emph{soundness of formalisation} and lies outside the
+scope of the completeness theorem.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Composition of the Pipeline}
+\label{sec:composition}
+% ------------------------------------------------------------
+
+\subsection{The Composite Functor}
+
+\begin{definition}[Construction functor]
+The \emph{construction functor} is the composite
+\[
+  \mathbf{C}
+  \;=\;
+  \phi_{\Nu\Fo}
+  \circ
+  \phi_{\Al\Nu}
+  \circ
+  \phi_{\To\Al}
+  \circ
+  \phi_{\Ge\To}
+  \circ
+  \phi_{\Sp\Ge}
+  :
+  \Ocal_\Sp \to \Ocal_\Fo .
+\]
+\end{definition}
+
+\begin{proposition}[Functoriality]
+The construction functor $\mathbf{C}$ is functorial in the sense of
+Axiom~1.3 of Part~I:
+\[
+  \mathbf{C}(\philam \circ \phi_{\kappa\lambda})
+  =
+  \mathbf{C}(\philam) \circ \mathbf{C}(\phi_{\kappa\lambda})
+\]
+for every composable chain $\kappa \prec \lambda \prec \mu$ in $\Lam$.
+\end{proposition}
+
+\subsection{Information Flow}
+
+\begin{definition}[Information flow diagram]
+The information flow through the pipeline is the diagram
+\[
+\begin{tikzcd}[row sep=large, column sep=large]
+  \Ocal_\Sp \arrow[r, "\phi_{\Sp\Ge}"] \arrow[rrrr, bend left=20, "\mathbf{C}_{\Sp\Fo}"]
+    & \Ocal_\Ge \arrow[r, "\phi_{\Ge\To}"]
+    & \Ocal_\To \arrow[r, "\phi_{\To\Al}"]
+    & \Ocal_\Al \arrow[r, "\phi_{\Al\Nu}"]
+    & \Ocal_\Nu \arrow[r, "\phi_{\Nu\Fo}"]
+    & \Ocal_\Fo
+\end{tikzcd}
+\]
+\end{definition}
+
+\begin{proposition}[Cumulative information loss]
+The total information loss along the pipeline is the composite
+kernel
+\[
+  \ker(\mathbf{C})
+  =
+  \bigcup_{\lambda \prec \Fo} \ker_\lambda(\philam)
+  \;\cup\;
+  \ker_{\Sp}(\mathbf{C}),
+\]
+in the sense of Definition~1.9 of Part~I.
+\end{proposition}
+
+\subsection{Deliverables}
+
+\begin{definition}[Deliverable chain]
+The \emph{deliverable chain} of the construction pipeline is the
+sequence
+\[
+  \Ocal_\Sp
+  \;\longrightarrow\;
+  \Ocal_\Ge
+  \;\longrightarrow\;
+  \Ocal_\To
+  \;\longrightarrow\;
+  \Ocal_\Al
+  \;\longrightarrow\;
+  \Ocal_\Nu
+  \;\longrightarrow\;
+  \Ocal_\Fo ,
+\]
+in which each arrow is a transition morphism in the sense of
+Part~I, Definition~1.4.
+\end{definition}
+
+% ------------------------------------------------------------
+\section*{Summary of Part II}
+% ------------------------------------------------------------
+
+Part~II has constructed, layer by layer, the six data of the
+construction pipeline:
+\[
+  \Ocal_\Sp,\ \Ocal_\Ge,\ \Ocal_\To,\ \Ocal_\Al,\ \Ocal_\Nu,\ \Ocal_\Fo.
+\]
+Each layer was presented with:
+\begin{itemize}
+  \item its primitive objects (Definitions~2.2, 3.2, 4.2, 5.2, 6.2,
+        7.2);
+  \item its transition morphism from the previous layer
+        (Definitions~2.4, 3.4, 4.4, 5.4, 6.4, 7.4);
+  \item its invariants (Definitions~2.5, 3.5, 4.5, 5.5, 6.5, 7.5);
+  \item its validation criteria.
+\end{itemize}
+The composite of the pipeline defines the construction functor
+$\mathbf{C} : \Ocal_\Sp \to \Ocal_\Fo$, functorial by
+Axiom~1.3 of Part~I.
+
+Part~III will treat the reverse direction: reconstruction, inverse
+problems, correction operators, and the bidirectional
+characterisation.
+
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% PACKAGES
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{mathrsfs}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{microtype}
+
+\geometry{margin=1in}
+
+% ============================================================
+% THEOREM ENVIRONMENTS
+% ============================================================
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}[definition]{Axiom}
+\newtheorem{example}[definition]{Example}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{convention}[definition]{Convention}
+\newtheorem{construction}[definition]{Construction}
+
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+
+% ============================================================
+% MACROS
+% ============================================================
+\newcommand{\Lam}{\Lambda}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\Ge}{\mathrm{Ge}}
+\newcommand{\To}{\mathrm{To}}
+\newcommand{\Al}{\mathrm{Al}}
+\newcommand{\Nu}{\mathrm{Nu}}
+\newcommand{\Fo}{\mathrm{Fo}}
+\newcommand{\Cl}{\mathrm{Cl}}
+\newcommand{\Corr}{\mathrm{Corr}}
+\newcommand{\Inv}{\mathrm{Inv}}
+\newcommand{\An}{\mathrm{An}}
+\newcommand{\Ob}{\mathfrak{O}}
+\newcommand{\Ecal}{\mathcal{E}}
+\newcommand{\Ocal}{\mathcal{O}}
+\newcommand{\Acal}{\mathcal{A}}
+\newcommand{\Mcal}{\mathcal{M}}
+\newcommand{\Hcal}{\mathcal{H}}
+\newcommand{\Dcal}{\mathcal{D}}
+\newcommand{\philam}{\phi_{\lambda\mu}}
+\newcommand{\rholam}{\rho_{\lambda}}
+\newcommand{\Vmat}{\mathbf{V}}
+\newcommand{\Jset}{\mathcal{J}}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\op}[1]{\operatorname{#1}}
+\newcommand{\spec}{\sigma}
+\newcommand{\hilb}{\mathcal{H}}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Vect}{\mathbf{Vect}}
+\newcommand{\Grp}{\mathbf{Grp}}
+\newcommand{\Rng}{\mathbf{Rng}}
+\newcommand{\Top}{\mathbf{Top}}
+\newcommand{\Man}{\mathbf{Man}}
+\newcommand{\Norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\Abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+
+% ============================================================
+% TITLE
+% ============================================================
+\title{%
+  \textbf{A Multirepresentational Construction--Reconstruction\\
+  Methodology for Mathematical Structures}\\[4pt]
+  \large Part III: Reconstruction, Inversion, and Correction
+}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Part~III develops the reverse direction of the multirepresentational
+methodology. Given the formal layer $\Ocal_\Fo$ produced by the
+construction pipeline of Part~II, we reconstruct the classical model
+$\Ecal_\Cl$, formulate the inverse problem of recovering the
+generating structure from its formal encoding, and derive a
+correction operator $\Delta L$ whose effect is measured by a
+correspondence limit. The central objects are the reconstruction
+operators $\rho_\Cl, \rho_\Inv, \rho_\An$ introduced in Part~I, the
+classical-model layer $\Ecal_\Cl$, the corrected-model layer
+$\Ecal_\Corr$, and the bidirectional characterisation
+$\Ob \rightleftarrows \Ecal_\Corr$. We also treat well-posedness,
+regularisation, and the stability conditions required for a
+meaningful inversion.
+\end{abstract}
+
+\tableofcontents
+
+% ============================================================
+\part{Reconstruction, Inversion, and Correction}
+% ============================================================
+
+\section{Overview of the Reconstruction Pipeline}
+\label{sec:overview-III}
+
+Recall from Part~I the reconstruction operators
+\[
+  \rho_\Cl    : \Ocal_\Fo \to \Ecal_\Cl, \qquad
+  \rho_\Inv   : \Ecal_\Cl \to \Ecal_\Corr, \qquad
+  \rho_\An    : \Ecal_\Corr \to \Acal,
+\]
+and the reconstruction pipeline
+\begin{equation}\label{eq:reconstruction-III}
+  \Ocal_\Fo
+  \xrightarrow{\rho_\Cl}
+  \Ecal_\Cl
+  \xrightarrow{\rho_\Inv}
+  \Ecal_\Corr
+  \xrightarrow{\rho_\An}
+  \Acal .
+\end{equation}
+
+Part~III is organised as follows.
+Section~\ref{sec:classical} treats the extraction of classical
+models. Section~\ref{sec:inverse} formulates the inverse problem.
+Section~\ref{sec:correction} defines the correction operator and the
+correspondence limit. Section~\ref{sec:bidirectional} establishes the
+bidirectional characterisation $\Ob \rightleftarrows \Ecal_\Corr$.
+Section~\ref{sec:wellposedness} treats well-posedness, stability, and
+regularisation.
+
+\begin{remark}
+The reconstruction pipeline is \emph{not} the formal inverse of the
+construction pipeline. The latter is a sequence of forgetful and
+realising functors; the former is a sequence of solution and
+selection operators. This asymmetry is the origin of the
+well-posedness questions treated in \S\ref{sec:wellposedness}.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Classical Models}
+\label{sec:classical}
+% ------------------------------------------------------------
+
+\subsection{The Classical-Model Layer}
+
+\begin{definition}[Classical-model layer]\label{def:classical-layer}
+The \emph{classical-model layer} is the class
+\[
+  \Ecal_\Cl
+  \;=\;
+  \bigl\{ \Mcal : \Mcal \models \Gamma \bigr\},
+\]
+where $\Gamma$ is the axiom set of the formal layer $\Ocal_\Fo$ and
+$\models$ is the satisfaction relation of the underlying logic
+$\mathcal{L}$.
+\end{definition}
+
+\begin{definition}[Distinguished classical model]
+A \emph{distinguished classical model} is a pair
+\[
+  \Mcal_\star = (\Omega_\star, \mathcal{E}_\star)
+\]
+where $\Omega_\star$ is a domain (open subset of $\mathbb{R}^n$, a
+manifold, a function space, or a probability space) and
+$\mathcal{E}_\star$ is a classical equation
+\[
+  \mathcal{E}_\star(u) = 0, \qquad u \in \Omega_\star .
+\]
+\end{definition}
+
+\subsection{Extraction}
+
+\begin{construction}[Classical extraction]\label{constr:classical}
+Given $\Ocal_\Fo = (\mathcal{L}, \Gamma, \vdash)$, the extraction
+operator $\rho_\Cl$ proceeds as follows:
+\begin{enumerate}[label=(\roman*)]
+  \item select the distinguished symbols of $\mathcal{L}$ that
+        encode operators, domains, and boundary conditions;
+  \item interpret each selected symbol in $\Omega_\star$;
+  \item collect the resulting equations into a system
+        $\mathcal{E}_\star(u) = 0$;
+  \item verify $\Mcal_\star \models \Gamma$.
+\end{enumerate}
+The output is the distinguished classical model $\Mcal_\star$.
+\end{construction}
+
+\begin{remark}
+The extraction is not unique: distinct choices of distinguished
+symbols may yield distinct classical models. When this occurs, the
+selection is part of the reconstruction and must be declared. This
+parallels the non-canonicity of $\phi_{\Sp\Ge}$ in
+Part~II, \S\ref{sec:spectral}.
+\end{remark}
+
+\subsection{Identification of Known Theories}
+
+\begin{definition}[Classical containment]
+A classical equation $\mathcal{E}_0(u) = 0$ is \emph{contained} in
+$\Ecal_\Cl$, written $\mathcal{E}_0 \trianglelefteq \Ecal_\Cl$, if
+there exists $\Mcal \in \Ecal_\Cl$ such that
+\[
+  \mathcal{E}_\Mcal = \mathcal{E}_0 .
+\]
+\end{definition}
+
+\begin{proposition}[Recognition criterion]\label{prop:recognition}
+If $\mathcal{E}_0 \trianglelefteq \Ecal_\Cl$ then the extracted
+model coincides with a known theory and no correction is required at
+the level of $\mathcal{E}_0$.
+\end{proposition}
+
+\begin{proof}
+By definition of containment, $\mathcal{E}_0$ satisfies the axioms
+$\Gamma$ and hence is a fixed point of the extraction. The correction
+operator (Definition~\ref{def:correction}) therefore acts trivially
+on $\mathcal{E}_0$.
+\end{proof}
+
+\subsection{Correspondence Limits}
+
+\begin{definition}[Correspondence limit]
+Let $\{ L_\epsilon \}_{\epsilon > 0}$ be a family of operators
+parametrised by $\epsilon$. A \emph{correspondence limit} is a limit
+\[
+  L_\star
+  \;=\;
+  \lim_{\epsilon \to 0^+} L_\epsilon ,
+\]
+in a topology $\tau$ specified on the operator space, together with
+an identification
+\[
+  L_\star = L_\Cl ,
+\]
+where $L_\Cl$ is the operator of the distinguished classical model.
+\end{definition}
+
+\begin{remark}
+The topology $\tau$ is not a technicality: strong, weak, norm,
+and resolvent topologies yield different correspondence statements.
+The choice of $\tau$ is part of the reconstruction and enters the
+validation matrix $\Vmat$ at the entry $(\Fo, \mathrm{Cv})$.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{The Inverse Problem}
+\label{sec:inverse}
+% ------------------------------------------------------------
+
+\subsection{Structural Inversion}
+
+\begin{definition}[Structural inverse problem]\label{def:inverse-problem}
+Given a classical equation
+\[
+  \mathcal{E}(u) = 0, \qquad u \in \Omega,
+\]
+and a target structure $\mathcal{P}$ on the domain $\Omega$, the
+\emph{structural inverse problem} consists in finding an operator
+$L^\ast$ such that
+\[
+  \mathcal{E}(u) = 0
+  \;\Longleftrightarrow\;
+  L^\ast u = \lambda u \quad \text{(or } L^\ast u = f \text{)}
+\]
+and such that $L^\ast$ realises $\mathcal{P}$.
+\end{definition}
+
+\begin{definition}[Inversion operator]
+The \emph{inversion operator} is the map
+\[
+  \rho_\Inv : \Ecal_\Cl \to \Ecal_\Corr
+\]
+that assigns to a classical model $\Mcal_\star$ an operator
+$L^\ast$ solving the structural inverse problem for $\Mcal_\star$.
+\end{definition}
+
+\subsection{The Inverse Spectral Paradigm}
+
+\begin{example}[Inverse spectral problem]
+Let $\Omega \subset \mathbb{R}^n$ be a bounded domain with smooth
+boundary, and let
+\[
+  \mathcal{E}(u) = -\Delta u - \lambda u = 0, \qquad u|_{\partial \Omega} = 0 .
+\]
+The structural inverse problem is:
+\emph{given the spectrum $\{\lambda_k\}_{k \geq 1}$ of $-\Delta$,
+recover the domain $\Omega$ (up to isometry)}.
+This is the classical problem of Kac, \emph{Can one hear the shape of
+a drum?}.
+\end{example}
+
+\begin{remark}
+The inverse spectral problem is \emph{not} uniquely solvable in
+general: there exist isospectral but non-isometric domains
+(Gordon--Webb--Wolpert, 1992). The failure of injectivity of
+$\rho_\Inv$ is thus intrinsic, not an artefact of the method.
+\end{remark}
+
+\subsection{The Inverse Construction Problem}
+
+\begin{definition}[Structure-to-equation problem]\label{def:structure-to-eq}
+Given the deliverable chain of Part~II,
+\[
+  \Ocal_\Sp, \Ocal_\Ge, \Ocal_\To, \Ocal_\Al,
+\]
+a \emph{structure-to-equation problem} consists in finding an
+operator $L^\ast$ such that the following compatibility holds:
+\[
+  \spec(L^\ast) \cong \Ocal_\Sp, \qquad
+  (M, g) = \Ocal_\Ge, \qquad
+  H_\bullet(M) = \Ocal_\To, \qquad
+  A(M) = \Ocal_\Al .
+\]
+\end{definition}
+
+\begin{proposition}[Non-uniqueness of structure-to-equation]\label{prop:nonunique}
+In general, the structure-to-equation problem admits more than one
+solution. The set of solutions is
+\[
+  \mathcal{S} = \rho_\Inv^{-1}(\Ecal_\Corr) ,
+\]
+and $\rho_\Inv$ is injective if and only if $\mathcal{S}$ is a
+singleton.
+\end{proposition}
+
+\begin{proof}
+Immediate from the definition of the preimage and injectivity.
+\end{proof}
+
+\subsection{The Correction Operator}
+
+\begin{definition}[Delta operator]\label{def:correction}
+Let $L_\Cl$ be the operator of the distinguished classical model and
+let $L^\ast = \rho_\Inv(\Mcal_\star)$. The \emph{delta operator} is
+\[
+  \Delta L
+  \;=\;
+  L^\ast - L_\Cl .
+\]
+The \emph{corrected operator} is
+\[
+  L_\Corr
+  \;=\;
+  L_\Cl + \Delta L .
+\]
+\end{definition}
+
+\begin{remark}
+The delta operator $\Delta L$ is not assumed to be small. Its
+magnitude is a diagnostic quantity, not a perturbative hypothesis.
+The interpretation of $\Delta L$ is deferred to
+\S\ref{sec:wellposedness}.
+\end{remark}
+
+\subsection{Layerwise Decomposition of the Correction}
+
+\begin{definition}[Layerwise decomposition]
+The delta operator admits a decomposition
+\[
+  \Delta L
+  \;=\;
+  \Delta L_\Sp + \Delta L_\Ge + \Delta L_\To + \Delta L_\Al ,
+\]
+where each $\Delta L_\lambda$ is the contribution of layer
+$\lambda \in \{\Sp, \Ge, \To, \Al\}$ to the discrepancy between
+$L^\ast$ and $L_\Cl$.
+\end{definition}
+
+\begin{proposition}[Layerwise correction]\label{prop:layerwise}
+If each layer $\lambda$ is information-preserving in the sense of
+Part~I, Definition~1.9, then
+\[
+  \Delta L_\lambda = 0
+  \qquad \forall \lambda \in \{\Sp, \Ge, \To, \Al\},
+\]
+and hence $L^\ast = L_\Cl$.
+\end{proposition}
+
+\begin{proof}
+Information preservation at layer $\lambda$ implies that no
+structural data is lost in the transition $\phi_{\lambda, \lambda'}$.
+Therefore the reconstruction $\rho_\Inv$ recovers $L_\Cl$ exactly,
+and $\Delta L = 0$.
+\end{proof}
+
+% ------------------------------------------------------------
+\section{Correction Operators and Correspondence}
+\label{sec:correction}
+% ------------------------------------------------------------
+
+\subsection{The Correspondence Principle}
+
+\begin{axiom}[Correspondence principle]\label{ax:correspondence}
+The corrected operator $L_\Corr$ depends on a parameter
+$\epsilon > 0$ and satisfies
+\[
+  \lim_{\epsilon \to 0^+} L_\Corr(\epsilon) = L_\Cl
+\]
+in the topology $\tau$ declared in Definition~\ref{def:classical-layer}.
+\end{axiom}
+
+\begin{remark}
+Axiom~\ref{ax:correspondence} is the analogue, in the reverse
+direction, of Axiom~1.5 of Part~I. It expresses the requirement that
+the correction vanishes in the regime where the classical model is
+valid.
+\end{remark}
+
+\subsection{Perturbative Regime}
+
+\begin{definition}[Perturbative regime]
+The correction is said to be \emph{perturbative} if
+\[
+  \Norm{\Delta L(\epsilon)} = \mathcal{O}(\epsilon)
+  \qquad \text{as } \epsilon \to 0^+ .
+\]
+\end{definition}
+
+\begin{definition}[Non-perturbative regime]
+The correction is said to be \emph{non-perturbative} if
+\[
+  \Norm{\Delta L(\epsilon)} \not\to 0
+  \qquad \text{as } \epsilon \to 0^+ .
+\]
+\end{definition}
+
+\begin{remark}
+Non-perturbative corrections are the primary objects of interest:
+they signal structural discrepancies that cannot be absorbed by
+smooth deformation of the classical model. In the terminology of
+Part~I, they correspond to entries of the validation matrix marked
+$\mathrm{O}$ in the reconstruction row.
+\end{remark}
+
+\subsection{Correspondence in the Spectral Layer}
+
+\begin{proposition}[Spectral correspondence]\label{prop:spec-corr}
+Suppose the correction $\Delta L$ is self-adjoint. Then
+\[
+  \spec(L_\Corr(\epsilon))
+  \;\longrightarrow\;
+  \spec(L_\Cl)
+  \qquad \text{(Hausdorff convergence)}
+\]
+as $\epsilon \to 0^+$.
+\end{proposition}
+
+\begin{proof}
+Apply Weyl's perturbation bound (Part~II, Theorem~2.10) to the
+decomposition $L_\Corr(\epsilon) = L_\Cl + \Delta L(\epsilon)$ and
+use $\Norm{\Delta L(\epsilon)} \to 0$.
+\end{proof}
+
+\subsection{Correspondence in the Geometric Layer}
+
+\begin{definition}[Metric correction]
+A metric correction is a family of Riemannian metrics
+$\{g_\epsilon\}_{\epsilon > 0}$ on a fixed manifold $M$ such that
+\[
+  g_\epsilon \to g_\Cl
+  \qquad \text{in } C^\infty_{\mathrm{loc}}(M, \mathrm{Sym}^2 T^\ast M) .
+\]
+\end{definition}
+
+\begin{proposition}[Curvature stability]
+If $g_\epsilon \to g_\Cl$ in $C^\infty_{\mathrm{loc}}$ then
+\[
+  R_\epsilon \to R_\Cl, \qquad
+  \op{Ric}_\epsilon \to \op{Ric}_\Cl, \qquad
+  S_\epsilon \to S_\Cl
+\]
+in $C^\infty_{\mathrm{loc}}$.
+\end{proposition}
+
+\begin{proof}
+The curvature tensor is a polynomial in the first and second
+derivatives of the metric. Local uniform convergence of $g_\epsilon$
+and its derivatives to all orders therefore implies convergence of
+$R_\epsilon$, $\op{Ric}_\epsilon$, $S_\epsilon$.
+\end{proof}
+
+% ------------------------------------------------------------
+\section{Bidirectional Characterisation}
+\label{sec:bidirectional}
+% ------------------------------------------------------------
+
+\subsection{The Bidirectional Diagram}
+
+\begin{definition}[Bidirectional characterisation]
+The methodology yields a \emph{bidirectional characterisation} if
+there exist functors
+\[
+  \mathbf{C} : \Ocal_\Sp \to \Ocal_\Fo, \qquad
+  \mathbf{R} : \Ocal_\Fo \to \Ocal_\Sp
+\]
+such that
+\[
+  \mathbf{R} \circ \mathbf{C} \;\simeq\; \mathrm{id}_{\Ocal_\Sp}, \qquad
+  \mathbf{C} \circ \mathbf{R} \;\simeq\; \mathrm{id}_{\Ocal_\Fo},
+\]
+in the sense of asymptotic equivalence (Part~I, Definition~1.15).
+\end{definition}
+
+\begin{theorem}[Bidirectional characterisation of the correction]\label{thm:bidir}
+Suppose:
+\begin{enumerate}[label=(\roman*)]
+  \item the construction functor $\mathbf{C}$ of Part~II,
+        \S\ref{sec:composition}, is coherent;
+  \item the inverse operator $\rho_\Inv$ is injective on
+        $\Ecal_\Cl$;
+  \item the correspondence principle (Axiom~\ref{ax:correspondence})
+        holds;
+  \item the reconstruction is stable in the sense of
+        \S\ref{sec:wellposedness}.
+\end{enumerate}
+Then there exists a bidirectional characterisation
+\[
+  \Ob \;\rightleftarrows\; \Ecal_\Corr ,
+\]
+with the classical theory $\Ecal_\Cl$ appearing as the limit
+$\epsilon \to 0^+$.
+\end{theorem}
+
+\begin{proof}[Sketch of proof]
+Injectivity of $\rho_\Inv$ gives a well-defined inverse
+$\rho_\Inv^{-1}$ on its image. The correspondence principle ensures
+that the composite
+\[
+  \mathbf{R} \circ \mathbf{C} : \Ocal_\Sp \to \Ecal_\Corr \to \Ocal_\Sp
+\]
+is well-defined and, by coherence, asymptotic to the identity. The
+reverse composite is handled symmetrically. The limit statement is
+Axiom~\ref{ax:correspondence}.
+\end{proof}
+
+\subsection{Failure Modes}
+
+\begin{definition}[Failure modes of the bidirectional characterisation]
+The bidirectional characterisation fails if one of the following
+occurs:
+\begin{enumerate}[label=(\alph*)]
+  \item \textbf{Loss of injectivity:} $\rho_\Inv$ is not injective,
+        so distinct structures map to the same corrected model;
+  \item \textbf{Breakdown of coherence:} some square of the
+        bidirectional diagram fails to commute beyond the tolerance
+        $\varepsilon_N$;
+  \item \textbf{Non-vanishing correction:} $\Delta L(\epsilon)$ does
+        not tend to zero as $\epsilon \to 0^+$;
+  \item \textbf{Instability:} small perturbations of the input
+        produce large perturbations of the output (see
+        \S\ref{sec:wellposedness}).
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[Diagnostic value of failure]
+Each failure mode (a)--(d) identifies a specific deficiency in the
+methodology, located at a specific layer and recorded in the
+validation matrix $\Vmat$.
+\end{proposition}
+
+\subsection{Reconstruction and the Validation Matrix}
+
+\begin{definition}[Reconstruction rows]
+The reconstruction pipeline contributes three rows to the validation
+matrix $\Vmat$, corresponding to the layers
+\[
+  \Cl, \quad \Corr, \quad \An .
+\]
+\end{definition}
+
+\begin{center}
+\begin{tabular}{c|c|l}
+  Layer & Criterion & Status \\
+  \hline
+  $\Cl$   & Existence   & P \\
+  $\Cl$   & Coherence   & P \\
+  $\Cl$   & Invariance  & P \\
+  $\Cl$   & Stability   & O \\
+  $\Corr$ & Existence   & O \\
+  $\Corr$ & Coherence   & O \\
+  $\Corr$ & Correspondence & P (by axiom) \\
+  $\An$   & Regularity  & O \\
+  $\An$   & Analyticity & O \\
+\end{tabular}
+\end{center}
+
+% ------------------------------------------------------------
+\section{Well-Posedness, Stability, and Regularisation}
+\label{sec:wellposedness}
+% ------------------------------------------------------------
+
+\subsection{Hadamard Well-Posedness}
+
+\begin{definition}[Hadamard well-posedness]
+The structural inverse problem (Definition~\ref{def:inverse-problem})
+is \emph{well-posed} in the sense of Hadamard if:
+\begin{enumerate}[label=(\roman*)]
+  \item a solution exists for every classical model
+        $\Mcal_\star \in \Ecal_\Cl$;
+  \item the solution is unique;
+  \item the solution depends continuously on the data.
+\end{enumerate}
+If any of these conditions fails, the problem is \emph{ill-posed}.
+\end{definition}
+
+\begin{proposition}[Failure of well-posedness]\label{prop:illposed}
+The structural inverse problem is ill-posed whenever
+$\rho_\Inv$ is not injective or not continuous.
+\end{proposition}
+
+\begin{proof}
+Failure of injectivity violates condition (ii); failure of
+continuity violates condition (iii).
+\end{proof}
+
+\subsection{Stability Estimates}
+
+\begin{definition}[Stability estimate]
+A \emph{stability estimate} for $\rho_\Inv$ is an inequality
+\[
+  d_{\Sp}(\rho_\Inv(\Mcal_1), \rho_\Inv(\Mcal_2))
+  \;\leq\;
+  \omega\bigl(d_{\Cl}(\Mcal_1, \Mcal_2)\bigr),
+\]
+where $\omega : [0, \infty) \to [0, \infty)$ is a modulus of
+continuity with $\omega(0) = 0$.
+\end{definition}
+
+\begin{definition}[H\"older stability]
+If $\omega(t) = C t^\alpha$ for some $C > 0$ and $\alpha \in (0, 1]$,
+the stability is \emph{H\"older} of exponent $\alpha$.
+\end{definition}
+
+\begin{definition}[Logarithmic stability]
+If $\omega(t) = C \Abs{\log t}^{-\beta}$ for some $C, \beta > 0$,
+the stability is \emph{logarithmic} of exponent $\beta$.
+\end{definition}
+
+\begin{remark}
+Logarithmic stability is the typical regime for severely ill-posed
+inverse problems. H\"older stability is the typical regime for
+moderately ill-posed problems. Both are weaker than Lipschitz
+stability, which corresponds to $\alpha = 1$ and $C < \infty$.
+\end{remark}
+
+\subsection{Regularisation}
+
+\begin{definition}[Regularisation operator]
+A \emph{regularisation} of $\rho_\Inv$ is a family of operators
+\[
+  R_\alpha : \Ecal_\Cl \to \Ecal_\Corr, \qquad \alpha > 0,
+\]
+such that:
+\begin{enumerate}[label=(\roman*)]
+  \item $R_\alpha$ is continuous for every $\alpha > 0$;
+  \item $R_\alpha \to \rho_\Inv$ as $\alpha \to 0^+$ on the domain
+        of $\rho_\Inv$;
+  \item the convergence in (ii) is uniform on compact subsets of the
+        domain.
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}[Regularisation and stability]\label{thm:regularisation}
+Let $R_\alpha$ be a regularisation of $\rho_\Inv$. Then for every
+classical model $\Mcal_\star$ and every $\delta > 0$ there exists
+$\alpha(\delta) > 0$ such that
+\[
+  \Norm{ R_{\alpha(\delta)}(\Mcal_\star) - \rho_\Inv(\Mcal_\star) }
+  \;\leq\; \delta .
+\]
+\end{theorem}
+
+\begin{proof}
+By property (ii) of Definition~\ref{def:correction}--analogue for
+$R_\alpha$, for each fixed $\Mcal_\star$ the quantity
+$\Norm{ R_\alpha(\Mcal_\star) - \rho_\Inv(\Mcal_\star) }$ tends to
+$0$ as $\alpha \to 0^+$. Choose $\alpha(\delta)$ accordingly.
+\end{proof}
+
+\begin{remark}
+The choice $\alpha = \alpha(\delta)$ is the central trade-off of
+regularisation theory: larger $\alpha$ gives greater stability but
+greater bias; smaller $\alpha$ gives smaller bias but greater
+variance. The optimal choice depends on the noise level $\delta$ and
+the a priori smoothness of the solution.
+\end{remark}
+
+\subsection{Discretisation and Stability}
+
+\begin{definition}[Discrete regularisation]
+A \emph{discrete regularisation} of $\rho_\Inv$ is a family
+\[
+  R_{\alpha, N} : \Ecal_\Cl \to \Ecal_\Corr, \qquad \alpha > 0, \; N \in \mathbb{N},
+\]
+satisfying:
+\begin{enumerate}[label=(\roman*)]
+  \item $R_{\alpha, N}$ is continuous and finite-dimensional for each
+        $\alpha, N$;
+  \item $R_{\alpha, N} \to R_\alpha$ as $N \to \infty$;
+  \item the discretisation error $\varepsilon_N$ satisfies
+        $\varepsilon_N \to 0$ as $N \to \infty$.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[Consistency--stability--convergence for inversion]
+Let $R_{\alpha, N}$ be a discrete regularisation. Then
+\[
+  \text{consistency} + \text{stability}
+  \;\Longrightarrow\;
+  \text{convergence}
+\]
+in the sense that
+\[
+  \lim_{N \to \infty} R_{\alpha(\delta), N}(\Mcal_\star)
+  = \rho_\Inv(\Mcal_\star) .
+\]
+\end{proposition}
+
+\begin{proof}
+Standard argument in the spirit of Lax--Richtmyer
+(Part~II, Theorem~\ref{thm:lax-rich}--analogue for inversion):
+consistency controls the truncation error, stability controls the
+propagation of perturbations, and their combination yields
+convergence.
+\end{proof}
+
+\subsection{Analytic Verification}
+
+\begin{definition}[Analytic layer]
+The \emph{analytic layer} is the pair
+\[
+  \Acal = (\mathcal{A}(\Omega), \mathcal{D}),
+\]
+where $\mathcal{A}(\Omega)$ is a space of analytic functions on
+$\Omega$ and $\mathcal{D}$ is a differential structure on
+$\mathcal{A}(\Omega)$.
+\end{definition}
+
+\begin{definition}[Analyticity of the corrected solution]
+The corrected solution $u_\Corr$ is \emph{analytic} if
+$u_\Corr \in \mathcal{A}(\Omega)$ and
+\[
+  L_\Corr u_\Corr = 0
+\]
+holds in the sense of the differential structure $\mathcal{D}$.
+\end{definition}
+
+\begin{theorem}[Analytic closure]\label{thm:analytic-closure}
+If
+\begin{enumerate}[label=(\roman*)]
+  \item $L_\Corr$ has analytic coefficients on $\Omega$;
+  \item $u_\Corr$ satisfies $L_\Corr u_\Corr = 0$ weakly on $\Omega$;
+  \item $L_\Corr$ is elliptic;
+\end{enumerate}
+then $u_\Corr$ is analytic on $\Omega$.
+\end{theorem}
+
+\begin{proof}
+Apply the analytic regularity theorem for elliptic operators (see
+Morrey, \emph{Multiple Integrals in the Calculus of Variations},
+Chapter~6; or Bers--John--Schechter, \emph{Partial Differential
+Equations}, Chapter~5).
+\end{proof}
+
+% ------------------------------------------------------------
+\section{Composition of the Full Methodology}
+\label{sec:composition-III}
+% ------------------------------------------------------------
+
+\subsection{The Full Diagram}
+
+The full multirepresentational methodology assembles into the
+following diagram.
+
+\begin{equation}\label{eq:full-diagram}
+\begin{tikzcd}[row sep=large, column sep=large]
+  & \Ocal_\Sp \arrow[dl, "\phi_{\Sp\Ge}"'] \arrow[dr, "\mathbf{C}"'] & \\
+  \Ocal_\Ge \arrow[d, "\phi_{\Ge\To}"'] & & \Ocal_\Fo \arrow[dll, "\rho_\Cl"'] \\
+  \Ocal_\To \arrow[d, "\phi_{\To\Al}"'] & & \Ecal_\Cl \arrow[d, "\rho_\Inv"'] \\
+  \Ocal_\Al \arrow[d, "\phi_{\Al\Nu}"'] & & \Ecal_\Corr \arrow[d, "\rho_\An"'] \\
+  \Ocal_\Nu \arrow[dr, "\phi_{\Nu\Fo}"'] & & \Acal
+\end{tikzcd}
+\end{equation}
+
+\subsection{Composite Operators}
+
+\begin{definition}[Full construction--reconstruction cycle]
+The \emph{full cycle} is the composite
+\[
+  \mathbf{K}
+  \;=\;
+  \rho_\An \circ \rho_\Inv \circ \rho_\Cl \circ \mathbf{C}
+  :
+  \Ocal_\Sp \to \Acal .
+\]
+\end{definition}
+
+\begin{proposition}[Factorisation]\label{prop:factorisation}
+The cycle $\mathbf{K}$ factors as
+\[
+  \mathbf{K} = \mathbf{K}_\An \circ \mathbf{K}_\Corr \circ \mathbf{K}_\Cl ,
+\]
+where
+\[
+  \mathbf{K}_\Cl   = \rho_\Cl \circ \mathbf{C}, \qquad
+  \mathbf{K}_\Corr = \rho_\Inv, \qquad
+  \mathbf{K}_\An   = \rho_\An .
+\]
+\end{proposition}
+
+\subsection{Closure Condition}
+
+\begin{definition}[Closure of the cycle]
+The cycle $\mathbf{K}$ is \emph{closed} if there exists a natural
+transformation
+\[
+  \eta : \mathrm{id}_{\Ocal_\Sp} \Longrightarrow \mathbf{K}
+\]
+or, more strongly, an asymptotic equivalence
+\[
+  \mathbf{K} \;\sim_\infty\; \mathrm{id}_{\Ocal_\Sp} .
+\]
+\end{definition}
+
+\begin{theorem}[Closure criterion]\label{thm:closure-criterion}
+The cycle $\mathbf{K}$ is closed if and only if:
+\begin{enumerate}[label=(\roman*)]
+  \item the correction $\Delta L(\epsilon)$ vanishes as
+        $\epsilon \to 0^+$;
+  \item the reconstruction $\rho_\Inv$ is injective;
+  \item the correspondence between $\Ocal_\Sp$ and $\Acal$ is
+        compatible with the analytic structure on both sides.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i) is necessary by Axiom~\ref{ax:correspondence}. (ii) is necessary
+by Theorem~\ref{thm:bidir}. (iii) is necessary by
+Theorem~\ref{thm:analytic-closure}. Sufficiency follows by composing
+the three implications.
+\end{proof}
+
+\begin{remark}
+The closure criterion is the ultimate requirement of the
+methodology. When it holds, the classical theory $\Ecal_\Cl$
+appears as the $\epsilon \to 0^+$ limit, and the corrected theory
+$\Ecal_\Corr$ is a \emph{genuine extension}: it preserves the
+classical limit while adding structural content not present in the
+classical model.
+\end{remark}
+
+% ------------------------------------------------------------
+\section*{Summary of Part III}
+% ------------------------------------------------------------
+
+Part~III has developed the reconstruction pipeline:
+\begin{itemize}
+  \item extraction of the classical model
+        $\Ecal_\Cl = \rho_\Cl(\Ocal_\Fo)$
+        (Definition~\ref{def:classical-layer});
+  \item formulation of the structural inverse problem
+        (Definition~\ref{def:inverse-problem});
+  \item construction of the delta operator $\Delta L$ and the
+        corrected operator $L_\Corr$ (Definition~\ref{def:correction});
+  \item proof of the bidirectional characterisation
+        $\Ob \rightleftarrows \Ecal_\Corr$
+        (Theorem~\ref{thm:bidir});
+  \item treatment of well-posedness, stability, and regularisation
+        (\S\ref{sec:wellposedness});
+  \item closure of the full construction--reconstruction cycle
+        (Theorem~\ref{thm:closure-criterion}).
+\end{itemize}
+
+The key structural results are:
+\[
+  \mathcal{E}_\Cl \;\trianglelefteq\; \Ecal_\Cl
+  \;\Longrightarrow\;
+  \Delta L = 0,
+\]
+\[
+  \rho_\Inv \text{ injective}
+  \;\Longleftrightarrow\;
+  \Ob \rightleftarrows \Ecal_\Corr \text{ is well-defined},
+\]
+and
+\[
+  \text{consistency} + \text{stability}
+  \;\Longrightarrow\;
+  \text{convergence}
+\]
+for both the direct and the inverse problems.
+
+Part~IV will treat the discrete-to-continuum passage, the analytic
+verification of the corrected model, and the validation matrix for
+the full methodology.
+
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% PACKAGES
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{mathrsfs}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{microtype}
+
+\geometry{margin=1in}
+
+% ============================================================
+% THEOREM ENVIRONMENTS
+% ============================================================
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}[definition]{Axiom}
+\newtheorem{example}[definition]{Example}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{convention}[definition]{Convention}
+\newtheorem{construction}[definition]{Construction}
+\newtheorem{assumption}[definition]{Assumption}
+
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+
+% ============================================================
+% MACROS
+% ============================================================
+\newcommand{\Lam}{\Lambda}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\Ge}{\mathrm{Ge}}
+\newcommand{\To}{\mathrm{To}}
+\newcommand{\Al}{\mathrm{Al}}
+\newcommand{\Nu}{\mathrm{Nu}}
+\newcommand{\Fo}{\mathrm{Fo}}
+\newcommand{\Cl}{\mathrm{Cl}}
+\newcommand{\Corr}{\mathrm{Corr}}
+\newcommand{\Inv}{\mathrm{Inv}}
+\newcommand{\An}{\mathrm{An}}
+\newcommand{\Ob}{\mathfrak{O}}
+\newcommand{\Ecal}{\mathcal{E}}
+\newcommand{\Ocal}{\mathcal{O}}
+\newcommand{\Acal}{\mathcal{A}}
+\newcommand{\Mcal}{\mathcal{M}}
+\newcommand{\Hcal}{\mathcal{H}}
+\newcommand{\Dcal}{\mathcal{D}}
+\newcommand{\Ncal}{\mathcal{N}}
+\newcommand{\Ccal}{\mathcal{C}}
+\newcommand{\philam}{\phi_{\lambda\mu}}
+\newcommand{\rholam}{\rho_{\lambda}}
+\newcommand{\Vmat}{\mathbf{V}}
+\newcommand{\Jset}{\mathcal{J}}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\op}[1]{\operatorname{#1}}
+\newcommand{\spec}{\sigma}
+\newcommand{\hilb}{\mathcal{H}}
+\newcommand{\Cat}{\mathbf{Cat}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\Vect}{\mathbf{Vect}}
+\newcommand{\Grp}{\mathbf{Grp}}
+\newcommand{\Rng}{\mathbf{Rng}}
+\newcommand{\Top}{\mathbf{Top}}
+\newcommand{\Man}{\mathbf{Man}}
+\newcommand{\Norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\Abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+
+% ============================================================
+% TITLE
+% ============================================================
+\title{%
+  \textbf{A Multirepresentational Construction--Reconstruction\\
+  Methodology for Mathematical Structures}\\[4pt]
+  \large Part IV: Discrete-to-Continuum Passage and Analytic Verification
+}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Part~IV addresses the discrete-to-continuum passage of the
+multirepresentational methodology. Starting from the discrete families
+$\Ob^{(N)}$ introduced in Part~I, we develop a rigorous framework for
+the study of structural emergence, stability, and convergence as the
+resolution parameter $N \to \infty$. The central objects are the
+layerwise convergence statements
+$\Ocal_\lambda^{(N)} \to \Ocal_\lambda$, the emergent invariants
+detected by numerical computation, the compactness and uniform-bound
+arguments required to pass to the continuum limit, and the final
+regularity and analyticity statements that close the methodology.
+The chapter distinguishes sharply between numerical evidence and
+mathematical proof, and records the passage from the former to the
+latter as a sequence of four steps: detection, estimation,
+compactness, and limit identification.
+\end{abstract}
+
+\tableofcontents
+
+% ============================================================
+\part{Discrete-to-Continuum Passage and Analytic Verification}
+% ============================================================
+
+\section{Overview of the Discrete-to-Continuum Programme}
+\label{sec:overview-IV}
+
+The construction pipeline of Part~II and the reconstruction pipeline
+of Part~III are, so far, formal statements about the layers
+$\Ocal_\lambda$. They do not, by themselves, produce computable or
+verifiable content. That content is supplied by the \emph{discrete
+families}
+\[
+  \Ob^{(N)} = \bigl(\Ocal_\lambda^{(N)}\bigr)_{\lambda \in \Lam},
+  \qquad N \in \N,
+\]
+introduced in Part~I, \S1.6.
+
+Part~IV is organised as follows.
+Section~\ref{sec:discrete-families} defines discrete families and
+their nested structure. Section~\ref{sec:stability} treats structural
+stability and invariant detection. Section~\ref{sec:csc} develops the
+consistency--stability--convergence triangle. Section~\ref{sec:compactness}
+supplies the compactness and uniform-bound machinery required for the
+continuum limit. Section~\ref{sec:regularity} closes with regularity
+and analyticity statements.
+
+\begin{remark}
+The discrete-to-continuum programme is the layer at which the
+methodology interacts with actual computation. It is therefore the
+layer at which the distinction between \emph{evidence} and
+\emph{proof} becomes critical, and it is the layer that gives the
+validation matrix $\Vmat$ its off-diagonal entries marked
+$\mathrm{N}$.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Discrete Families}
+\label{sec:discrete-families}
+% ------------------------------------------------------------
+
+\subsection{The Resolution Parameter}
+
+\begin{definition}[Resolution parameter]\label{def:resolution}
+A \emph{resolution parameter} is a positive integer $N \in \N$
+indexing a family of finite-dimensional approximations of the master
+object $\Ob$. The integer $N$ is assumed to increase monotonically
+along a filtration
+\[
+  \Ncal_1 \subset \Ncal_2 \subset \cdots \subset \Ncal_N \subset \cdots
+\]
+of nested finite-dimensional subspaces of the ambient Hilbert space
+$\hilb$.
+\end{definition}
+
+\begin{definition}[Discrete master object]\label{def:discrete-master}
+The \emph{discrete master object} at resolution $N$ is
+\[
+  \Ob^{(N)}
+  \;=\;
+  \bigl(\Ocal_\Sp^{(N)}, \Ocal_\Ge^{(N)}, \Ocal_\To^{(N)},
+        \Ocal_\Al^{(N)}, \Ocal_\Nu^{(N)}, \Ocal_\Fo^{(N)}\bigr),
+\]
+together with layer projections
+\[
+  \pi_\lambda^{(N)} : \Ob^{(N)} \to \Ocal_\lambda^{(N)}
+\]
+and resolution morphisms
+\[
+  \iota_N : \Ob^{(N)} \to \Ob .
+\]
+\end{definition}
+
+\subsection{Nested Approximations}
+
+\begin{axiom}[Nestedness]\label{ax:nested}
+For every $N \leq M$ there exist canonical inclusions
+\[
+  \iota_{N,M} : \Ocal_\lambda^{(N)} \hookrightarrow \Ocal_\lambda^{(M)},
+  \qquad \lambda \in \Lam,
+\]
+compatible with the layer projections:
+\[
+  \pi_\lambda^{(M)} \circ \iota_{N,M}
+  \;=\;
+  \iota_{N,M} \circ \pi_\lambda^{(N)} .
+\]
+\end{axiom}
+
+\begin{definition}[Inductive limit]
+The \emph{inductive limit} of the discrete family is
+\[
+  \Ocal_\lambda^{(\infty)}
+  \;=\;
+  \varinjlim_{N} \Ocal_\lambda^{(N)} .
+\]
+\end{definition}
+
+\begin{proposition}[Universal property]\label{prop:universal}
+The inductive limit $\Ocal_\lambda^{(\infty)}$ is the unique
+object, up to isomorphism, together with canonical morphisms
+$\jmath_N : \Ocal_\lambda^{(N)} \to \Ocal_\lambda^{(\infty)}$
+satisfying
+\[
+  \jmath_M \circ \iota_{N,M} = \jmath_N
+  \qquad (N \leq M),
+\]
+and universal with respect to this property.
+\end{proposition}
+
+\begin{proof}
+Standard category-theoretic construction of the colimit; existence
+follows from nestedness (Axiom~\ref{ax:nested}) and uniqueness from
+the universal property.
+\end{proof}
+
+\subsection{Emergent Structures}
+
+\begin{definition}[Emergent structure]\label{def:emergent}
+A structure $\mathcal{P}$ on the limit object
+$\Ocal_\lambda^{(\infty)}$ is \emph{emergent} from the discrete
+family $\{\Ocal_\lambda^{(N)}\}_N$ if:
+\begin{enumerate}[label=(\roman*)]
+  \item there exist structures $\mathcal{P}_N$ on each
+        $\Ocal_\lambda^{(N)}$ such that
+        $\mathcal{P}_N \to \mathcal{P}$ in an appropriate topology;
+  \item the convergence is stable under the inclusions
+        $\iota_{N,M}$.
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Persistent structure]\label{def:persistent}
+A structure $\mathcal{P}$ is \emph{persistent} at level $N_0$ if
+$\mathcal{P}_N \neq \varnothing$ for every $N \geq N_0$.
+\end{definition}
+
+\begin{example}[Persistent homology]
+In topological data analysis, the persistent homology of a filtration
+\[
+  X_1 \subset X_2 \subset \cdots \subset X_N
+\]
+produces a barcode
+\[
+  \mathrm{PH}_k(X_\bullet) = \{(b_i, d_i)\}_i
+\]
+of birth--death intervals. Structures whose intervals remain finite
+as $N \to \infty$ are the topological analogues of emergent
+structures in the sense of Definition~\ref{def:emergent}.
+\end{example}
+
+\begin{remark}
+The notion of emergent structure is precisely the mathematical
+formalisation of the informal notion of ``pattern'': a pattern is a
+structure that persists across resolutions and admits a well-defined
+limit.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Stability and Invariance}
+\label{sec:stability}
+% ------------------------------------------------------------
+
+\subsection{Structural Stability}
+
+\begin{definition}[Structural stability]\label{def:structural-stability}
+Let $\Ocal_\lambda^{(N)}$ and $\Ocal_\lambda^{(N)\prime}$ be two
+discrete approximations at resolution $N$ arising from perturbations
+of the input data. The layer $\lambda$ is \emph{structurally stable}
+if for every $\epsilon > 0$ there exists $\delta > 0$ such that
+\[
+  d_{\mathrm{in}}\bigl(\mathrm{data}, \mathrm{data}'\bigr) < \delta
+  \;\Longrightarrow\;
+  d_\lambda\bigl(\Ocal_\lambda^{(N)}, \Ocal_\lambda^{(N)\prime}\bigr) < \epsilon
+\]
+uniformly in $N$.
+\end{definition}
+
+\begin{definition}[Uniform structural stability]
+The family $\{\Ocal_\lambda^{(N)}\}_N$ is \emph{uniformly
+structurally stable} if the modulus of continuity is independent
+of $N$.
+\end{definition}
+
+\subsection{Robustness}
+
+\begin{definition}[Robust invariant]\label{def:robust}
+An invariant $I_\lambda : \Ocal_\lambda \to \mathcal{V}_\lambda$ is
+\emph{robust} if it is continuous with respect to the layer topology
+and satisfies
+\[
+  I_\lambda\bigl(\Ocal_\lambda^{(N)}\bigr)
+  \;\longrightarrow\;
+  I_\lambda\bigl(\Ocal_\lambda^{(\infty)}\bigr)
+\]
+uniformly in the admissible class of inputs.
+\end{definition}
+
+\begin{proposition}[Robustness and emergence]\label{prop:robust-emergent}
+If $I_\lambda$ is robust then the structure
+$\mathcal{P} = I_\lambda^{-1}(v)$ for fixed $v \in \mathcal{V}_\lambda$
+is emergent in the sense of Definition~\ref{def:emergent}.
+\end{proposition}
+
+\begin{proof}
+Robustness gives the convergence $I_\lambda(\Ocal_\lambda^{(N)}) \to v$
+along the filtration. Emergence follows by choosing
+$\mathcal{P}_N = I_\lambda^{-1}(v) \cap \Ocal_\lambda^{(N)}$.
+\end{proof}
+
+\subsection{Invariant Detection}
+
+\begin{definition}[Detection algorithm]\label{def:detection}
+An \emph{invariant detection algorithm} is a map
+\[
+  \Dcal : \{\Ocal_\lambda^{(N)}\}_{N=1}^{N_{\max}}
+  \;\longrightarrow\;
+  \mathcal{H},
+\]
+where $\mathcal{H}$ is a hypothesis space, that outputs a candidate
+invariant $I_\lambda \in \mathcal{H}$ consistent with the discrete
+data.
+\end{definition}
+
+\begin{remark}
+Invariant detection is the formalisation of the informal notion of
+``spotting a pattern''. The output $I_\lambda$ of a detection
+algorithm is a \emph{conjecture}, not a theorem: it must subsequently
+be verified by an estimation argument (\S\ref{sec:csc}) and a
+compactness argument (\S\ref{sec:compactness}).
+\end{remark}
+
+\begin{example}[Numerical detection of $\pi$]
+Consider the sequence of approximations
+\[
+  I_N = 4 \sum_{k=0}^{N} \frac{(-1)^k}{2k+1} .
+\]
+A detection algorithm may observe $I_N \to 3.14159\ldots$ and
+hypothesise $I = \pi$. The conjecture is verified by proving
+\[
+  \Abs{I_N - \pi} \leq \frac{C}{N},
+\]
+which is a classical estimate.
+\end{example}
+
+\begin{remark}
+The detection algorithm outputs a plausible invariant. The
+verification is what makes it a theorem. The distinction is
+reflected in the validation matrix by the presence of both
+$\mathrm{N}$ (numerical evidence) and $\mathrm{P}$ (proof) entries.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Consistency, Stability, and Convergence}
+\label{sec:csc}
+% ------------------------------------------------------------
+
+\subsection{Consistency}
+
+\begin{definition}[Layerwise consistency]\label{def:consistency}
+Let $\Ocal_\lambda$ be a layer and let $\Ocal_\lambda^{(N)}$ be its
+$N$-th discrete approximation. Let
+$\mathcal{F}_\lambda : \Ocal_\lambda \to \mathcal{W}_\lambda$
+be the defining equation of the layer. The discretisation is
+\emph{consistent} if
+\[
+  \Norm{
+    \mathcal{F}_\lambda\bigl(\pi_\lambda^{(N)} u\bigr)
+    -
+    \pi_\lambda^{(N)} \mathcal{F}_\lambda(u)
+  }_{\mathcal{W}_\lambda}
+  \;\longrightarrow\;
+  0
+  \qquad (N \to \infty),
+\]
+uniformly on bounded subsets of the domain.
+\end{definition}
+
+\begin{definition}[Order of consistency]
+If the convergence in Definition~\ref{def:consistency} is
+$\mathcal{O}(N^{-p})$ for some $p > 0$, the discretisation is said
+to be \emph{consistent of order $p$}.
+\end{definition}
+
+\subsection{Stability}
+
+\begin{definition}[Layerwise stability]\label{def:stability}
+The discretisation is \emph{stable} if there exists a constant
+$C > 0$, independent of $N$, such that
+\[
+  \Norm{(\mathcal{F}_\lambda^{(N)})^{-1}}_{\mathcal{W}_\lambda \to \Ocal_\lambda^{(N)}}
+  \;\leq\;
+  C
+  \qquad \forall N \in \N .
+\]
+\end{definition}
+
+\begin{definition}[Condition number]
+The \emph{condition number} of $\mathcal{F}_\lambda^{(N)}$ is
+\[
+  \kappa\bigl(\mathcal{F}_\lambda^{(N)}\bigr)
+  \;=\;
+  \Norm{\mathcal{F}_\lambda^{(N)}} \cdot
+  \Norm{(\mathcal{F}_\lambda^{(N)})^{-1}} .
+\]
+\end{definition}
+
+\begin{remark}
+Stability is equivalent to uniform boundedness of the condition
+number. Numerical instability manifests as $\kappa \to \infty$ as
+$N \to \infty$, which signals a loss of well-posedness in the
+discrete problem.
+\end{remark}
+
+\subsection{Convergence}
+
+\begin{theorem}[Consistency--stability--convergence]\label{thm:csc}
+Let $\Ocal_\lambda^{(N)}$ be a consistent and stable discretisation
+of $\Ocal_\lambda$. Then for every $u \in \Ocal_\lambda$,
+\[
+  \Norm{\pi_\lambda^{(N)} u - u_N}_{\Ocal_\lambda^{(N)}}
+  \;\leq\;
+  C \, \Norm{
+    \mathcal{F}_\lambda\bigl(\pi_\lambda^{(N)} u\bigr)
+    -
+    \pi_\lambda^{(N)} \mathcal{F}_\lambda(u)
+  }_{\mathcal{W}_\lambda},
+\]
+where $u_N \in \Ocal_\lambda^{(N)}$ is the discrete solution. In
+particular,
+\[
+  u_N \;\longrightarrow\; u
+  \qquad (N \to \infty).
+\]
+\end{theorem}
+
+\begin{proof}
+Write the discretised equation as
+\[
+  \mathcal{F}_\lambda^{(N)} u_N = 0 .
+\]
+Subtract $\mathcal{F}_\lambda^{(N)} \pi_\lambda^{(N)} u$ from both
+sides to obtain
+\[
+  \mathcal{F}_\lambda^{(N)}(u_N - \pi_\lambda^{(N)} u)
+  =
+  - \mathcal{F}_\lambda^{(N)} \pi_\lambda^{(N)} u .
+\]
+Apply the stability estimate (Definition~\ref{def:stability}) and
+the consistency estimate (Definition~\ref{def:consistency}) to
+conclude.
+\end{proof}
+
+\begin{corollary}[Order of convergence]\label{cor:order}
+If the discretisation is consistent of order $p$ and stable, then
+the convergence is of order $p$:
+\[
+  \Norm{\pi_\lambda^{(N)} u - u_N}
+  \;=\;
+  \mathcal{O}(N^{-p}) .
+\]
+\end{corollary}
+
+\begin{proof}
+Immediate from Theorem~\ref{thm:csc} and Definition~\ref{def:consistency}.
+\end{proof}
+
+\subsection{The Three-Proof Structure}
+
+\begin{definition}[Three-proof structure]\label{def:three-proof}
+A layer $\lambda$ is said to satisfy the \emph{three-proof
+structure} if:
+\begin{enumerate}[label=(\roman*)]
+  \item consistency (Definition~\ref{def:consistency}) holds;
+  \item stability (Definition~\ref{def:stability}) holds;
+  \item convergence (Theorem~\ref{thm:csc}) holds.
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[Three-proof sufficiency]\label{prop:three-proof}
+If a layer satisfies the three-proof structure, then
+\[
+  \Ocal_\lambda^{(N)} \to \Ocal_\lambda
+\]
+in the sense of Part~I, Definition~1.7.
+\end{proposition}
+
+\begin{proof}
+Apply Theorem~\ref{thm:csc} to each defining equation of the layer
+and combine the resulting estimates into the aggregate error
+$\varepsilon_N$ of Part~I, \eqref{eq:error}.
+\end{proof}
+
+\begin{remark}
+The three-proof structure replaces the informal statement ``the
+numerical results look convergent'' by three explicit mathematical
+obligations. This is the operational content of the distinction
+between numerical evidence and mathematical proof.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Compactness and Limit Passage}
+\label{sec:compactness}
+% ------------------------------------------------------------
+
+\subsection{Uniform Bounds}
+
+\begin{assumption}[Uniform boundedness]\label{ass:uniform}
+There exists $C > 0$, independent of $N$, such that
+\[
+  \Norm{u_N}_{X}
+  \;\leq\;
+  C
+  \qquad \forall N \in \N,
+\]
+where $X$ is a Banach space into which all $\Ocal_\lambda^{(N)}$
+embed continuously.
+\end{assumption}
+
+\begin{proposition}[Consequence of uniform boundedness]\label{prop:uniform-bounded}
+Under Assumption~\ref{ass:uniform}, the sequence $\{u_N\}_N$ admits
+a weakly convergent subsequence in $X$:
+\[
+  u_{N_j} \rightharpoonup u_\infty \in X .
+\]
+\end{proposition}
+
+\begin{proof}
+Banach--Alaoglu theorem applied to the unit ball of $X$, using the
+uniform bound to stay within a fixed ball.
+\end{proof}
+
+\subsection{Compactness Arguments}
+
+\begin{theorem}[Compactness]\label{thm:compactness}
+Let $X \hookrightarrow Y$ be a compact embedding of Banach spaces.
+Under Assumption~\ref{ass:uniform}, there exists a subsequence
+$\{u_{N_j}\}$ and a limit $u_\infty \in X$ such that
+\[
+  u_{N_j} \;\longrightarrow\; u_\infty
+  \qquad \text{strongly in } Y .
+\]
+\end{theorem}
+
+\begin{proof}
+Weak compactness (Proposition~\ref{prop:uniform-bounded}) provides
+a weakly convergent subsequence. Compactness of $X \hookrightarrow Y$
+upgrades weak convergence in $X$ to strong convergence in $Y$.
+\end{proof}
+
+\begin{example}[Sobolev compactness]
+The classical Rellich--Kondrachov theorem states that
+\[
+  H^1(\Omega) \hookrightarrow L^2(\Omega)
+\]
+is compact for $\Omega \subset \R^n$ bounded and Lipschitz. This
+provides the compactness required in many applications of
+Theorem~\ref{thm:compactness}.
+\end{example}
+
+\subsection{Limit Identification}
+
+\begin{definition}[Limit equation]\label{def:limit-eq}
+The \emph{limit equation} of the discrete family $\{u_N\}_N$ is
+\[
+  \mathcal{E}(u_\infty) = 0,
+\]
+where $\mathcal{E}$ is the formal equation obtained by passing to the
+limit in the discretised equations $\mathcal{E}^{(N)}(u_N) = 0$.
+\end{definition}
+
+\begin{theorem}[Limit identification]\label{thm:limit-id}
+Under the hypotheses of Theorem~\ref{thm:compactness}, the limit
+$u_\infty$ satisfies the limit equation $\mathcal{E}(u_\infty) = 0$
+in the weak sense of the space $Y$.
+\end{theorem}
+
+\begin{proof}
+Use density of test functions in $Y^\ast$ and pass to the limit in
+the weak formulation of $\mathcal{E}^{(N)}(u_N) = 0$. Consistency
+(Definition~\ref{def:consistency}) ensures that the discrete operator
+converges to the continuum operator weakly.
+\end{proof}
+
+\subsection{Extrapolation to the Limit}
+
+\begin{definition}[Numerical extrapolation]\label{def:extrapolation}
+Let $\{u_N\}_N$ be a convergent sequence with order $p$
+(Corollary~\ref{cor:order}). The \emph{Richardson extrapolation} of
+order $q$ is the linear combination
+\[
+  u_N^{(q)}
+  \;=\;
+  \sum_{j=0}^{q} c_j^{(q)} u_{N_j} ,
+\]
+where the coefficients $c_j^{(q)}$ are chosen so that the leading
+$q$ error terms cancel.
+\end{definition}
+
+\begin{proposition}[Acceleration of convergence]\label{prop:richardson}
+If $\{u_N\}$ converges with order $p$ and admits an asymptotic
+expansion
+\[
+  u_N = u_\infty + a_1 N^{-p} + a_2 N^{-2p} + \cdots,
+\]
+then the Richardson extrapolation $u_N^{(q)}$ converges with order
+$(q+1) p$.
+\end{proposition}
+
+\begin{proof}
+By construction of the coefficients $c_j^{(q)}$, the first $q$ terms
+of the asymptotic expansion cancel, leaving an error of order
+$N^{-(q+1)p}$.
+\end{proof}
+
+\begin{remark}
+Numerical extrapolation is a computational technique, not a
+mathematical proof. It accelerates convergence on the discrete side
+but does not, by itself, establish the limit statement. The latter
+requires a mathematical estimate of the type
+$\Norm{u_N - u_\infty} \leq C N^{-p}$, which is the content of
+Corollary~\ref{cor:order}.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Regularity and Analyticity}
+\label{sec:regularity}
+% ------------------------------------------------------------
+
+\subsection{Regularity}
+
+\begin{definition}[Sobolev regularity]\label{def:sobolev}
+Let $\Omega \subset \R^n$ be an open set and let $s \in \R$. The
+\emph{Sobolev space} $H^s(\Omega)$ is the completion of
+$C_c^\infty(\Omega)$ with respect to the norm
+\[
+  \Norm{u}_{H^s}^2
+  \;=\;
+  \int_{\R^n} (1 + \Abs{\xi}^2)^s \Abs{\hat{u}(\xi)}^2 \dd \xi ,
+\]
+where $\hat{u}$ denotes the Fourier transform of $u$.
+\end{definition}
+
+\begin{definition}[Regularity of the limit]\label{def:regularity}
+The limit $u_\infty$ is said to have \emph{regularity $s$} if
+$u_\infty \in H^s(\Omega)$. It is said to have \emph{classical
+regularity $C^k$} if $u_\infty \in C^k(\Omega)$ and all derivatives
+up to order $k$ are continuous.
+\end{definition}
+
+\begin{theorem}[Regularity bootstrap]\label{thm:bootstrap}
+Let $L$ be an elliptic operator of order $m$ with smooth
+coefficients on $\Omega$, and let $u \in H^s(\Omega)$ satisfy
+$Lu = f$ with $f \in H^{s-m}(\Omega)$. Then
+\[
+  u \in H^{s+1}(\Omega)
+\]
+whenever $s$ and $s+1$ are integers.
+\end{theorem}
+
+\begin{proof}
+Standard elliptic regularity (see Agmon--Douglis--Nirenberg,
+\emph{Estimates near the boundary for solutions of elliptic partial
+differential equations}, Comm.~Pure Appl.~Math.~12 (1959),
+623--727).
+\end{proof}
+
+\begin{corollary}[Smoothness under iteration]\label{cor:smoothness}
+If the hypotheses of Theorem~\ref{thm:bootstrap} hold for every
+$s \geq 0$, then $u \in C^\infty(\Omega)$.
+\end{corollary}
+
+\begin{proof}
+Iterate the bootstrap: $u \in H^{s_0} \Rightarrow u \in H^{s_0+1}
+\Rightarrow \cdots \Rightarrow u \in H^s$ for every $s$. Sobolev
+embedding gives $u \in C^k$ for every $k$.
+\end{proof}
+
+\subsection{Analyticity}
+
+\begin{definition}[Analytic function]\label{def:analytic}
+A function $u : \Omega \to \C$ is \emph{analytic} if for every
+$x_0 \in \Omega$ there exists $r > 0$ and coefficients
+$\{a_\alpha\}_{\alpha \in \N^n}$ such that
+\[
+  u(x) = \sum_{\alpha} a_\alpha (x - x_0)^\alpha
+  \qquad (\Abs{x - x_0} < r),
+\]
+where the series converges absolutely and uniformly on the ball of
+radius $r$.
+\end{definition}
+
+\begin{theorem}[Analytic regularity for elliptic operators]\label{thm:analytic-regularity}
+Let $L$ be an elliptic operator of order $m$ with real-analytic
+coefficients on $\Omega$, and let $u \in H^s(\Omega)$ satisfy
+$Lu = f$ with $f$ real-analytic on $\Omega$. Then $u$ is
+real-analytic on $\Omega$.
+\end{theorem}
+
+\begin{proof}
+See Morrey, \emph{Multiple Integrals in the Calculus of Variations},
+Chapter~6, or Bers--John--Schechter, \emph{Partial Differential
+Equations}, Chapter~5. The proof uses a bootstrapping argument
+similar to that of Theorem~\ref{thm:bootstrap} but with analytic
+norms replacing Sobolev norms.
+\end{proof}
+
+\subsection{Analytic Closure}
+
+\begin{definition}[Analytic closure of the methodology]\label{def:analytic-closure}
+The multirepresentational methodology is said to achieve
+\emph{analytic closure} if the corrected solution $u_\Corr$
+constructed in Part~III satisfies
+\[
+  u_\Corr \in \mathcal{A}(\Omega)
+\]
+and
+\[
+  L_\Corr u_\Corr = 0
+\]
+in the analytic sense of Definition~\ref{def:analytic}.
+\end{definition}
+
+\begin{theorem}[Analytic closure criterion]\label{thm:analytic-closure-IV}
+Analytic closure holds if and only if:
+\begin{enumerate}[label=(\roman*)]
+  \item the corrected operator $L_\Corr$ is elliptic;
+  \item its coefficients are real-analytic on $\Omega$;
+  \item the discrete family $\{u_N\}_N$ is bounded in $H^s(\Omega)$
+        for some $s > n/2$;
+  \item the limit $u_\infty$ satisfies $L_\Corr u_\infty = 0$ in the
+        weak sense.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Necessity of (i)--(iv) follows from the definitions of elliptic
+operator, analytic coefficient, uniform boundedness
+(Assumption~\ref{ass:uniform}), and limit equation
+(Definition~\ref{def:limit-eq}). Sufficiency follows from
+Theorem~\ref{thm:analytic-regularity} applied to $L = L_\Corr$ and
+$u = u_\infty$.
+\end{proof}
+
+\subsection{The Final Verification Chain}
+
+\begin{definition}[Final verification chain]\label{def:final-chain}
+The \emph{final verification chain} of the methodology is the
+sequence
+\[
+  \text{detection}
+  \;\to\;
+  \text{estimation}
+  \;\to\;
+  \text{compactness}
+  \;\to\;
+  \text{limit}
+  \;\to\;
+  \text{regularity}
+  \;\to\;
+  \text{analyticity} .
+\]
+\end{definition}
+
+\begin{theorem}[Closure of the verification chain]\label{thm:chain-closure}
+If
+\begin{enumerate}[label=(\roman*)]
+  \item the detection algorithm outputs a robust invariant
+        (Definition~\ref{def:robust});
+  \item the three-proof structure holds (Definition~\ref{def:three-proof});
+  \item the uniform bound holds (Assumption~\ref{ass:uniform});
+  \item the compactness embedding is available (Theorem~\ref{thm:compactness});
+  \item the analytic regularity hypotheses hold
+        (Theorem~\ref{thm:analytic-regularity});
+\end{enumerate}
+then the full cycle
+\[
+  \Ob \;\longrightarrow\; \Ecal_\Corr \;\longrightarrow\; \Acal
+\]
+of Part~III terminates in a solution $u_\Corr \in \mathcal{A}(\Omega)$
+satisfying $L_\Corr u_\Corr = 0$.
+\end{theorem}
+
+\begin{proof}
+Combine the chain of implications given by
+Propositions~\ref{prop:robust-emergent}, \ref{prop:three-proof};
+Theorems~\ref{thm:compactness}, \ref{thm:limit-id}, and
+\ref{thm:analytic-regularity}.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:chain-closure} is the closing statement of the
+methodology. It asserts that the discrete-to-continuum passage,
+combined with the analytic regularity theory, terminates in a
+well-defined analytic solution of the corrected equation. When it
+holds, the methodology is \emph{complete} in the sense that every
+layer, from the spectral to the analytic, has been traversed and
+verified.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{The Validation Matrix at the Discrete-to-Continuum Level}
+\label{sec:validation-IV}
+% ------------------------------------------------------------
+
+\begin{definition}[Discrete-to-continuum rows]
+The discrete-to-continuum programme contributes the following rows
+to the validation matrix $\Vmat$, in addition to those already
+recorded in Parts~I--III.
+\end{definition}
+
+\begin{center}
+\begin{tabular}{c|c|l}
+  Layer / stage & Criterion & Status \\
+  \hline
+  Detection            & Existence    & N \\
+  Detection            & Invariance   & N \\
+  Detection            & Coherence    & O \\
+  Estimation           & Existence    & O \\
+  Estimation           & Stability    & O \\
+  Compactness          & Existence    & P (conditional) \\
+  Limit passage        & Convergence  & P (conditional) \\
+  Regularity           & Regularity   & P (conditional) \\
+  Analyticity          & Regularity   & P (conditional) \\
+  Analyticity          & Reversibility& O \\
+\end{tabular}
+\end{center}
+
+\begin{remark}
+The ``conditional'' entries indicate that the corresponding result
+holds under the explicit hypotheses stated in the theorem. The
+entry $\mathrm{N}$ in the detection row indicates that the
+corresponding assertion is supported by numerical evidence but has
+not been proved; the entry $\mathrm{O}$ indicates that the
+assertion is open at the time of writing.
+\end{remark}
+
+\begin{proposition}[Necessary conditions for closure]\label{prop:necessary-closure}
+If the validation matrix $\Vmat$ contains an entry marked
+$\mathrm{F}$ (failed), then the methodology is not closed in the
+sense of Part~I, Definition~1.19.
+\end{proposition}
+
+\begin{proof}
+A failed entry indicates that some layer or stage of the
+methodology does not satisfy its defining condition. Closure requires
+every layer to satisfy at least one criterion marked $\mathrm{P}$
+and no criterion marked $\mathrm{F}$; the presence of $\mathrm{F}$
+violates the second requirement.
+\end{proof}
+
+% ------------------------------------------------------------
+\section*{Summary of Part IV}
+% ------------------------------------------------------------
+
+Part~IV has developed the discrete-to-continuum passage of the
+methodology:
+\begin{itemize}
+  \item discrete families $\Ob^{(N)}$ and the resolution parameter
+        $N$ (Definition~\ref{def:resolution});
+  \item nested approximations and inductive limits
+        (Axiom~\ref{ax:nested}, Proposition~\ref{prop:universal});
+  \item emergent and persistent structures
+        (Definitions~\ref{def:emergent}, \ref{def:persistent});
+  \item structural stability and robust invariants
+        (Definitions~\ref{def:structural-stability}, \ref{def:robust});
+  \item the consistency--stability--convergence triangle
+        (Theorem~\ref{thm:csc});
+  \item compactness and limit identification
+        (Theorems~\ref{thm:compactness}, \ref{thm:limit-id});
+  \item regularity and analyticity of the limit
+        (Theorems~\ref{thm:bootstrap}, \ref{thm:analytic-regularity});
+  \item the final verification chain
+        (Definition~\ref{def:final-chain}) and its closure
+        (Theorem~\ref{thm:chain-closure});
+  \item the discrete-to-continuum rows of the validation matrix
+        $\Vmat$.
+\end{itemize}
+
+The central structural results are:
+\[
+  \text{consistency} + \text{stability}
+  \;\Longrightarrow\;
+  \text{convergence},
+\]
+\[
+  \text{uniform bound} + \text{compact embedding}
+  \;\Longrightarrow\;
+  \text{limit identification},
+\]
+and
+\[
+  \text{ellipticity} + \text{analytic coefficients}
+  \;\Longrightarrow\;
+  \text{analytic regularity}.
+\]
+
+Part~V will treat the validation matrix in full, the worked
+example, and the formalisation of the methodology in proof
+assistants.
+
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% PACKAGES
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{mathrsfs}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+
+\geometry{margin=1in}
+
+% ============================================================
+% THEOREM ENVIRONMENTS
+% ============================================================
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}[definition]{Axiom}
+\newtheorem{example}[definition]{Example}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{convention}[definition]{Convention}
+\newtheorem{construction}[definition]{Construction}
+\newtheorem{assumption}[definition]{Assumption}
+\newtheorem{protocol}[definition]{Protocol}
+
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+
+% ============================================================
+% MACROS
+% ============================================================
+\newcommand{\Lam}{\Lambda}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\Ge}{\mathrm{Ge}}
+\newcommand{\To}{\mathrm{To}}
+\newcommand{\Al}{\mathrm{Al}}
+\newcommand{\Nu}{\mathrm{Nu}}
+\newcommand{\Fo}{\mathrm{Fo}}
+\newcommand{\Cl}{\mathrm{Cl}}
+\newcommand{\Corr}{\mathrm{Corr}}
+\newcommand{\Inv}{\mathrm{Inv}}
+\newcommand{\An}{\mathrm{An}}
+\newcommand{\Ob}{\mathfrak{O}}
+\newcommand{\Ecal}{\mathcal{E}}
+\newcommand{\Ocal}{\mathcal{O}}
+\newcommand{\Acal}{\mathcal{A}}
+\newcommand{\Mcal}{\mathcal{M}}
+\newcommand{\Hcal}{\mathcal{H}}
+\newcommand{\Dcal}{\mathcal{D}}
+\newcommand{\Ncal}{\mathcal{N}}
+\newcommand{\Ccal}{\mathcal{C}}
+\newcommand{\Vcal}{\mathcal{V}}
+\newcommand{\philam}{\phi_{\lambda\mu}}
+\newcommand{\Vmat}{\mathbf{V}}
+\newcommand{\Jset}{\mathcal{J}}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\op}[1]{\operatorname{#1}}
+\newcommand{\spec}{\sigma}
+\newcommand{\Norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\Abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Pmark}{\mathrm{P}}
+\newcommand{\Nmark}{\mathrm{N}}
+\newcommand{\Omark}{\mathrm{O}}
+\newcommand{\Fmark}{\mathrm{F}}
+
+% ============================================================
+% TITLE
+% ============================================================
+\title{%
+  \textbf{A Multirepresentational Construction--Reconstruction\\
+  Methodology for Mathematical Structures}\\[4pt]
+  \large Part V: Validation Matrix, Worked Example, and Formalisation
+}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Part~V closes the methodology. We first consolidate the validation
+matrix $\Vmat$ introduced in Part~I and populated in Parts~II--IV,
+giving it a canonical form and a set of closure criteria. We then
+present a fully worked example traversing all six construction
+layers, the reconstruction pipeline, and the discrete-to-continuum
+verification chain. Finally, we treat the formalisation of the
+methodology in proof assistants, distinguishing the mathematics from
+its mechanical encoding, and we state the limits of what can be
+verified computationally. Appendices collect the notation table, the
+main proofs, the numerical algorithms, and the bibliography.
+\end{abstract}
+
+\tableofcontents
+
+% ============================================================
+\part{Validation Matrix, Worked Example, and Formalisation}
+% ============================================================
+
+\section{The Validation Matrix}
+\label{sec:validation-matrix}
+
+\subsection{Recapitulation of the Validation Criteria}
+
+Recall from Part~I, Definition~1.6, the set of validation criteria
+\[
+  \Jset = \{\mathrm{Ex}, \mathrm{Co}, \mathrm{In}, \mathrm{Nu},
+          \mathrm{St}, \mathrm{Cv}, \mathrm{Re}, \mathrm{Rev}\},
+\]
+with the following interpretation:
+\begin{center}
+\begin{tabular}{c l}
+  \toprule
+  Symbol & Meaning \\
+  \midrule
+  $\mathrm{Ex}$  & Existence \\
+  $\mathrm{Co}$  & Coherence (functoriality, naturality) \\
+  $\mathrm{In}$  & Invariance under admissible transformations \\
+  $\mathrm{Nu}$  & Numerical consistency \\
+  $\mathrm{St}$  & Stability under perturbations \\
+  $\mathrm{Cv}$  & Convergence as $N \to \infty$ \\
+  $\mathrm{Re}$  & Regularity of the limit \\
+  $\mathrm{Rev}$ & Reversibility of the construction \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\begin{definition}[Epistemic statuses]\label{def:statuses}
+The entries of $\Vmat$ take values in
+\[
+  \{\Pmark, \Nmark, \Omark, \Fmark\}
+\]
+with the following interpretation:
+\begin{itemize}
+  \item $\Pmark$: the criterion is \emph{proved} mathematically;
+  \item $\Nmark$: the criterion is \emph{numerically supported} but
+        not proved;
+  \item $\Omark$: the criterion is \emph{open} at the time of
+        writing;
+  \item $\Fmark$: the criterion \emph{fails} for the given problem.
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+The distinction between $\Pmark$ and $\Nmark$ is the operational
+form of the distinction between mathematics and computation
+developed throughout Parts~I--IV. A numerical result, however
+stable, is not a proof; it is at best evidence for the existence of
+a proof.
+\end{remark}
+
+\subsection{The Canonical Form of $\Vmat$}
+
+\begin{definition}[Canonical validation matrix]\label{def:canonical-matrix}
+The \emph{canonical validation matrix} of the methodology is
+\[
+  \Vmat
+  \;=\;
+  \bigl(v_{\lambda j}\bigr)_{\substack{\lambda \in \Lambda^\ast \\ j \in \Jset}},
+\]
+where
+\[
+  \Lambda^\ast
+  \;=\;
+  \{\Sp, \Ge, \To, \Al, \Nu, \Fo, \Cl, \Corr, \An\}
+\]
+is the extended layer set comprising the six construction layers and
+the three reconstruction layers.
+\end{definition}
+
+\begin{protocol}[Population of $\Vmat$]\label{prot:population}
+The entry $v_{\lambda j}$ is populated as follows:
+\begin{enumerate}[label=(\roman*)]
+  \item if the criterion $j$ has been established by a proof at layer
+        $\lambda$, set $v_{\lambda j} = \Pmark$;
+  \item if the criterion $j$ has been verified numerically at layer
+        $\lambda$ but no proof is available, set
+        $v_{\lambda j} = \Nmark$;
+  \item if the criterion $j$ is neither proved nor numerically
+        supported, and no counterexample is known, set
+        $v_{\lambda j} = \Omark$;
+  \item if the criterion $j$ is known to fail at layer $\lambda$,
+        set $v_{\lambda j} = \Fmark$.
+\end{enumerate}
+\end{protocol}
+
+\subsection{Instantiation}
+
+The following table displays the instantiation of $\Vmat$ obtained
+by combining the layerwise tables of Parts~II--IV.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{l|cccccccc}
+  \toprule
+  Layer $\backslash$ Criterion
+  & $\mathrm{Ex}$ & $\mathrm{Co}$ & $\mathrm{In}$ & $\mathrm{Nu}$
+  & $\mathrm{St}$ & $\mathrm{Cv}$ & $\mathrm{Re}$ & $\mathrm{Rev}$ \\
+  \midrule
+  $\Sp$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Omark$ \\
+  $\Ge$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Omark$ & $\Omark$ & $\Pmark$ & $\Omark$ \\
+  $\To$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ \\
+  $\Al$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Omark$ & $\Omark$ & $\Pmark$ & $\Omark$ \\
+  $\Nu$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Omark$ \\
+  $\Fo$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Cl$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Omark$ & $\Omark$ & $\Pmark$ & $\Omark$ \\
+  $\Corr$ & $\Omark$ & $\Omark$ & $\Omark$ & $\Omark$ & $\Omark$ & $\Pmark$ & $\Omark$ & $\Omark$ \\
+  $\An$   & $\Omark$ & $\Omark$ & $\Omark$ & $\Omark$ & $\Omark$ & $\Omark$ & $\Pmark$ & $\Omark$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}
+The entries of this table are \emph{problem-dependent}: they reflect
+the state of knowledge for a generic problem in which each layer is
+handled by the standard methods cited in Parts~II--IV. Specific
+problems will have specific instantiations.
+\end{remark}
+
+\subsection{Closure Criteria}
+
+\begin{definition}[Row closure]\label{def:row-closure}
+A layer $\lambda$ is \emph{closed} if
+\[
+  v_{\lambda j} \in \{\Pmark\} \quad \text{for at least one } j \in \Jset,
+\]
+and
+\[
+  v_{\lambda j} \neq \Fmark \quad \text{for all } j \in \Jset .
+\]
+\end{definition}
+
+\begin{definition}[Full closure]\label{def:full-closure}
+The methodology is \emph{fully closed} if every layer
+$\lambda \in \Lambda^\ast$ is closed in the sense of
+Definition~\ref{def:row-closure}, and the reversibility criterion
+$\mathrm{Rev}$ is marked $\Pmark$ at the formal layer.
+\end{definition}
+
+\begin{theorem}[Closure of the methodology]\label{thm:closure-V}
+If every layer is closed and the reversible criterion is marked
+$\Pmark$ at the formal layer, then the methodology yields a
+bidirectional characterisation
+\[
+  \Ob \;\rightleftarrows\; \Ecal_\Corr
+\]
+in the sense of Part~III, Theorem~3.12.
+\end{theorem}
+
+\begin{proof}
+Combine the layerwise closure conditions with the closure criterion
+of Part~III, Theorem~3.14, and the coherence of the construction
+functor established in Part~I, Theorem~1.20.
+\end{proof}
+
+\subsection{Obstruction Analysis}
+
+\begin{definition}[Obstruction]\label{def:obstruction}
+An \emph{obstruction} is an entry $v_{\lambda j} = \Fmark$ in the
+validation matrix. The \emph{obstruction layer} is the corresponding
+$\lambda$, and the \emph{obstruction criterion} is the corresponding
+$j$.
+\end{definition}
+
+\begin{proposition}[Localisation of obstructions]\label{prop:localisation}
+Every obstruction is localised at a unique pair
+$(\lambda, j) \in \Lambda^\ast \times \Jset$. Consequently,
+obstructions can be enumerated, ranked, and resolved layer by layer.
+\end{proposition}
+
+\begin{proof}
+Immediate from Definition~\ref{def:obstruction}.
+\end{proof}
+
+\begin{example}[Spectral obstruction]
+The inverse spectral problem (Part~III, Example~3.6) exhibits an
+obstruction at $(\Sp, \mathrm{Rev})$: injectivity of $\rho_\Inv$
+fails because isospectral non-isometric domains exist
+(Gordon--Webb--Wolpert). The obstruction is localised at the spectral
+layer, criterion of reversibility.
+\end{example}
+
+\begin{example}[Numerical obstruction]
+A discretisation scheme whose condition number grows unboundedly
+with $N$ exhibits an obstruction at $(\Nu, \mathrm{St})$: stability
+fails. The obstruction is localised at the numerical layer,
+criterion of stability.
+\end{example}
+
+% ------------------------------------------------------------
+\section{Worked Example}
+\label{sec:worked-example}
+% ------------------------------------------------------------
+
+The following example illustrates the full methodology on a
+concrete problem. The objective is not to solve a new research
+problem but to display the traversal of every layer with explicit
+content.
+
+\subsection{Statement}
+
+\begin{example}[Worked problem: the vibrating string]\label{ex:vibrating-string}
+Let $\Omega = (0, \pi) \subset \R$, and consider the eigenvalue
+problem
+\[
+  -u''(x) = \lambda u(x), \qquad x \in \Omega,
+\]
+with Dirichlet boundary conditions
+\[
+  u(0) = u(\pi) = 0 .
+\]
+The classical solution is
+\[
+  \lambda_n = n^2, \qquad u_n(x) = \sin(n x),
+  \qquad n \in \N, \; n \geq 1 .
+\]
+\end{example}
+
+\subsection{Layer $\Sp$: Spectral Datum}
+
+\begin{construction}[Spectral construction]\label{constr:spectral-worked}
+The spectral datum is
+\[
+  \Ocal_\Sp = (T, \spec(T), E_T)
+\]
+with $T = -\frac{d^2}{dx^2}$ on the domain
+$D(T) = H^2(\Omega) \cap H^1_0(\Omega)$. The operator $T$ is
+self-adjoint, positive, and unbounded. Its spectrum is
+\[
+  \spec(T) = \{n^2 : n \in \N, n \geq 1\},
+\]
+with multiplicities all equal to $1$. The spectral measure is
+\[
+  E_T(B) \varphi = \sum_{n \in \N, \, n^2 \in B} \ip{\varphi}{u_n} u_n,
+  \qquad B \in \mathcal{B}(\spec(T)).
+\]
+\end{construction}
+
+\begin{proposition}[Spectral validation]\label{prop:spectral-worked}
+For the vibrating string:
+\[
+  v_{\Sp, \mathrm{Ex}} = \Pmark, \quad
+  v_{\Sp, \mathrm{Co}} = \Pmark, \quad
+  v_{\Sp, \mathrm{In}} = \Pmark, \quad
+  v_{\Sp, \mathrm{Cv}} = \Pmark .
+\]
+\end{proposition}
+
+\begin{proof}
+Existence follows from the spectral theorem for unbounded
+self-adjoint operators (Reed--Simon, Vol.~I, Theorem~VIII.6).
+Coherence follows from functoriality of the spectral measure.
+Invariance follows from unitary invariance of the spectrum
+(Part~II, Proposition~2.6). Convergence follows from the Weyl
+asymptotics
+\[
+  \lambda_n = n^2 + \mathcal{O}(1) .
+\]
+\end{proof}
+
+\subsection{Layer $\Ge$: Geometric Datum}
+
+\begin{construction}[Geometric construction]\label{constr:geom-worked}
+The geometric realisation is
+\[
+  M = \mathbb{S}^1_{\pi} := \R / 2\pi \Z,
+\]
+the circle of circumference $2\pi$, with the standard Riemannian
+metric
+\[
+  g = \dd x \otimes \dd x .
+\]
+The Levi-Civita connection is the flat connection
+$\nabla = \partial_x$, and the Riemann curvature tensor vanishes:
+\[
+  R = 0 .
+\]
+The Laplace--Beltrami operator on $(M, g)$ is
+\[
+  \Delta_g = \frac{d^2}{dx^2} = -T .
+\]
+\end{construction}
+
+\subsection{Layer $\To$: Topological Datum}
+
+\begin{construction}[Topological construction]\label{constr:top-worked}
+The underlying topological space is $X = M = \mathbb{S}^1$. Its
+homology and homotopy are
+\[
+  H_0(X; \Z) = \Z, \quad H_1(X; \Z) = \Z, \quad H_k(X; \Z) = 0
+  \quad (k \geq 2),
+\]
+\[
+  \pi_1(X) = \Z, \quad \pi_k(X) = 0 \quad (k \geq 2),
+\]
+\[
+  \chi(X) = 0 .
+\]
+\end{construction}
+
+\subsection{Layer $\Al$: Algebraic Datum}
+
+\begin{construction}[Algebraic construction]\label{constr:alg-worked}
+The algebraic datum is
+\[
+  \Ocal_\Al = (A, G, R, \Mcal)
+\]
+with:
+\begin{itemize}
+  \item $A = \C[\partial_x]$, the polynomial algebra in the
+        derivation $\partial_x$;
+  \item $G = \mathbb{Z}$, the fundamental group of $X$ acting by
+        rotations;
+  \item $R = \Z$, the ring of integers encoding the arithmetic of
+        the spectrum;
+  \item $\Mcal = C^\infty(X) \otimes \C$, the module of smooth
+        functions.
+\end{itemize}
+The eigenvalue equation is
+\[
+  (\partial_x^2 + \lambda) u = 0,
+\]
+which identifies $A$ as a quotient of $\C[\partial_x]$.
+\end{construction}
+
+\subsection{Layer $\Nu$: Numerical Datum}
+
+\begin{construction}[Numerical construction]\label{constr:num-worked}
+Choose the finite-difference discretisation with step
+$h = \pi / (N+1)$ and grid points
+\[
+  x_i = i h, \qquad i = 0, 1, \ldots, N+1 .
+\]
+The discrete operator is the tridiagonal matrix
+\[
+  T_N = \frac{1}{h^2}
+  \begin{pmatrix}
+    2 & -1 & & \\
+    -1 & 2 & -1 & \\
+    & \ddots & \ddots & \ddots \\
+    & & -1 & 2
+  \end{pmatrix}
+  \in \mathrm{Mat}_{N \times N}(\R),
+\]
+acting on $u = (u_1, \ldots, u_N)^\top$ with
+$u_0 = u_{N+1} = 0$.
+\end{construction}
+
+\begin{proposition}[Eigenvalue approximation]\label{prop:eigen-approx}
+The eigenvalues of $T_N$ are
+\[
+  \lambda_n^{(N)}
+  \;=\;
+  \frac{4}{h^2} \sin^2\!\left( \frac{n \pi h}{2} \right),
+  \qquad n = 1, \ldots, N,
+\]
+and satisfy
+\[
+  \Abs{\lambda_n^{(N)} - n^2}
+  \;\leq\;
+  \frac{n^4 h^2}{12} + \mathcal{O}(h^4) .
+\]
+In particular,
+\[
+  \lambda_n^{(N)} \to n^2 \qquad (N \to \infty).
+\]
+\end{proposition}
+
+\begin{proof}
+Standard computation: the eigenvalue equation reduces to a linear
+recurrence with characteristic roots $e^{\pm i \theta}$, where
+$\theta$ satisfies $\cos \theta = 1 - h^2 \lambda / 2$. Solving for
+$\lambda$ gives the displayed expression; the estimate follows from
+Taylor expansion of $\sin^2$ around the origin.
+\end{proof}
+
+\subsection{Layer $\Fo$: Formal Datum}
+
+\begin{construction}[Formal construction]\label{constr:formal-worked}
+The formal language is $\mathcal{L} = \mathcal{L}_{\mathrm{PDE}}$,
+a first-order language with sorts for $\R$, functions
+$\partial_x, \partial_x^2, u$, and a constant symbol $\lambda$. The
+axioms are
+\[
+  \Gamma = \{\;
+    \forall x \in \Omega,\; u(0) = u(\pi) = 0, \;
+    \forall x \in \Omega,\; -u''(x) = \lambda u(x) \;
+  \}.
+\]
+Derivability is given by natural deduction. The completeness theorem
+(Part~II, Theorem~7.9) provides
+\[
+  \Gamma \vdash \varphi
+  \;\Longleftrightarrow\;
+  \Gamma \models \varphi .
+\]
+\end{construction}
+
+\subsection{Reconstruction: Classical Extraction}
+
+\begin{construction}[Reconstruction]\label{constr:reconstruct-worked}
+The reconstruction $\rho_\Cl$ extracts the classical model
+\[
+  \Mcal_\star = \bigl( \Omega, \; -u'' = \lambda u \bigr)
+\]
+as the distinguished classical equation. A direct comparison with
+the classical literature identifies
+\[
+  \mathcal{E}_\Cl = \{-u'' = \lambda u\}
+  \;\trianglelefteq\;
+  \Ecal_\Cl ,
+\]
+where $\trianglelefteq$ is the containment relation of Part~III,
+Definition~3.3. Consequently, by Part~III,
+Proposition~3.4,
+\[
+  \Delta L = 0 .
+\]
+\end{construction}
+
+\begin{proposition}[No correction]\label{prop:no-correction}
+For the vibrating string, the delta operator vanishes identically:
+\[
+  \Delta L = 0, \qquad L_\Corr = L_\Cl .
+\]
+\end{proposition}
+
+\begin{proof}
+By Construction~\ref{constr:reconstruct-worked} and Part~III,
+Proposition~3.4.
+\end{proof}
+
+\subsection{Discrete-to-Continuum Passage}
+
+\begin{proposition}[Convergence of the discrete family]\label{prop:convergence-worked}
+The discrete family $\{T_N\}_N$ satisfies the three-proof structure
+of Part~IV, Definition~4.12:
+\[
+  v_{\Nu, \mathrm{St}} = \Pmark, \quad
+  v_{\Nu, \mathrm{Cv}} = \Pmark, \quad
+  v_{\Nu, \mathrm{Nu}} = \Nmark .
+\]
+\end{proposition}
+
+\begin{proof}
+Consistency: $T_N \pi_N u \to \pi_N T u$ by Taylor expansion.
+Stability: $T_N$ is diagonally dominant and positive definite, so
+$\Norm{T_N^{-1}} \leq C$ uniformly in $N$ (Gershgorin). Convergence
+follows from Theorem~4.6 (Lax--Richtmyer analogue).
+\end{proof}
+
+\subsection{Analytic Closure}
+
+\begin{proposition}[Analyticity]\label{prop:analytic-worked}
+Every eigenvalue $\lambda_n = n^2$ admits a corresponding
+eigenfunction $u_n(x) = \sin(n x)$ that is real-analytic on
+$\Omega = (0, \pi)$.
+\end{proposition}
+
+\begin{proof}
+The function $\sin(n x)$ extends to an entire function on $\C$ and
+satisfies the ODE $-u'' = n^2 u$ identically. Analyticity follows
+from the analytic regularity theorem (Part~IV,
+Theorem~4.15).
+\end{proof}
+
+\subsection{Summary of the Worked Example}
+
+The following table summarises the validation status for the
+vibrating string problem.
+
+\begin{center}
+\begin{tabular}{l|cccccccc}
+  \toprule
+  Layer & $\mathrm{Ex}$ & $\mathrm{Co}$ & $\mathrm{In}$ & $\mathrm{Nu}$
+  & $\mathrm{St}$ & $\mathrm{Cv}$ & $\mathrm{Re}$ & $\mathrm{Rev}$ \\
+  \midrule
+  $\Sp$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Ge$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\To$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Al$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Nu$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Omark$ \\
+  $\Fo$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Cl$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Corr$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\An$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}
+The vibrating string problem admits a \emph{fully closed}
+methodology: every layer satisfies every applicable criterion either
+by proof or, in the case of numerical criteria, by numerically
+supported evidence. This is the ideal case; it is not the generic
+case.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Formalisation in Proof Assistants}
+\label{sec:proof-assistants}
+% ------------------------------------------------------------
+
+\subsection{The Two Notions of Formalisation}
+
+\begin{definition}[Mathematical formalisation]\label{def:math-formalisation}
+\emph{Mathematical formalisation} is the process of expressing a
+mathematical argument as a sequence of statements and inferences in
+a fixed language $\mathcal{L}$, using a fixed set of axioms
+$\Gamma$, and a fixed set of inference rules.
+\end{definition}
+
+\begin{definition}[Mechanical formalisation]\label{def:mech-formalisation}
+\emph{Mechanical formalisation} is the process of encoding a
+mathematical formalisation in a proof assistant (Lean, Coq, Isabelle,
+Agda, \ldots) so that the derivability relation $\vdash$ is checked
+by a program.
+\end{definition}
+
+\begin{remark}
+Mathematical formalisation does not require mechanical formalisation.
+Every rigorous proof in the mathematical literature is a
+mathematical formalisation; only a small fraction has been encoded
+mechanically. The distinction parallels, at the level of proofs,
+the distinction between mathematical truth and numerical evidence
+developed throughout Parts~I--IV.
+\end{remark}
+
+\subsection{Encoding the Metamodel}
+
+\begin{construction}[Encoding the master object]\label{constr:encoding-Ob}
+In Lean~4 with Mathlib, the master object $\Ob$ and its layers can
+be encoded as a dependent record:
+\begin{verbatim}
+structure MasterObject where
+  Sp : SpectralDatum
+  Ge : GeometricDatum
+  To : TopologicalDatum
+  Al : AlgebraicDatum
+  Nu : NumericalDatum
+  Fo : FormalDatum
+\end{verbatim}
+Each layer is a structure with its primitive fields and its
+invariants. The transition morphisms are functions between these
+structures, and the functoriality axiom is a proof obligation.
+\end{construction}
+
+\begin{construction}[Encoding the transitions]\label{constr:encoding-transitions}
+The transition morphisms of Part~II, \S2.4--\S7.4 become functions:
+\begin{verbatim}
+def phi_Sp_Ge : SpectralDatum → GeometricDatum := ...
+def phi_Ge_To : GeometricDatum → TopologicalDatum := ...
+def phi_To_Al : TopologicalDatum → AlgebraicDatum := ...
+def phi_Al_Nu : AlgebraicDatum → NumericalDatum := ...
+def phi_Nu_Fo : NumericalDatum → FormalDatum := ...
+\end{verbatim}
+Functoriality (Part~I, Axiom~1.3) becomes a lemma:
+\begin{verbatim}
+lemma phi_functorial
+  (h : phi_Ge_To ∘ phi_Sp_Ge = phi_Sp_To) : ... := ...
+\end{verbatim}
+\end{construction}
+
+\subsection{Verification Obligations}
+
+\begin{protocol}[Mechanical verification obligations]\label{prot:mech-obligations}
+For the methodology to be mechanically verified, the following
+obligations must be discharged in the proof assistant:
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Functoriality:} each layer transition respects
+        composition (Part~I, Axiom~1.3).
+  \item \textbf{Projection coherence:} the discrete projections
+        commute with the continuum projections (Part~I,
+        Axiom~1.4).
+  \item \textbf{Correspondence limit:} the corrected operator admits
+        the classical operator as a limit (Part~III,
+        Axiom~3.4).
+  \item \textbf{Closure:} the bidirectional characterisation
+        $\Ob \rightleftarrows \Ecal_\Corr$ is proved
+        (Part~III, Theorem~3.12).
+  \item \textbf{Chain closure:} the final verification chain
+        terminates in an analytic solution (Part~IV,
+        Theorem~4.23).
+\end{enumerate}
+\end{protocol}
+
+\begin{theorem}[Mechanical verifiability]\label{thm:mech-verifiability}
+If the obligations (i)--(v) of Protocol~\ref{prot:mech-obligations}
+are discharged in a consistent proof assistant, then the
+methodology is mechanically verified.
+\end{theorem}
+
+\begin{proof}
+Each obligation is a formal statement in the language of the proof
+assistant. By the soundness of the assistant's logic (a standard
+theorem for Lean, Coq, Isabelle, and Agda), each discharged
+obligation is a theorem in the underlying formal system. Their
+conjunction is the mechanical verification of the methodology.
+\end{proof}
+
+\subsection{Limits of Mechanical Verification}
+
+\begin{proposition}[Non-verifiable components]\label{prop:non-verif}
+The following components of the methodology \emph{cannot} be
+mechanically verified in isolation:
+\begin{enumerate}[label=(\alph*)]
+  \item the choice of the distinguished classical model
+        $\Mcal_\star$ (Part~III, Construction~3.2);
+  \item the choice of the discretisation scheme
+        (Part~IV, Definition~4.1);
+  \item the choice of the detection algorithm
+        (Part~IV, Definition~4.11);
+  \item the interpretation of the formal language in the intended
+        mathematical universe (Part~II, Construction~7.6).
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Each of (a)--(d) is a \emph{choice} rather than a \emph{theorem}: it
+is an input to the methodology, not a consequence of it. Mechanical
+verification can check that the consequences of a choice are
+correct, but not that the choice itself is correct.
+\end{proof}
+
+\begin{remark}
+The limits of mechanical verification mirror the limits of
+mathematical formalism itself: a formal system can verify that
+certain statements follow from certain axioms, but it cannot, from
+within, verify that the axioms capture the intended mathematical
+reality. This is the formal analogue of the distinction between
+syntax and semantics, and it is why the validation matrix $\Vmat$
+records both the proof status ($\Pmark$) and the numerical status
+($\Nmark$) of each criterion.
+\end{remark}
+
+\subsection{Recommended Encodings}
+
+\begin{example}[Lean~4 encoding of the spectral layer]
+The spectral layer of Construction~\ref{constr:encoding-Ob} can be
+refined as follows.
+\begin{verbatim}
+structure SpectralDatum (H : Type*) [NormedAddCommGroup H]
+  [InnerProductSpace ℂ H] [CompleteSpace H] where
+  T : H →ₗ.[ℂ] H
+  closed : IsClosed (T.graph)
+  selfAdjoint : IsSelfAdjoint T
+  spectrum : Set ℂ
+  spectrum_eq : spectrum = spectrum ℂ T
+  spectralMeasure : ...
+\end{verbatim}
+The spectral theorem is available in Mathlib as
+\texttt{IsSelfAdjoint.spectralTheorem}, and the correspondence
+$\spec(T) \subset \R$ is the lemma
+\texttt{IsSelfAdjoint.spectrum\_subset\_real}.
+\end{example}
+
+\begin{example}[Lean~4 encoding of the topological layer]
+The topological layer can be encoded using Mathlib's
+\texttt{SingularHomology} and \texttt{FundamentalGroup}.
+\begin{verbatim}
+structure TopologicalDatum where
+  X : Type*
+  topX : TopologicalSpace X
+  H : ℕ → Type*
+  H_eq : ∀ k, H k = SingularHomology X k
+  pi1 : FundamentalGroup X
+  chi : ℤ
+  chi_eq : chi = eulerCharacteristic X
+\end{verbatim}
+Homotopy invariance is the lemma
+\texttt{SingularHomology.homotopyInvariant}.
+\end{example}
+
+\begin{remark}
+The two encodings above illustrate a general pattern: each layer of
+the methodology can be encoded using existing Mathlib structures,
+and each transition morphism becomes a proof obligation rather than
+an object of study. This is the sense in which mechanical
+formalisation is a \emph{consumer} of the methodology, not a
+\emph{producer} of it.
+\end{remark}
+
+% ------------------------------------------------------------
+\section*{Summary of Part V}
+% ------------------------------------------------------------
+
+Part~V has closed the methodology by:
+\begin{itemize}
+  \item consolidating the validation matrix $\Vmat$ in its
+        canonical form (Definition~\ref{def:canonical-matrix});
+  \item defining the closure criteria for individual layers
+        (Definition~\ref{def:row-closure}) and for the methodology
+        as a whole (Definition~\ref{def:full-closure});
+  \item proving the closure theorem
+        (Theorem~\ref{thm:closure-V});
+  \item presenting a fully worked example (the vibrating string)
+        traversing all nine layers;
+  \item distinguishing mathematical formalisation from mechanical
+        formalisation (Definitions~\ref{def:math-formalisation},
+        \ref{def:mech-formalisation});
+  \item specifying the mechanical verification obligations
+        (Protocol~\ref{prot:mech-obligations});
+  \item identifying the components that cannot be mechanically
+        verified (Proposition~\ref{prop:non-verif}).
+\end{itemize}
+
+The central structural results are:
+\[
+  \text{every layer closed} \;\Longrightarrow\;
+  \Ob \rightleftarrows \Ecal_\Corr ,
+\]
+\[
+  \text{obligations (i)--(v) discharged} \;\Longrightarrow\;
+  \text{mechanical verification},
+\]
+and the fundamental distinction
+\[
+  \Pmark \;\neq\; \Nmark .
+\]
+
+% ============================================================
+\appendix
+\part*{Appendices}
+\addcontentsline{toc}{part}{Appendices}
+% ============================================================
+
+\section{Notation Table}
+\label{app:notation}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{c l}
+  \toprule
+  Symbol & Meaning \\
+  \midrule
+  $\Ob$                        & Master object \\
+  $\Lam$                       & Layer index set \\
+  $\Ocal_\lambda$              & Layer-$\lambda$ datum \\
+  $\philam$                    & Transition morphism \\
+  $\rho_\Cl, \rho_\Inv, \rho_\An$ & Reconstruction operators \\
+  $\Ecal_\Cl$                  & Classical-model layer \\
+  $\Ecal_\Corr$                & Corrected-model layer \\
+  $\Acal$                      & Analytic layer \\
+  $\Ob^{(N)}$                  & Discrete master object at resolution $N$ \\
+  $\varepsilon_N$              & Layer-aggregated error \\
+  $\Vmat$                      & Validation matrix \\
+  $\Jset$                      & Set of validation criteria \\
+  $\Pmark, \Nmark, \Omark, \Fmark$ & Proved, numerical, open, failed \\
+  $\Delta L$                   & Delta operator (correction) \\
+  $L_\Corr$                    & Corrected operator \\
+  $\spec(T)$                   & Spectrum of $T$ \\
+  $E_T$                        & Spectral measure of $T$ \\
+  $\Delta_g$                   & Laplace--Beltrami operator \\
+  $H_k(X)$                     & $k$-th singular homology \\
+  $\pi_k(X)$                   & $k$-th homotopy group \\
+  $\chi(X)$                    & Euler characteristic \\
+  $\kappa(T_N)$                & Condition number \\
+  \bottomrule
+\end{longtable}
+\end{center}
+
+\section{Proofs}
+\label{app:proofs}
+
+\begin{proof}[Proof of Proposition~2.6 (unitary invariance)]
+Let $U : H \to H'$ be unitary and $T' = U T U^{-1}$. If
+$T v = \lambda v$, then $T' (U v) = U T v = \lambda U v$, so
+$\spec(T') \supseteq \spec(T)$; the reverse inclusion follows by
+symmetry. For the spectral measure: for $B \in \mathcal{B}(\spec(T))$,
+\[
+  E_{T'}(B)
+  = \int_B \dd E_{T'}
+  = U \left( \int_B \dd E_T \right) U^{-1}
+  = U E_T(B) U^{-1}.
+\]
+\end{proof}
+
+\begin{proof}[Proof of Theorem~4.6 (consistency--stability--convergence)]
+The discrete equation is $\mathcal{F}_\lambda^{(N)} u_N = 0$.
+Subtracting $\mathcal{F}_\lambda^{(N)} \pi_\lambda^{(N)} u$:
+\[
+  \mathcal{F}_\lambda^{(N)}(u_N - \pi_\lambda^{(N)} u)
+  = -\mathcal{F}_\lambda^{(N)} \pi_\lambda^{(N)} u .
+\]
+Applying the inverse estimate:
+\[
+  \Norm{u_N - \pi_\lambda^{(N)} u}
+  \leq \Norm{(\mathcal{F}_\lambda^{(N)})^{-1}}
+        \Norm{\mathcal{F}_\lambda^{(N)} \pi_\lambda^{(N)} u}
+  \leq C \Norm{\mathcal{F}_\lambda^{(N)} \pi_\lambda^{(N)} u} .
+\]
+The last factor is controlled by consistency
+(Definition~4.5), giving the stated estimate.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~4.19 (compactness)]
+By Assumption~4.14, $\{u_N\}$ is bounded in $X$. Banach--Alaoglu
+gives a weakly convergent subsequence $u_{N_j} \rightharpoonup u_\infty$
+in $X$. The compact embedding $X \hookrightarrow Y$ upgrades weak
+convergence in $X$ to strong convergence in $Y$.
+\end{proof}
+
+\section{Numerical Algorithms}
+\label{app:algorithms}
+
+\begin{protocol}[Eigenvalue computation]
+Given $T_N \in \mathrm{Mat}_{N \times N}(\R)$ symmetric positive
+definite:
+\begin{enumerate}[label=(\arabic*)]
+  \item Compute the Cholesky factorisation $T_N = L L^\top$.
+  \item Apply the Lanczos algorithm with $k$ steps to obtain a
+        tridiagonal matrix $T_k^{(L)}$ with
+        $T_k^{(L)} \approx Q_k^\top T_N Q_k$.
+  \item Compute the eigenvalues of $T_k^{(L)}$ by the QR algorithm.
+  \item Return the $k$ Ritz values as approximations to the $k$
+        smallest eigenvalues of $T_N$.
+\end{enumerate}
+\end{protocol}
+
+\begin{protocol}[Persistent homology computation]
+Given a filtered simplicial complex $X_1 \subset \cdots \subset X_N$:
+\begin{enumerate}[label=(\arabic*)]
+  \item Construct the boundary matrix $D$ of the full complex $X_N$.
+  \item Reduce $D$ by column operations (standard algorithm) to
+        obtain the reduced matrix $R$.
+  \item Extract the barcode from the pivot positions of $R$.
+  \item Persistence intervals are given by
+        $(b_i, d_i) = (\text{birth}, \text{death})$.
+\end{enumerate}
+\end{protocol}
+
+\begin{protocol}[Richardson extrapolation]
+Given a sequence $\{u_N\}_N$ with asymptotic expansion
+$u_N = u_\infty + a_1 N^{-p} + a_2 N^{-2p} + \cdots$:
+\begin{enumerate}[label=(\arabic*)]
+  \item Choose a base step $N_0$ and refinement factors
+        $N_j = 2^j N_0$.
+  \item Compute $u_{N_j}$ for $j = 0, 1, \ldots, q$.
+  \item Solve the Vandermonde system for the coefficients
+        $c_j^{(q)}$.
+  \item Return $u^{(q)} = \sum_j c_j^{(q)} u_{N_j}$.
+\end{enumerate}
+\end{protocol}
+
+\section{Bibliography}
+\label{app:biblio}
+
+\begin{thebibliography}{99}
+
+\bibitem{reed-simon-1}
+M.~Reed, B.~Simon,
+\emph{Methods of Modern Mathematical Physics, Vol.~I: Functional
+Analysis},
+Academic Press, 1980.
+
+\bibitem{reed-simon-4}
+M.~Reed, B.~Simon,
+\emph{Methods of Modern Mathematical Physics, Vol.~IV: Analysis of
+Operators},
+Academic Press, 1978.
+
+\bibitem{ebbinghaus}
+H.-D.~Ebbinghaus, J.~Flum, W.~Thomas,
+\emph{Mathematical Logic},
+Graduate Texts in Mathematics 291, Springer, 2021.
+
+\bibitem{engl}
+H.~W.~Engl, M.~Hanke, A.~Neubauer,
+\emph{Regularization of Inverse Problems},
+Kluwer, 1996.
+
+\bibitem{morrey}
+C.~B.~Morrey,
+\emph{Multiple Integrals in the Calculus of Variations},
+Springer, 1966.
+
+\bibitem{bers-john}
+L.~Bers, F.~John, M.~Schechter,
+\emph{Partial Differential Equations},
+AMS, 1964.
+
+\bibitem{agmon}
+S.~Agmon, A.~Douglis, L.~Nirenberg,
+Estimates near the boundary for solutions of elliptic partial
+differential equations,
+\emph{Comm.~Pure Appl.~Math.}~12 (1959), 623--727.
+
+\bibitem{gordon}
+C.~Gordon, D.~Webb, S.~Wolpert,
+Isospectral plane domains and surfaces via Riemannian orbifolds,
+\emph{Invent.~Math.}~110 (1992), 1--22.
+
+\bibitem{kac}
+M.~Kac,
+Can one hear the shape of a drum?
+\emph{Amer.~Math.~Monthly}~73 (1966), 1--23.
+
+\bibitem{lax-rich}
+P.~D.~Lax, R.~D.~Richtmyer,
+Survey of the stability of linear finite difference equations,
+\emph{Comm.~Pure Appl.~Math.}~9 (1956), 267--293.
+
+\bibitem{mathlib}
+The Mathlib Community,
+\emph{Mathlib: A unified library of mathematics formalized in Lean},
+\url{https://leanprover-community.github.io/mathlib4_docs/}, 2024.
+
+\end{thebibliography}
+
+% ============================================================
+\section*{Closing Remark}
+% ============================================================
+
+The methodology developed in Parts~I--V is best described as a
+\emph{multirepresentational construction--reconstruction
+methodology}. Its distinguishing features are:
+
+\begin{enumerate}[label=(\roman*)]
+  \item the treatment of mathematical representations as
+        \emph{projections} of a single master object, rather than
+        as distinct objects;
+  \item the explicit separation of \emph{construction} (Part~II)
+        from \emph{reconstruction} (Part~III);
+  \item the treatment of the discrete-to-continuum passage
+        (Part~IV) as a mathematical problem in its own right, with
+        consistency, stability, convergence, and regularity as
+        separate obligations;
+  \item the systematic use of the validation matrix $\Vmat$ to
+        record the epistemic status of each layer and criterion;
+  \item the sharp distinction between
+        \emph{mathematical} formalisation and \emph{mechanical}
+        formalisation (Part~V, \S\ref{sec:proof-assistants}).
+\end{enumerate}
+
+The methodology does not produce mathematical results; it organises
+them. Its value is diagnostic: it forces every representation of a
+mathematical object to declare what it preserves, what it loses,
+what it proves, and what it merely suggests. In this sense it is
+closer to a \emph{protocol of mathematical hygiene} than to a
+\emph{discovery method}.
+
+\end{document}

@@ -1,0 +1,1183 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% PACKAGES
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{mathrsfs}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{graphicx}
+
+\geometry{margin=1in}
+
+% ============================================================
+% THEOREM ENVIRONMENTS
+% ============================================================
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}[definition]{Axiom}
+\newtheorem{example}[definition]{Example}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{convention}[definition]{Convention}
+\newtheorem{construction}[definition]{Construction}
+\newtheorem{assumption}[definition]{Assumption}
+\newtheorem{protocol}[definition]{Protocol}
+
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+
+% ============================================================
+% MACROS (inherited from framework paper)
+% ============================================================
+\newcommand{\Lam}{\Lambda}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\Ge}{\mathrm{Ge}}
+\newcommand{\To}{\mathrm{To}}
+\newcommand{\Al}{\mathrm{Al}}
+\newcommand{\Nu}{\mathrm{Nu}}
+\newcommand{\Fo}{\mathrm{Fo}}
+\newcommand{\Cl}{\mathrm{Cl}}
+\newcommand{\Corr}{\mathrm{Corr}}
+\newcommand{\Inv}{\mathrm{Inv}}
+\newcommand{\An}{\mathrm{An}}
+\newcommand{\Ob}{\mathfrak{O}}
+\newcommand{\Ecal}{\mathcal{E}}
+\newcommand{\Ocal}{\mathcal{O}}
+\newcommand{\Acal}{\mathcal{A}}
+\newcommand{\Ccal}{\mathcal{C}}
+\newcommand{\Mcal}{\mathcal{M}}
+\newcommand{\Ncal}{\mathcal{N}}
+\newcommand{\Rcal}{\mathcal{R}}
+\newcommand{\Dcal}{\mathcal{D}}
+\newcommand{\philam}{\phi_{\lambda\mu}}
+\newcommand{\Vmat}{\mathbf{V}}
+\newcommand{\Jset}{\mathcal{J}}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\op}[1]{\operatorname{#1}}
+\newcommand{\spec}{\sigma}
+\newcommand{\Norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\Abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Pmark}{\mathrm{P}}
+\newcommand{\Nmark}{\mathrm{N}}
+\newcommand{\Omark}{\mathrm{O}}
+\newcommand{\Fmark}{\mathrm{F}}
+\newcommand{\Fr}{\mathrm{Fr}}
+
+% ============================================================
+% TITLE
+% ============================================================
+\title{%
+  \textbf{Structural Constraining and Spectral Emergence:}\\[4pt]
+  \large A Multirepresentational Methodology for Nonlinear Evolution Equations
+}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+We develop a methodology for the analysis of mathematical models by
+successive representation across spectral, geometric, topological,
+algebraic, numerical, and formal layers. Unlike standard
+multi-physics or multi-scale approaches, the methodology treats each
+layer as a \emph{constraint} on the space of admissible models,
+rather than as an independent representation. We introduce three
+structural principles: \emph{constraining}, according to which the
+solution space shrinks monotonically under layer transitions;
+\emph{spectral emergence}, according to which the spectral layer
+may be constructed rather than assumed, via Fr\'echet linearisation
+of a nonlinear operator at an equilibrium; and
+\emph{discrepancy classification}, according to which any mismatch
+between the initial model and its reconstruction falls into one of
+three regimes---discretisation, physical extension, or structural
+inconsistency. Four worked examples, all elementary enough to be
+verified by hand, exhibit the full methodology: the Dirichlet
+Laplacian on $[0,1]$, the path-vs-cycle bifurcation, an erroneous
+diffusion equation with spurious advection, and a nonlinear
+$p$-Laplacian gradient flow. For each example we produce a
+validation matrix recording the epistemic status of each layer. We
+close by discussing the limits of the methodology, its relationship
+to structure-preserving numerics, inverse problems, and
+proof-assistant formalisation, and open problems.
+\end{abstract}
+
+\tableofcontents
+
+% ============================================================
+\part{Foundations}
+% ============================================================
+
+\section{Introduction}
+\label{sec:intro}
+
+\subsection{Motivation}
+
+Given a mathematical model---typically a partial differential
+equation, an operator equation, or a variational principle---the
+question of \emph{what structure the model carries} is rarely
+answered by the model's surface form. A diffusion equation hides a
+gradient-flow structure; a linear equation hides a spectral
+decomposition valid only near an equilibrium; an apparent scalar
+equation hides a symmetry group; and so on.
+
+The methodology developed here is a systematic procedure for
+exposing such hidden structure. Its central claim is that
+mathematical representations should be treated not as
+\emph{parallel descriptions} of a fixed object, but as
+\emph{constraints} that progressively eliminate candidate models.
+
+\subsection{Relationship to the framework paper}
+
+This paper inherits notation and definitions from a companion
+framework paper \cite{framework} which introduces the master object
+$\Ob$, the layer set $\Lam$, the transition morphisms $\philam$, the
+reconstruction operators $\rho_\Cl, \rho_\Inv, \rho_\An$, and the
+validation matrix $\Vmat$. The reader is referred to \cite{framework}
+for the full treatment of the six construction layers and the three
+reconstruction layers. The present paper assumes this vocabulary and
+develops three new structural principles.
+
+\subsection{Contributions}
+
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Structural constraining} (\S\ref{sec:constraining}):
+        a formal definition of the methodology as a monotone
+        intersection of admissible model spaces.
+  \item \textbf{Spectral emergence} (\S\ref{sec:emergence}): a
+        construction by which the spectral layer is produced by
+        Fr\'echet linearisation of a nonlinear operator, rather than
+        assumed.
+  \item \textbf{Discrepancy classification} (\S\ref{sec:discrepancy}):
+        a trichotomy of reconstruction discrepancies into
+        discretisation, physical extension, and structural
+        inconsistency.
+  \item \textbf{Four worked examples} (\S\ref{sec:toys}) covering
+        linear, bifurcating, erroneous, and nonlinear cases.
+  \item \textbf{Validation matrices} (\S\ref{sec:validation-new})
+        for each example, recording the epistemic status of each
+        layer.
+\end{enumerate}
+
+\subsection{Organization}
+
+Part~I (\S\ref{sec:constraining}--\ref{sec:discrepancy}) develops the
+three structural principles. Part~II (\S\ref{sec:toys}) presents the
+four worked examples. Part~III (\S\ref{sec:validation-new}--\ref{sec:discussion})
+treats the validation matrix, the comparison with related work, and
+the limits of the methodology.
+
+% ------------------------------------------------------------
+\section{Structural Constraining}
+\label{sec:constraining}
+% ------------------------------------------------------------
+
+\subsection{The Constraining Space}
+
+Let $\Ob$ be the master object of the framework paper and let
+\[
+  \Lam = \{\Sp, \Ge, \To, \Al, \Nu, \Fo, \Cl, \Corr, \An\}
+\]
+be the extended layer set. Fix a problem class $\mathcal P$: the set
+of models (operators, equations, variational principles) compatible
+with the empirical and formal data under consideration.
+
+\begin{definition}[Constrained model space]\label{def:constrained-space}
+For each layer $\lambda \in \Lam$, the \emph{constrained model space
+at layer $\lambda$} is
+\[
+  \Ccal_\lambda
+  \;=\;
+  \bigl\{ P \in \Ccal_{\lambda^-} \;:\;
+    P \text{ is compatible with } \Ocal_\lambda \bigr\},
+\]
+where $\lambda^-$ is the immediate predecessor of $\lambda$ in the
+construction order and $\Ccal_{\varnothing} = \mathcal P$.
+\end{definition}
+
+\begin{axiom}[Monotonicity of constraining]\label{ax:monotone}
+For every pair $\lambda \prec \mu$ in $\Lam$,
+\[
+  \Ccal_\mu \;\subseteq\; \Ccal_\lambda .
+\]
+\end{axiom}
+
+\begin{proposition}[Chain of constraints]\label{prop:chain}
+The constrained model spaces form a decreasing chain
+\[
+  \mathcal P
+  \;\supseteq\;
+  \Ccal_\Sp
+  \;\supseteq\;
+  \Ccal_\Ge
+  \;\supseteq\;
+  \Ccal_\To
+  \;\supseteq\;
+  \Ccal_\Al
+  \;\supseteq\;
+  \Ccal_\Nu
+  \;\supseteq\;
+  \Ccal_\An .
+\]
+\end{proposition}
+
+\begin{proof}
+Immediate from Axiom~\ref{ax:monotone} and transitivity of $\prec$.
+\end{proof}
+
+\subsection{The Solution as an Intersection}
+
+\begin{definition}[Constrained solution set]\label{def:sol-set}
+The \emph{constrained solution set} of the methodology is
+\[
+  \Ccal_\ast
+  \;=\;
+  \bigcap_{\lambda \in \Lam} \Ccal_\lambda .
+\]
+\end{definition}
+
+\begin{proposition}[Model determination]\label{prop:determination}
+If $\Ccal_\ast$ is a singleton $\{P_\ast\}$, then the methodology
+\emph{determines} the model $P_\ast$ uniquely.
+\end{proposition}
+
+\begin{proof}
+By definition of the intersection.
+\end{proof}
+
+\begin{remark}
+The methodology does \emph{not} require $\Ccal_\ast$ to be a
+singleton. In many applications, $\Ccal_\ast$ has positive
+dimension, corresponding to a moduli space of admissible models.
+The methodology's output is then a parametrised family, and the
+parameters carry physical or mathematical meaning (symmetries,
+boundary conditions, coupling constants).
+\end{remark}
+
+\subsection{The Constraining Diagram}
+
+The constraining principle can be displayed as
+\begin{equation}\label{eq:constraining-diagram}
+\begin{tikzcd}[row sep=large, column sep=large]
+  \mathcal P \arrow[d, hookrightarrow] \\
+  \Ccal_\Sp \arrow[d, hookrightarrow] \\
+  \Ccal_\Ge \arrow[d, hookrightarrow] \\
+  \Ccal_\To \arrow[d, hookrightarrow] \\
+  \Ccal_\Al \arrow[d, hookrightarrow] \\
+  \Ccal_\Nu \arrow[d, hookrightarrow] \\
+  \Ccal_\An
+\end{tikzcd}
+\end{equation}
+where each inclusion is the constraining imposed by the corresponding
+layer.
+
+\subsection{Comparison with the Framework Paper}
+
+In the framework paper, the layers are treated as \emph{projections
+of a single master object}; here, they are treated as
+\emph{constraints on a model class}. The two perspectives are
+complementary:
+\begin{itemize}
+  \item the projection view describes \emph{what each layer sees};
+  \item the constraining view describes \emph{what each layer
+        eliminates}.
+\end{itemize}
+
+\begin{proposition}[Equivalence of perspectives]\label{prop:equivalence}
+Let $\pi_\lambda : \Ob \to \Ocal_\lambda$ be the projections of the
+framework paper. Then
+\[
+  \Ccal_\lambda
+  =
+  \bigl\{ P \in \mathcal P : \pi_\lambda(P) \in \Ocal_\lambda \bigr\},
+\]
+where $\pi_\lambda(P)$ denotes the layer-$\lambda$ shadow of the
+model $P$.
+\end{proposition}
+
+\begin{proof}
+By definition of the projection and of the constrained model space.
+\end{proof}
+
+% ------------------------------------------------------------
+\section{Spectral Emergence}
+\label{sec:emergence}
+% ------------------------------------------------------------
+
+\subsection{The Problem with Linear Spectral Theory}
+
+In the framework paper, the spectral layer $\Ocal_\Sp$ is defined
+by the eigenpair equation
+\[
+  T v_\lambda = \lambda v_\lambda
+\]
+for a linear operator $T$. This presumes $T$ is linear. For
+nonlinear evolution equations
+\[
+  u_t = \Ncal(u),
+\]
+no such decomposition exists globally.
+
+\begin{definition}[Nonlinear evolution equation]\label{def:nonlinear-eq}
+A \emph{nonlinear evolution equation} on a domain $\Omega$ is a
+relation
+\[
+  u_t = \Ncal(u),
+  \qquad u(\cdot, t) \in X,
+\]
+where $X$ is a function space and $\Ncal : D(\Ncal) \subset X \to X$
+is a nonlinear operator.
+\end{definition}
+
+\begin{remark}
+If $\Ncal$ is nonlinear, the set of eigenvalues and eigenfunctions
+of $\Ncal$ is not well-defined. The spectral layer of the framework
+paper is therefore not directly available.
+\end{remark}
+
+\subsection{Fr\'echet Linearisation}
+
+\begin{definition}[Fr\'echet derivative]\label{def:frechet}
+Let $u_\ast \in X$ be an equilibrium of \eqref{eq:nonlinear-flow},
+i.e.\ $\Ncal(u_\ast) = 0$. The \emph{Fr\'echet derivative} of
+$\Ncal$ at $u_\ast$ is the bounded linear operator
+$D\Ncal[u_\ast] : X \to X$ such that
+\[
+  \Ncal(u_\ast + v) - \Ncal(u_\ast)
+  =
+  D\Ncal[u_\ast]\, v + o(\Norm{v}_X)
+  \qquad (\Norm{v}_X \to 0).
+\]
+\end{definition}
+
+\begin{construction}[Emergent spectral layer]\label{constr:emergent-spectral}
+Given a nonlinear evolution equation $u_t = \Ncal(u)$ with
+equilibrium $u_\ast$, the \emph{emergent spectral layer} is
+\[
+  \Ocal_\Sp^{\mathrm{emg}}
+  \;=\;
+  \bigl(
+    L_{u_\ast},
+    \spec(L_{u_\ast}),
+    E_{L_{u_\ast}}
+  \bigr),
+\]
+where $L_{u_\ast} := D\Ncal[u_\ast]$ is the Fr\'echet derivative of
+$\Ncal$ at $u_\ast$.
+\end{construction}
+
+\begin{proposition}[Linearisation as first-order approximation]\label{prop:linearisation}
+For $\Norm{v}_X$ small,
+\[
+  u_t = \Ncal(u_\ast + v)
+  =
+  L_{u_\ast} v + o(\Norm{v}_X).
+\]
+Therefore, the spectral data of $L_{u_\ast}$ govern the linear
+dynamics of small perturbations around the equilibrium $u_\ast$.
+\end{proposition}
+
+\begin{proof}
+Direct application of Definition~\ref{def:frechet}.
+\end{proof}
+
+\subsection{The Emergence Diagram}
+
+The spectral layer is now constructed, not assumed:
+\begin{equation}\label{eq:emergence-diagram}
+\begin{tikzcd}[row sep=large, column sep=large]
+  \Ncal \arrow[r, "\text{linearise at } u_\ast"] \arrow[dr, dashed]
+    & L_{u_\ast} \arrow[d, "\text{spectral theorem}"] \\
+  & \Ocal_\Sp^{\mathrm{emg}}
+\end{tikzcd}
+\end{equation}
+
+\subsection{Limits of Emergent Spectral Data}
+
+\begin{proposition}[Insufficiency of emergent spectrum]\label{prop:insufficient}
+The emergent spectral layer $\Ocal_\Sp^{\mathrm{emg}}$ captures only
+the \emph{linear} behaviour of $\Ncal$ near $u_\ast$. Higher-order
+terms $\Ncal_k$, $k \geq 2$, in the Taylor expansion
+\[
+  \Ncal(u_\ast + v)
+  =
+  L_{u_\ast} v + \Ncal_2(v, v) + \Ncal_3(v, v, v) + \cdots
+\]
+are not recoverable from $\Ocal_\Sp^{\mathrm{emg}}$ alone.
+\end{proposition}
+
+\begin{proof}
+The spectral theorem applies to the linear operator $L_{u_\ast}$
+only. The higher-order terms are nonlinear and therefore lie outside
+the domain of linear spectral theory.
+\end{proof}
+
+\begin{remark}
+This limitation is precisely why the methodology requires
+\emph{all} layers: the spectral layer constrains the linear part,
+but only the algebraic, numerical, and formal layers recover the
+full nonlinear structure.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Discrepancy Classification}
+\label{sec:discrepancy}
+% ------------------------------------------------------------
+
+\subsection{Reconstruction Discrepancies}
+
+Given a candidate model $P_{\rm cand}$ and its reconstruction
+$\Rcal(\Ecal(P_{\rm cand}))$ (notation inherited from the framework
+paper), the \emph{discrepancy} is
+\[
+  \Delta P
+  \;=\;
+  \Rcal\bigl(\Ecal(P_{\rm cand})\bigr) - P_{\rm cand}.
+\]
+
+\begin{theorem}[Trichotomy of discrepancies]\label{thm:trichotomy}
+Every discrepancy $\Delta P$ arising from the methodology falls into
+exactly one of the following three regimes:
+\begin{enumerate}[label=\textbf{(\roman*)}]
+  \item \textbf{Discretisation regime:}
+        $\Delta P = \varepsilon_N$ with $\varepsilon_N \to 0$ as
+        $N \to \infty$. The discrepancy is a numerical artefact.
+  \item \textbf{Extension regime:}
+        $\Delta P = \Delta_\ast \neq 0$, independent of $N$. The
+        candidate model was incomplete.
+  \item \textbf{Inconsistency regime:}
+        $\Delta P$ violates a structural constraint (symmetry,
+        self-adjointness, topological invariant, energy law) required
+        by the problem. The candidate model was inconsistent.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Suppose $\Delta P \neq 0$. Consider the limit
+$\Delta_\ast := \lim_{N \to \infty} \Delta P$.
+\begin{itemize}
+  \item If $\Delta_\ast = 0$, then $\Delta P \to 0$, giving (i).
+  \item If $\Delta_\ast \neq 0$ and $\Delta_\ast$ is compatible with
+        all layer constraints, then (ii) holds.
+  \item If $\Delta_\ast \neq 0$ and $\Delta_\ast$ violates some
+        layer constraint, then (iii) holds.
+\end{itemize}
+These cases are exhaustive and mutually exclusive.
+\end{proof}
+
+\subsection{Diagnostic Procedure}
+
+\begin{protocol}[Discrepancy diagnosis]\label{prot:diagnosis}
+Given a candidate model $P_{\rm cand}$ and its reconstruction
+$\Rcal(\Ecal(P_{\rm cand}))$:
+\begin{enumerate}[label=(\arabic*)]
+  \item Compute $\Delta P$.
+  \item If $\Norm{\Delta P} = \mathcal{O}(N^{-p})$ for some $p > 0$,
+        classify as \emph{discretisation}. Terminate.
+  \item Otherwise, check whether $\Delta P$ violates any of:
+        \begin{itemize}
+          \item self-adjointness: $L \neq L^\ast$;
+          \item symmetry: $[L, S] \neq 0$ for a problem symmetry $S$;
+          \item energy law: $\frac{dE}{dt} > 0$ for a dissipative
+                equation;
+          \item topological invariant: $H_k \neq H_k^{\rm target}$.
+        \end{itemize}
+        If any violation is found, classify as
+        \emph{inconsistency}. Propose a correction
+        $P_{\rm corr} = P_{\rm cand} - \Delta_{\rm structural}$.
+  \item Otherwise, classify as \emph{extension}. Augment the model
+        with $\Delta P$.
+\end{enumerate}
+\end{protocol}
+
+\subsection{The Three Regimes Illustrated}
+
+\begin{center}
+\begin{tabular}{c|c|c}
+  \toprule
+  Regime & Signature & Interpretation \\
+  \midrule
+  Discretisation & $\Delta P \to 0$ as $N \to \infty$
+    & Numerical artefact \\
+  Extension & $\Delta P \to \Delta_\ast \neq 0$, compatible
+    & Missing physics \\
+  Inconsistency & $\Delta P$ violates structural constraint
+    & Candidate was wrong \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================
+\part{Worked Examples}
+% ============================================================
+
+\section{Four Toys}
+\label{sec:toys}
+
+Each toy below is elementary enough to be verified by hand, and each
+exhibits the full methodology. Section~\ref{sec:toy1} treats the
+Dirichlet Laplacian as the baseline case (spectrum available as
+input). Section~\ref{sec:toy2} exhibits the geometry bifurcation
+(path vs.\ cycle). Section~\ref{sec:toy3} exhibits error detection
+via symmetry violation. Section~\ref{sec:toy4} exhibits spectral
+emergence via Fr\'echet linearisation.
+
+% ------------------------------------------------------------
+\section{Toy 1: Dirichlet Laplacian on $[0,1]$}
+\label{sec:toy1}
+% ------------------------------------------------------------
+
+\subsection{Candidate model}
+
+\[
+  P_{\rm cand}: \qquad -u''(x) = f(x), \quad x \in (0,1),
+  \quad u(0) = u(1) = 0.
+\]
+
+\subsection{Spectral layer}
+
+The operator $A = -\partial_{xx}$ on
+$D(A) = H^2(0,1) \cap H_0^1(0,1)$ is self-adjoint, positive, and
+unbounded. Its spectrum is
+\[
+  \spec(A) = \{n^2 \pi^2 : n \in \N, n \geq 1\}
+\]
+with eigenfunctions $\phi_n(x) = \sin(n \pi x)$.
+
+\subsection{Geometric layer}
+
+$M = [0,1]$ with metric $g = dx^2$, and $A = -\Delta_g$ on $M$.
+
+\subsection{Topological layer}
+
+$H_0(M) \cong \Z$, $H_1(M) = 0$, $\pi_1(M) = 0$.
+
+\subsection{Algebraic layer}
+
+$A = D^\ast D$ where $D = \partial_x$ on $H_0^1(0,1)$; therefore
+$A \succeq 0$.
+
+\subsection{Numerical layer}
+
+Tridiagonal $A_N$ with $h = 1/(N+1)$; eigenvalues
+\[
+  \lambda_k^{(N)}
+  =
+  \frac{4}{h^2} \sin^2\!\left( \frac{k \pi}{2(N+1)} \right),
+\]
+satisfying $\lambda_k^{(N)} = k^2 \pi^2 + \mathcal{O}(h^2)$.
+
+\subsection{Formal and reconstruction layers}
+
+Formal theory $\Gamma$ encodes the weak formulation. The
+reconstruction $\Rcal(\Ecal(P_{\rm cand}))$ recovers $P_{\rm cand}$.
+
+\subsection{Discrepancy classification}
+
+$\Delta P = \mathcal{O}(h^2) \to 0$. Regime (i): discretisation.
+
+\subsection{Validation matrix}
+
+\begin{center}
+\begin{tabular}{l|cccccccc}
+  \toprule
+  Layer & $\mathrm{Ex}$ & $\mathrm{Co}$ & $\mathrm{In}$
+  & $\mathrm{Nu}$ & $\mathrm{St}$ & $\mathrm{Cv}$
+  & $\mathrm{Re}$ & $\mathrm{Rev}$ \\
+  \midrule
+  $\Sp$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Ge$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\To$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Al$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Nu$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Omark$ \\
+  $\Fo$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+% ------------------------------------------------------------
+\section{Toy 2: Geometry Bifurcation (Path vs.\ Cycle)}
+\label{sec:toy2}
+% ------------------------------------------------------------
+
+\subsection{The same local principle, two geometries}
+
+Consider $N$ nodes with nearest-neighbour interaction. Two
+geometric realisations are possible:
+\begin{itemize}
+  \item \textbf{Path:} $G_N^{(A)} = P_N$, approximating $M_A = [0,1]$.
+  \item \textbf{Cycle:} $G_N^{(B)} = C_N$, approximating $M_B = S^1$.
+\end{itemize}
+
+\subsection{Constraining diagram}
+
+\begin{equation}
+\begin{tikzcd}[row sep=large, column sep=large]
+  & \text{local interaction} \arrow[dl] \arrow[dr] & \\
+  M_A = [0,1] \arrow[d] & & M_B = S^1 \arrow[d] \\
+  \partial M_A \neq \varnothing \arrow[d] & & \partial M_B = \varnothing \arrow[d] \\
+  \text{Dirichlet BC} \arrow[d] & & \text{periodic BC} \arrow[d] \\
+  \sin(n \pi x) \arrow[d] & & e^{i k \theta} \arrow[d] \\
+  \lambda_n = n^2 \pi^2 & & \lambda_k = k^2
+\end{tikzcd}
+\end{equation}
+
+\subsection{Spectral comparison}
+
+\begin{center}
+\begin{tabular}{l|c|c}
+  \toprule
+  Feature & Path ($[0,1]$) & Cycle ($S^1$) \\
+  \midrule
+  $\pi_1$ & $0$ & $\Z$ \\
+  Boundary & $\{0,1\}$ & $\varnothing$ \\
+  Modes & $\sin(n \pi x)$ & $e^{ik\theta}$ \\
+  Spectrum & $n^2 \pi^2$ & $k^2$ \\
+  Multiplicity & simple & double for $k \neq 0$ \\
+  Natural numerical method & finite differences & FFT \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Constraining interpretation}
+
+Both realisations share the discrete object $L_N$. The geometric
+layer selects one of two families; the topological layer then
+restricts the admissible functional analysis (Dirichlet vs.\ periodic
+Hilbert spaces); the algebraic layer determines the mode basis
+(sine vs.\ Fourier); and the numerical layer is dictated by the
+geometry. The two branches converge to genuinely different models
+$P_{\rm cand}^{(A)} \neq P_{\rm cand}^{(B)}$.
+
+\begin{proposition}[Non-equivalence of branches]\label{prop:non-equiv}
+$P_{\rm cand}^{(A)} \not\cong P_{\rm cand}^{(B)}$ as operator
+equations.
+\end{proposition}
+
+\begin{proof}
+The spectra $\{n^2 \pi^2\}_{n \geq 1}$ and $\{k^2\}_{k \geq 0}$ are
+not isomorphic as subsets of $\R$: the latter contains $0$ (constant
+mode) and all non-zero eigenvalues have multiplicity $2$, whereas
+the former has neither property.
+\end{proof}
+
+% ------------------------------------------------------------
+\section{Toy 3: Erroneous Diffusion with Spurious Advection}
+\label{sec:toy3}
+% ------------------------------------------------------------
+
+\subsection{Candidate model}
+
+\[
+  P_{\rm cand}: \qquad u_t = \kappa u_{xx} + \varepsilon u_x,
+  \quad x \in (0,1), \quad u(0,t) = u(1,t) = 0.
+\]
+
+The candidate is \emph{assumed} to model isotropic diffusion, but
+contains an additional advection term.
+
+\subsection{Layer-by-layer analysis}
+
+\begin{enumerate}[label=(\arabic*)]
+  \item \textbf{Spectral:} removing the first-order term via
+        $\phi(x) = e^{-\varepsilon x/(2\kappa)} v(x)$ gives
+        \[
+          \lambda_n = -\kappa n^2 \pi^2 - \frac{\varepsilon^2}{4\kappa},
+        \]
+        which departs from the pure diffusion spectrum by the
+        constant shift $-\varepsilon^2/(4\kappa)$.
+  \item \textbf{Geometric:} the term $\varepsilon \partial_x$
+        selects a preferred direction on $M = [0,1]$; the geometry
+        $(M, g)$ alone does not provide such a direction.
+  \item \textbf{Algebraic:} decompose $L = L_S + L_A$ where
+        $L_S = \kappa \partial_{xx}$ is symmetric and
+        $L_A = \varepsilon \partial_x$ is antisymmetric. Then
+        $L \neq L^\ast$.
+  \item \textbf{Energy:} for pure diffusion,
+        $\frac{d}{dt} \Norm{u}_{L^2}^2 = -2\kappa \Norm{u_x}_{L^2}^2$.
+        For the candidate,
+        \[
+          \frac{1}{2}\frac{d}{dt} \Norm{u}_{L^2}^2
+          =
+          -\kappa \Norm{u_x}_{L^2}^2
+          +
+          \frac{\varepsilon}{2} [u^2]_0^1
+          =
+          -\kappa \Norm{u_x}_{L^2}^2
+        \]
+        because $u(0,t) = u(1,t) = 0$. \emph{The energy test does not
+        detect the error.}
+  \item \textbf{Symmetry:} the reflection $R : x \mapsto 1 - x$
+        satisfies $R \partial_{xx} R^{-1} = \partial_{xx}$ but
+        $R \partial_x R^{-1} = -\partial_x$. Therefore
+        \[
+          R L R^{-1} = \kappa \partial_{xx} - \varepsilon \partial_x
+          \neq L
+        \]
+        unless $\varepsilon = 0$.
+\end{enumerate}
+
+\subsection{Diagnosis}
+
+The reflection symmetry of the problem and the isotropy requirement
+of the diffusion model are incompatible with $\varepsilon \neq 0$.
+The violation is detected at the algebraic layer, in the symmetry
+criterion, not at the energy layer.
+
+\begin{theorem}[Forced correction]\label{thm:forced-correction}
+Under the reflection symmetry constraint, the only model compatible
+with the candidate's diffusion hypothesis is $\varepsilon = 0$,
+i.e.\ $P_{\rm corr} = P_{\rm cand}|_{\varepsilon = 0}$.
+\end{theorem}
+
+\begin{proof}
+The candidate $P_{\rm cand}$ is required to be $R$-invariant by the
+isotropy hypothesis. But $R L R^{-1} = L$ forces $\varepsilon = 0$.
+\end{proof}
+
+\subsection{Discrepancy classification}
+
+The discrepancy is a \emph{structural inconsistency} (regime iii):
+$\Delta P$ violates the symmetry required by the problem. The
+correction is a \emph{deletion} of the offending term.
+
+\subsection{Remark: non-detection by energy}
+
+The failure of the energy test to detect the error is important. It
+illustrates that a \emph{single} layer does not suffice; the
+correction arises from the \emph{intersection} of independent
+constraints. This is precisely the structural constraining principle
+of \S\ref{sec:constraining}.
+
+% ------------------------------------------------------------
+\section{Toy 4: Nonlinear $p$-Laplacian with Spectral Emergence}
+\label{sec:toy4}
+% ------------------------------------------------------------
+
+\subsection{Candidate model}
+
+\[
+  P_{\rm cand}: \qquad
+  u_t = \partial_x \bigl[ (1 + u_x^2) u_x \bigr],
+  \quad x \in (0,1), \quad u(0,t) = u(1,t) = 0.
+\]
+Equivalently, $u_t = \Ncal(u)$ with
+$\Ncal(u) = \partial_x[(1 + u_x^2) u_x]$.
+
+\subsection{Spectral layer: not available directly}
+
+Since $\Ncal$ is nonlinear, no global linear spectral theory applies.
+We record
+\[
+  \Ocal_\Sp = \varnothing
+  \qquad \text{(provisionally)}.
+\]
+
+\subsection{Geometric layer}
+
+$M = [0,1]$, $g = dx^2$; the operator $\Ncal$ is a nonlinear
+generalisation of $-\Delta_g$.
+
+\subsection{Topological layer}
+
+$H_0 = \Z$, $H_1 = 0$; boundary $\partial M = \{0, 1\}$.
+
+\subsection{Algebraic layer: gradient-flow structure}
+
+Define the functional
+\[
+  E[u] = \int_0^1 \left( \frac{1}{2} u_x^2 + \frac{1}{4} u_x^4 \right) dx.
+\]
+Its first variation is
+\[
+  \frac{\delta E}{\delta u}
+  =
+  -\partial_x(u_x + u_x^3)
+  =
+  -\Ncal(u).
+\]
+Therefore, the candidate is the gradient flow
+\[
+  u_t = -\frac{\delta E}{\delta u},
+\]
+and consequently
+\[
+  \frac{dE}{dt} = -\Norm{\Ncal(u)}_{L^2}^2 \leq 0.
+\]
+
+\subsection{Numerical layer}
+
+Discretise $E_N(\mathbf u) = h \sum_j [\frac{1}{2}(D_h u_j)^2 +
+\frac{1}{4}(D_h u_j)^4]$. The discrete gradient flow is
+$\dot{\mathbf u} = -\nabla E_N(\mathbf u)$, preserving the energy
+law exactly.
+
+Numerical experiments with $N = 32, 64, 128, \ldots$ show that for
+small initial data $\Norm{u_0}_{H^1} = \epsilon \ll 1$, the
+solution converges to that of a linear diffusion equation with
+coefficients determined by the linearised operator.
+
+\subsection{Spectral emergence}
+
+Compute the Fr\'echet derivative of $\Ncal$ at the equilibrium
+$u_\ast = 0$:
+\[
+  D\Ncal[0] v
+  =
+  \partial_x(v_x + 3 \cdot 0 \cdot v_x)
+  =
+  v_{xx}.
+\]
+Therefore,
+\[
+  L_0 := D\Ncal[0] = \partial_{xx},
+\]
+and its spectral data (with Dirichlet boundary conditions) are
+\[
+  \phi_n(x) = \sin(n \pi x), \qquad \lambda_n = -n^2 \pi^2.
+\]
+
+Now the spectral layer \emph{emerges}:
+\[
+  \Ocal_\Sp^{\mathrm{emg}}
+  =
+  \bigl( \partial_{xx}, \{-n^2 \pi^2\}_{n \geq 1},
+    \{\sin(n \pi x)\}_{n \geq 1} \bigr).
+\]
+
+\subsection{Higher-order recovery}
+
+The emergent spectrum captures only the linear part. The higher-order
+terms are recovered from the algebraic layer: the functional
+$E[u]$ contains $\int u_x^4 dx$, which is not determined by $L_0$
+alone.
+
+\begin{proposition}[Non-recovery from spectrum]\label{prop:non-recovery}
+The nonlinear term $\int u_x^4 dx$ in $E[u]$ cannot be recovered from
+the spectral data of $L_0$.
+\end{proposition}
+
+\begin{proof}
+Two distinct functionals
+\[
+  E_1[u] = \int \bigl( \tfrac{1}{2} u_x^2 + \tfrac{1}{4} u_x^4 \bigr) dx,
+  \qquad
+  E_2[u] = \int \bigl( \tfrac{1}{2} u_x^2 + \tfrac{1}{6} u_x^6 \bigr) dx
+\]
+have the same second variation at $u = 0$, hence the same Fr\'echet
+derivative $L_0 = \partial_{xx}$ and the same spectrum, but different
+nonlinear structure.
+\end{proof}
+
+\subsection{Reconstruction}
+
+From the emergent spectrum, we reconstruct $L_0 = \partial_{xx}$.
+From the algebraic layer, we recover the full functional $E[u]$.
+Combining, we reconstruct
+\[
+  u_t = -\frac{\delta E}{\delta u}
+  =
+  \partial_x[(1 + u_x^2) u_x]
+  =
+  P_{\rm cand}.
+\]
+
+\subsection{Discrepancy classification}
+
+$\Delta P = 0$ at the reconstruction step: the method closes. But
+the example illustrates a new phenomenon: the spectral layer was
+\emph{produced} by the method rather than \emph{assumed} at the
+start.
+
+\subsection{Validation matrix}
+
+\begin{center}
+\begin{tabular}{l|cccccccc}
+  \toprule
+  Layer & $\mathrm{Ex}$ & $\mathrm{Co}$ & $\mathrm{In}$
+  & $\mathrm{Nu}$ & $\mathrm{St}$ & $\mathrm{Cv}$
+  & $\mathrm{Re}$ & $\mathrm{Rev}$ \\
+  \midrule
+  $\Sp$ (emergent) & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Ge$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\To$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Al$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Nu$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Nmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Omark$ \\
+  $\Fo$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Omark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+% ============================================================
+\part{Validation and Discussion}
+% ============================================================
+
+\section{The Validation Matrix for the Toys}
+\label{sec:validation-new}
+
+\subsection{Unified Validation Table}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{l|c|c|c|c}
+  \toprule
+  Layer & Toy 1 & Toy 2 & Toy 3 & Toy 4 \\
+  \midrule
+  $\Sp$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ (emergent) \\
+  $\Ge$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\To$   & $\Pmark$ & $\Pmark$ (bifurcates) & $\Pmark$ & $\Pmark$ \\
+  $\Al$   & $\Pmark$ & $\Pmark$ & $\Pmark$ (forces $\varepsilon = 0$) & $\Pmark$ \\
+  $\Nu$   & $\Nmark$ & $\Nmark$ & $\Nmark$ & $\Nmark$ \\
+  $\Fo$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Cl$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  $\Corr$ & trivial  & trivial  & $\Pmark$ (correction) & trivial \\
+  $\An$   & $\Pmark$ & $\Pmark$ & $\Pmark$ & $\Pmark$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Observations}
+
+\begin{enumerate}[label=(\roman*)]
+  \item In all four toys, the numerical layer is marked $\Nmark$
+        rather than $\Pmark$: numerical evidence is not proof.
+  \item Toy~2 exhibits a \emph{bifurcation} at the geometric layer:
+        a single discrete object produces two distinct continuous
+        models.
+  \item Toy~3 exhibits a \emph{correction}: the algebraic layer
+        forces $\varepsilon = 0$.
+  \item Toy~4 exhibits \emph{spectral emergence}: the spectral layer
+        is constructed, not assumed.
+\end{enumerate}
+
+\subsection{Constancy of the Validation Structure}
+
+\begin{proposition}[Structural invariance of $\Vmat$]\label{prop:structural-invariance}
+Across all four toys, the shape of the validation matrix is
+invariant: the numerical and reconstruction rows are always marked
+$\Nmark$ and $\Omark$ respectively, while the construction layers
+are marked $\Pmark$. This reflects the epistemic asymmetry between
+construction and reconstruction.
+\end{proposition}
+
+\begin{proof}
+The construction layers admit explicit mathematical proofs
+(spectral theorem, exterior algebra, Sobolev theory). The numerical
+and reconstruction layers depend on the specific discretisation and
+inversion schemes, and their proofs are conditional on additional
+hypotheses (stability, compactness, regularity).
+\end{proof}
+
+% ------------------------------------------------------------
+\section{Discussion}
+\label{sec:discussion}
+% ------------------------------------------------------------
+
+\subsection{Comparison with Related Work}
+
+\paragraph{Structure-preserving numerics.}
+The methodology shares with structure-preserving discretisation
+\cite{hairer-structure} the goal of preserving qualitative
+features of the continuous model at the discrete level. The
+distinction is that structure-preserving numerics typically fixes
+the continuous model and asks how to discretise it; the present
+methodology asks whether the continuous model itself is consistent
+with the layer constraints.
+
+\paragraph{Inverse problems.}
+The reconstruction pipeline of the framework paper shares the
+well-posedness concerns of classical inverse problems
+\cite{engl}. The distinction is that the methodology treats
+inversion as one of several layers, with the constraining principle
+providing a priori restrictions that classical inverse problems
+often lack.
+
+\paragraph{Multi-scale and multi-physics modelling.}
+The methodology shares the goal of coupling multiple descriptions
+\cite{e-weinan}. The distinction is that the coupling here is
+\emph{constraining} rather than \emph{informational}: each layer
+reduces the admissible set rather than transmitting information to
+the next.
+
+\paragraph{Formal mathematics.}
+The framework paper's treatment of proof assistants
+\cite{mathlib} is inherited here. The toys are simple enough that
+their formalisation in Lean~4 would be a reasonable exercise, though
+we have not undertaken it in this paper.
+
+\subsection{Limits of the Methodology}
+
+\begin{proposition}[Limits]\label{prop:limits}
+The methodology has the following intrinsic limitations:
+\begin{enumerate}[label=(\alph*)]
+  \item The choice of the initial model class $\mathcal P$ is not
+        determined by the method.
+  \item The construction of the geometric layer from the spectral
+        layer (\S\ref{sec:emergence}) is not canonical: different
+        realisations $M$ produce different geometric data.
+  \item The emergent spectrum captures only the linear part of a
+        nonlinear operator.
+  \item The correction procedure (\S\ref{sec:discrepancy}) requires
+        an external criterion (symmetry, energy, topology) to
+        identify the offending term.
+  \item The methodology does not, by itself, produce new
+        mathematical theorems; it organises the search for them.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Each item is an instance of a non-canonicity or information loss
+explicit in the corresponding layer definition. The details are
+carried by the framework paper's treatment of information loss
+(Definition~1.9 of \cite{framework}).
+\end{proof}
+
+\subsection{Open Problems}
+
+\begin{enumerate}[label=(\arabic*)]
+  \item \textbf{Canonicity of the geometric layer.} Under what
+        conditions is there a unique geometric realisation of a
+        given spectral datum?
+  \item \textbf{Full nonlinear reconstruction.} Can the nonlinear
+        part of a gradient flow be recovered from the combination
+        of the spectral layer and a finite set of numerical
+        moments?
+  \item \textbf{Structural constraining dimension.} Given a model
+        class $\mathcal P$ and a layer set $\Lam$, does the
+        intersection $\Ccal_\ast$ admit a canonical dimension
+        (moduli count)?
+  \item \textbf{Mechanical verification.} Can the four toys be
+        formalised in Lean~4 within Mathlib, and what is the
+        shortest proof?
+  \item \textbf{Constraining-completeness.} Under what conditions
+        does the constraining chain terminate in a singleton?
+\end{enumerate}
+
+\subsection{Closing Remark}
+
+The methodology presented in this paper is best described as a
+\emph{structural constraining procedure}: it does not produce new
+mathematics from nothing, but it organises the interaction between
+spectral, geometric, topological, algebraic, numerical, and formal
+descriptions of a model in such a way that each description
+eliminates a class of candidates and the surviving model is the
+intersection of the constraints. The three structural principles
+introduced here---constraining, spectral emergence, and discrepancy
+classification---give the method its operational content. The four
+worked examples show that the method is not vacuous: it detects
+symmetry violations, produces corrections, and constructs spectral
+data from nonlinear operators where linear theory does not apply.
+
+The central insight, in one line: \emph{in the analysis of a
+mathematical model, the question is not what each representation
+\emph{shows}, but what each representation \emph{rules out}.}
+
+% ============================================================
+\appendix
+% ============================================================
+
+\section{Notation Summary}
+\label{app:notation}
+
+Inherited from the framework paper \cite{framework}:
+\begin{center}
+\begin{tabular}{c l}
+  \toprule
+  Symbol & Meaning \\
+  \midrule
+  $\Ob$ & Master object \\
+  $\Lam$ & Extended layer set \\
+  $\Ocal_\lambda$ & Layer-$\lambda$ datum \\
+  $\philam$ & Transition morphism \\
+  $\rho_\Cl, \rho_\Inv, \rho_\An$ & Reconstruction operators \\
+  $\Vmat$ & Validation matrix \\
+  $\Pmark, \Nmark, \Omark, \Fmark$ & Proved, numerical, open, failed \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+New in this paper:
+\begin{center}
+\begin{tabular}{c l}
+  \toprule
+  Symbol & Meaning \\
+  \midrule
+  $\Ccal_\lambda$ & Constrained model space at layer $\lambda$ \\
+  $\Ccal_\ast$ & Constrained solution set \\
+  $\Ncal$ & Nonlinear operator of evolution equation \\
+  $D\Ncal[u_\ast]$ & Fr\'echet derivative at equilibrium $u_\ast$ \\
+  $\Ocal_\Sp^{\mathrm{emg}}$ & Emergent spectral layer \\
+  $\Delta P$ & Reconstruction discrepancy \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\section{Bibliography}
+\label{app:biblio}
+
+\begin{thebibliography}{99}
+
+\bibitem{framework}
+[Companion framework paper],
+\emph{A Multirepresentational Construction--Reconstruction
+Methodology for Mathematical Structures}, Parts I--V.
+
+\bibitem{reed-simon-1}
+M.~Reed, B.~Simon,
+\emph{Methods of Modern Mathematical Physics, Vol.~I: Functional
+Analysis}, Academic Press, 1980.
+
+\bibitem{engl}
+H.~W.~Engl, M.~Hanke, A.~Neubauer,
+\emph{Regularization of Inverse Problems}, Kluwer, 1996.
+
+\bibitem{hairer-structure}
+E.~Hairer, C.~Lubich, G.~Wanner,
+\emph{Geometric Numerical Integration: Structure-Preserving
+Algorithms for Ordinary Differential Equations}, Springer, 2006.
+
+\bibitem{e-weinan}
+W.~E, B.~Engquist,
+The heterogeneous multiscale methods,
+\emph{Comm.~Math.~Sci.}~1 (2003), 87--132.
+
+\bibitem{mathlib}
+The Mathlib Community,
+\emph{Mathlib: A unified library of mathematics formalized in Lean},
+2024.
+
+\bibitem{gordon}
+C.~Gordon, D.~Webb, S.~Wolpert,
+Isospectral plane domains and surfaces via Riemannian orbifolds,
+\emph{Invent.~Math.}~110 (1992), 1--22.
+
+\bibitem{spielman}
+D.~Spielman,
+\emph{Spectral and Algebraic Graph Theory}, Yale, 2019.
+
+\bibitem{udell}
+M.~Udell,
+\emph{Introduction to Spectral Graph Theory}, Stanford, 2011.
+
+\end{thebibliography}
+
+\end{document}

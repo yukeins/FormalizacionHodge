@@ -1,0 +1,1648 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% PACKAGES
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{mathrsfs}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\geometry{margin=1in}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny,
+  keywordstyle=\color{blue!70!black},
+  commentstyle=\color{green!50!black},
+  stringstyle=\color{red!60!black},
+}
+
+% ============================================================
+% THEOREM ENVIRONMENTS
+% ============================================================
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{cycle}{Cycle}[section]
+\newtheorem{principle}[definition]{Principle}
+\newtheorem{example}[definition]{Example}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{invariant}[definition]{Invariant}
+\newtheorem{condition}[definition]{Condition}
+\newtheorem{axiom}[definition]{Axiom}
+
+\theoremstyle{plain}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+
+% ============================================================
+% MACROS (inherited from previous papers)
+% ============================================================
+\newcommand{\Lam}{\Lambda}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\Ge}{\mathrm{Ge}}
+\newcommand{\To}{\mathrm{To}}
+\newcommand{\Al}{\mathrm{Al}}
+\newcommand{\Nu}{\mathrm{Nu}}
+\newcommand{\Fo}{\mathrm{Fo}}
+\newcommand{\Cl}{\mathrm{Cl}}
+\newcommand{\Corr}{\mathrm{Corr}}
+\newcommand{\Inv}{\mathrm{Inv}}
+\newcommand{\An}{\mathrm{An}}
+\newcommand{\Cd}{\mathrm{Cd}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Ob}{\mathfrak{O}}
+\newcommand{\Xcal}{\mathcal{X}}
+\newcommand{\Ccal}{\mathcal{C}}
+\newcommand{\Rcal}{\mathcal{R}}
+\newcommand{\Mcal}{\mathcal{M}}
+\newcommand{\Ncal}{\mathcal{N}}
+\newcommand{\Pcal}{\mathcal{P}}
+\newcommand{\Hcal}{\mathcal{H}}
+\newcommand{\Acal}{\mathcal{A}}
+\newcommand{\Dcal}{\mathcal{D}}
+\newcommand{\Tcal}{\mathcal{T}}
+\newcommand{\Vcal}{\mathcal{V}}
+\newcommand{\Ical}{\mathcal{I}}
+\newcommand{\Ecal}{\mathcal{E}}
+\newcommand{\Ocal}{\mathcal{O}}
+\newcommand{\Fcal}{\mathcal{F}}
+\newcommand{\Rfrak}{\mathfrak{R}}
+\newcommand{\Cfrak}{\mathfrak{C}}
+\newcommand{\philam}{\phi_{\lambda\mu}}
+\newcommand{\Vmat}{\mathbf{V}}
+\newcommand{\Jset}{\mathcal{J}}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\op}[1]{\operatorname{#1}}
+\newcommand{\spec}{\sigma}
+\newcommand{\Norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\Abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Pmark}{\mathrm{P}}
+\newcommand{\Nmark}{\mathrm{N}}
+\newcommand{\Omark}{\mathrm{O}}
+\newcommand{\Fmark}{\mathrm{F}}
+\newcommand{\STPASS}{\textsc{Pass}}
+\newcommand{\STFAIL}{\textsc{Fail}}
+\newcommand{\STUNRES}{\textsc{Unresolved}}
+\newcommand{\STCLOSED}{\textsc{Closed}}
+\newcommand{\STOPEN}{\textsc{Open}}
+\newcommand{\STOBSTR}{\textsc{Obstructed}}
+\newcommand{\STIMPLIED}{\textsc{Code-Implied}}
+\newcommand{\STVERIFIED}{\textsc{Code-Verified}}
+
+% ============================================================
+% TITLE
+% ============================================================
+\title{%
+  \textbf{From Code to Structure:}\\[4pt]
+  \large An Operational Protocol for Reverse-Engineering\\
+  Mathematical Objects from Computational Artifacts
+}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+We present an operational protocol for analysing mathematical
+problems whose point of entry is executable code rather than a
+formal statement. The code is treated as a computational
+\emph{artifact}, not as a mathematical object: it produces outputs
+but does not justify the choices, hypotheses, or approximations
+that make those outputs meaningful. The protocol reverse-engineers
+the mathematical object that the code approximates and certifies
+the approximation. It is organised as eight mandatory cycles
+(C0--C7) and terminates in exactly one of three states:
+\textsc{Closed}, \textsc{Open}, or \textsc{Obstructed}. The output
+of the protocol is not a paper but a \emph{certification
+document}: a structured record comprising the code, the inferred
+model, the reconstructed continuous object, the analysis by layer,
+an independent re-discretisation, a cross-audit matrix, and a
+provenance trace. We formalise six validity conditions (V1--V6)
+that must hold for the certificate to be complete, and we argue
+that the code becomes \emph{redundant} precisely when each of its
+outputs is predictable from the reconstructed structure without
+execution. The protocol is explicitly positioned with respect to
+four companion papers: a framework paper on multirepresentational
+constraining, a paper on structural constraining and spectral
+emergence, a paper on the limits of constraining, and a position
+paper on structural auditability.
+\end{abstract}
+
+\tableofcontents
+
+% ============================================================
+\part{Introduction and Positioning}
+% ============================================================
+
+\section{Motivation: the Code-First Problem}
+\label{sec:motivation}
+
+\subsection{The Situation}
+
+A researcher receives a piece of code. The code runs, produces
+numbers, plots, tables. It ``works''. The question is not whether
+the code produces outputs; it evidently does. The question is what
+those outputs \emph{mean}.
+
+The code contains, simultaneously:
+\begin{itemize}
+  \item mathematical content (an equation, an operator, boundary
+        conditions);
+  \item computational content (a scheme, a grid, a stopping
+        criterion, a floating-point arithmetic).
+\end{itemize}
+It fuses the two. A reader cannot, by inspecting the code alone,
+separate the mathematical object from its approximation. Two
+readers may interpret the same code as solving two different
+equations, with the same numerical output.
+
+\begin{definition}[Computational artifact]\label{def:artifact}
+A \emph{computational artifact} is a pair
+\[
+  \Acal = (\mathrm{src}, \mathrm{out})
+\]
+where $\mathrm{src}$ is executable source code and $\mathrm{out}$
+is a collection of observable outputs (numbers, plots, tables,
+error logs) produced by executing $\mathrm{src}$.
+\end{definition}
+
+\begin{remark}
+The artifact is \emph{not} a mathematical object. It is a witness
+to the existence of a numerical procedure. A witness is not a
+proof.
+\end{remark}
+
+\subsection{The Question the Protocol Answers}
+
+Given an artifact $\Acal$, the protocol answers:
+\begin{enumerate}[label=(\roman*)]
+  \item What mathematical object does $\Acal$ approximate?
+  \item Is that object well-defined?
+  \item Does the approximation converge to the object?
+  \item Is the object consistent with its structural invariants?
+  \item Can the code be \emph{reconstructed} from the object, so
+        that its outputs are predictable without execution?
+\end{enumerate}
+
+\subsection{The Inversion of Direction}
+
+Classical mathematical work proceeds from problem to code:
+\[
+  \text{problem} \;\longrightarrow\; \text{representations}
+  \;\longrightarrow\; \text{code} \;\longrightarrow\;
+  \text{verification}.
+\]
+The protocol proceeds in the opposite direction:
+\[
+  \text{code} \;\longrightarrow\; \text{inferred model}
+  \;\longrightarrow\; \text{continuous object}
+  \;\longrightarrow\; \text{structure} \;\longrightarrow\;
+  \text{validation against the code}.
+\]
+The code becomes the \emph{object of study}, not the tool.
+
+\subsection{The Central Criterion}
+
+The protocol is successful when the code becomes
+\emph{redundant}:
+
+\begin{principle}[Code redundancy]\label{pr:redundancy}
+The protocol has completed its analysis of an artifact $\Acal$
+when each output in $\mathrm{out}$ is predictable from the
+reconstructed continuous object and its structural layers, without
+executing $\mathrm{src}$.
+\end{principle}
+
+This is the operational criterion of closure. It replaces the
+vaguer criterion ``the analysis is complete'' with a checkable
+condition: recompute the outputs from the structure, and compare.
+
+% ------------------------------------------------------------
+\section{Relationship to Companion Papers}
+\label{sec:relationship}
+% ------------------------------------------------------------
+
+\subsection{The Five Papers}
+
+This paper belongs to a program developed across five previous
+contributions:
+
+\begin{center}
+\begin{tabular}{l l}
+  \toprule
+  Reference & Focus \\
+  \midrule
+  \cite{framework} & Framework: master object, layers, transitions, \\
+                   & reconstruction, validation matrix. \\
+  \cite{paperI}    & Structural constraining, spectral emergence, \\
+                   & discrepancy trichotomy; four worked toys. \\
+  \cite{paperII}   & Separation criterion, three-type rupture, \\
+                   & cross-coherence, dynamic expansion. \\
+  \cite{paperIII}  & Structural auditability, wear, certification \\
+                   & trace, six-level output taxonomy. \\
+  \textbf{This paper} & Operational protocol for code-first \\
+                   & analysis; certification document. \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{What is Inherited}
+
+From \cite{framework}:
+\begin{itemize}
+  \item the master object $\Ob$ and the layer set $\Lam$;
+  \item the transition morphisms $\philam$;
+  \item the reconstruction operators $\rho_\Cl, \rho_\Inv, \rho_\An$;
+  \item the validation matrix $\Vmat$ and the epistemic states
+        $\{\Pmark, \Nmark, \Omark, \Fmark\}$;
+  \item the discrete family $\Ob^{(N)}$ and the error
+        $\varepsilon_N$.
+\end{itemize}
+
+From \cite{paperI}:
+\begin{itemize}
+  \item structural constraining: $\Ccal_0 \supseteq \Ccal_1
+        \supseteq \cdots$;
+  \item spectral emergence via Fr\'echet linearisation;
+  \item discrepancy trichotomy (discretisation / extension /
+        inconsistency).
+\end{itemize}
+
+From \cite{paperII}:
+\begin{itemize}
+  \item separation criterion $\Phimap(X) = \Phimap(Y)
+        \Rightarrow X \simadm Y$;
+  \item three-type rupture classification (Type I, II, III);
+  \item coherence subspace $\Rfrak_{\rm coh} \subset \prod_i
+        \Rcal_i$;
+  \item dynamic expansion $\Rfrak_{n+1} = \Rfrak_n \cup
+        \{R_{\rm new}\}$.
+\end{itemize}
+
+From \cite{paperIII}:
+\begin{itemize}
+  \item the six-level output taxonomy;
+  \item the certification trace $\Tcal(X) = (D, H, C, R, E, V, A)$;
+  \item the principles of auditability, hostile representation,
+        and trace completeness.
+\end{itemize}
+
+\subsection{What is New}
+
+\begin{enumerate}[label=(\roman*)]
+  \item The \textbf{Code layer} $R_{\Cd}$ as a formal input.
+  \item The \textbf{inference morphisms}
+        $\iota_{\Cd \to \Ge}$, $\iota_{\Cd \to \Nu}$.
+  \item The \textbf{eight-cycle protocol} C0--C7.
+  \item The \textbf{six validity conditions} V1--V6.
+  \item The \textbf{certification document} as the formal output.
+  \item The \textbf{code redundancy criterion} (Principle~\ref{pr:redundancy}).
+\end{enumerate}
+
+% ------------------------------------------------------------
+\section{Contributions and Organization}
+\label{sec:contributions}
+% ------------------------------------------------------------
+
+\subsection{Contributions}
+
+\begin{enumerate}[label=(\roman*)]
+  \item A formal definition of the code layer and its inference
+        morphisms (\S\ref{sec:foundations-code}).
+  \item An eight-cycle protocol for code-first analysis
+        (\S\ref{sec:protocol}).
+  \item Six validity conditions V1--V6 defining complete
+        certification (\S\ref{sec:validity}).
+  \item A specification of the certification document
+        (\S\ref{sec:certificate}).
+  \item Two worked examples: a \textsc{Closed} case and an
+        \textsc{Obstructed} case (\S\ref{sec:cases}).
+  \item A backend architecture for implementation
+        (\S\ref{sec:backend}).
+\end{enumerate}
+
+\subsection{Organization}
+
+Part~\ref{part:intro} positions the protocol. Part~\ref{part:foundations}
+recalls the framework and introduces the code layer. Part~\ref{part:protocol}
+specifies the eight cycles. Part~\ref{part:validity} formalises the
+validity conditions. Part~\ref{part:certificate} specifies the
+certificate. Part~\ref{part:cases} presents two worked cases.
+Part~\ref{part:backend} sketches the implementation. Part~\ref{part:closing}
+closes.
+
+% ============================================================
+\part{Foundations}
+\label{part:foundations}
+% ============================================================
+
+\section{Recap of the Multirepresentational Framework}
+\label{sec:foundations-recap}
+
+We recall the essential structure of \cite{framework} without
+reproducing its full content.
+
+\subsection{The Master Object and Layers}
+
+\begin{definition}[Master object, {\cite[Definition 1.1]{framework}}]
+A \emph{master object} is a tuple
+\[
+  \Ob = (\Ocal_\lambda)_{\lambda \in \Lam},
+\]
+where
+\[
+  \Lam = \{\Sp, \Ge, \To, \Al, \Nu, \Fo, \Cl, \Corr, \An\}
+\]
+and each $\Ocal_\lambda$ is a layer datum.
+\end{definition}
+
+\subsection{Transition and Reconstruction}
+
+Transition morphisms $\philam : \Ocal_\lambda \to \Ocal_\mu$ for
+$\lambda \prec \mu$ carry structure between layers. The
+construction pipeline is
+\[
+  \Ocal_\Sp \to \Ocal_\Ge \to \Ocal_\To \to \Ocal_\Al
+  \to \Ocal_\Nu \to \Ocal_\Fo .
+\]
+The reconstruction operators
+\[
+  \rho_\Cl : \Ocal_\Fo \to \Ecal_\Cl, \quad
+  \rho_\Inv : \Ecal_\Cl \to \Ecal_\Corr, \quad
+  \rho_\An : \Ecal_\Corr \to \Acal
+\]
+return from the formal layer to the classical and corrected
+models.
+
+\subsection{The Validation Matrix}
+
+\begin{definition}[Validation matrix, {\cite[Definition 1.6]{framework}}]
+The matrix
+\[
+  \Vmat = (v_{\lambda j})_{\lambda \in \Lam, \, j \in \Jset},
+  \qquad
+  v_{\lambda j} \in \{\Pmark, \Nmark, \Omark, \Fmark\},
+\]
+with
+\[
+  \Jset = \{\mathrm{Ex}, \mathrm{Co}, \mathrm{In}, \mathrm{Nu},
+          \mathrm{St}, \mathrm{Cv}, \mathrm{Re}, \mathrm{Rev}\}
+\]
+records the epistemic status of each criterion at each layer.
+\end{definition}
+
+\subsection{Constraining}
+
+From \cite{paperI}, the constrained model spaces form a decreasing
+chain:
+\[
+  \Ccal_0 \supseteq \Ccal_\Sp \supseteq \Ccal_\Ge \supseteq \cdots
+  \supseteq \Ccal_\An .
+\]
+The methodology's output is the intersection
+\[
+  \Ccal_\ast = \bigcap_{\lambda \in \Lam} \Ccal_\lambda .
+\]
+
+\subsection{Separation}
+
+From \cite{paperII}, the representation map
+\[
+  \Phimap : \Xcal \to \prod_{\lambda \in \Lam} \Rcal_\lambda,
+  \qquad
+  \Phimap(X) = (R_\lambda(X))_{\lambda \in \Lam}
+\]
+must satisfy
+\[
+  \Phimap(X) = \Phimap(Y) \;\Longrightarrow\; X \simadm Y
+\]
+for the methodology to close. Failure of this condition defines a
+\emph{rupture} of Type I, II, or III.
+
+\subsection{Auditability}
+
+From \cite{paperIII}, every construction should be accompanied by
+a certification trace
+\[
+  \Tcal(X) = (D, H, C, R, E, V, A),
+\]
+recording definitions, hypotheses, constructions, representations,
+estimates, verifications, and audits.
+
+% ------------------------------------------------------------
+\section{The Code Layer}
+\label{sec:foundations-code}
+% ------------------------------------------------------------
+
+\subsection{Formal Extension of the Layer Set}
+
+\begin{definition}[Extended layer set]\label{def:extended-layers}
+The \emph{extended layer set} is
+\[
+  \Lam^+ = \Lam \cup \{\Cd\},
+\]
+where $\Cd$ denotes the \emph{code layer}.
+\end{definition}
+
+\begin{definition}[Code datum]\label{def:code-datum}
+A \emph{code datum} is a tuple
+\[
+  \Ocal_\Cd = (\mathrm{src}, \mathrm{out}, \mathrm{env}),
+\]
+where:
+\begin{itemize}
+  \item $\mathrm{src}$ is the source text;
+  \item $\mathrm{out}$ is the set of observable outputs;
+  \item $\mathrm{env}$ is the execution environment (language,
+        libraries, precision, hardware assumptions).
+\end{itemize}
+\end{definition}
+
+\subsection{Inference Morphisms}
+
+\begin{definition}[Inference morphism]\label{def:inference}
+An \emph{inference morphism} is a map
+\[
+  \iota_{\Cd \to \lambda} : \Ocal_\Cd \to \Ocal_\lambda
+\]
+from the code layer to a structural layer $\lambda$, together with
+a \emph{justification} $J_{\Cd \to \lambda}$ recording the
+assumptions under which the inference is valid.
+\end{definition}
+
+Two inference morphisms are primary:
+
+\begin{itemize}
+  \item $\iota_{\Cd \to \Ge} : \Ocal_\Cd \to \Ocal_\Ge$: from code
+        to the inferred geometric datum (domain, dimension,
+        boundary structure).
+  \item $\iota_{\Cd \to \Nu} : \Ocal_\Cd \to \Ocal_\Nu$: from code
+        to the inferred numerical datum (scheme, grid, tolerance,
+        convergence order).
+\end{itemize}
+
+\begin{axiom}[Inference non-uniqueness]\label{ax:non-unique}
+In general, inference morphisms are not unique: multiple structural
+objects may be compatible with a single code datum.
+\end{axiom}
+
+\begin{remark}
+Axiom~\ref{ax:non-unique} is the formal statement of the
+code-first problem: the code \emph{underdetermines} the object it
+approximates. The protocol's role is to reduce this
+underdetermination via additional representations.
+\end{remark}
+
+\subsection{The Inferred Model}
+
+\begin{definition}[Inferred model]\label{def:inferred-model}
+Given an inference morphism $\iota_{\Cd \to \Ge}$, the
+\emph{inferred model} is
+\[
+  \Mcal_{\rm imp} = \iota_{\Cd \to \Ge}(\Ocal_\Cd) \in \Ocal_\Ge,
+\]
+together with a \emph{hypothesis record}
+$\Hcal_{\rm imp} = (J_{\Cd \to \Ge}, \text{assumptions})$.
+\end{definition}
+
+The inferred model is a \emph{candidate} for the continuous object.
+It becomes a genuine identification only after the protocol's
+validation cycles.
+
+% ------------------------------------------------------------
+\section{Extended Epistemic States}
+\label{sec:epistemic}
+% ------------------------------------------------------------
+
+The epistemic states of \cite{framework} are extended to include
+two code-specific states.
+
+\begin{definition}[Extended epistemic states]\label{def:epistemic-states}
+The \emph{extended epistemic state set} is
+\[
+  \mathrm{Ep} = \{\Pmark, \Nmark, \Omark, \Fmark,
+                  \STIMPLIED, \STVERIFIED\},
+\]
+where:
+\begin{itemize}
+  \item $\Pmark$: proved mathematically;
+  \item $\Nmark$: numerically supported;
+  \item $\Omark$: open;
+  \item $\Fmark$: failed;
+  \item $\STIMPLIED$: implied by the code, without justification;
+  \item $\STVERIFIED$: verified against the code via an independent
+        re-discretisation.
+\end{itemize}
+\end{definition}
+
+\begin{principle}[No silent promotion]\label{pr:no-silent}
+A statement marked $\STIMPLIED$ may be promoted to $\Pmark$,
+$\Nmark$, or $\STVERIFIED$ only by exhibiting the explicit
+mathematical or computational argument that establishes the
+promotion. Silent promotion is a protocol violation.
+\end{principle}
+
+% ============================================================
+\part{The Protocol}
+\label{part:protocol}
+% ============================================================
+
+\section{Overview}
+\label{sec:protocol-overview}
+
+\subsection{Structure}
+
+The protocol consists of eight mandatory cycles
+\[
+  \mathrm{C0} \to \mathrm{C1} \to \cdots \to \mathrm{C7},
+\]
+each with a fixed signature: input, operation, output, success
+criterion, failure modes, invariant, and transition. Cycles cannot
+be reordered. Sub-operations within a cycle may be parallelised.
+
+\subsection{Terminal States}
+
+The protocol terminates in exactly one of three states:
+
+\begin{itemize}
+  \item \STCLOSED: the residue reduces to a single equivalence
+        class and the reconstruction reproduces the code.
+  \item \STOPEN: the residue contains multiple classes but no
+        obstruction is identified.
+  \item \STOBSTR: a Type~III rupture (\cite{paperII},
+        Definition~3.6) is identified.
+\end{itemize}
+
+\subsection{Global Invariants}
+
+\begin{invariant}[Provenance]\label{inv:provenance}
+Every result produced by any cycle carries a provenance record
+identifying the cycle, its input, its operation, and the
+assumptions used. This is the cycle-level realisation of the
+certification trace of \cite{paperIII}, Definition~6.1.
+\end{invariant}
+
+\begin{invariant}[Epistemic separation]\label{inv:epistemic}
+Every result is tagged with exactly one state in $\mathrm{Ep}$
+(Definition~\ref{def:epistemic-states}). $\Pmark$ and $\Nmark$ are
+never conflated.
+\end{invariant}
+
+\begin{invariant}[Strict residue decrease]\label{inv:residue}
+Each iteration of the loop
+$\mathrm{C1} \to \mathrm{C2} \to \mathrm{C3} \to \mathrm{C4}
+\to \mathrm{C5} \to \mathrm{C6}$ strictly decreases the residue:
+\[
+  \Ccal^{(n+1)} \subsetneq \Ccal^{(n)}.
+\]
+\end{invariant}
+
+% ------------------------------------------------------------
+\section{Cycle C0: Code Reading}
+\label{sec:c0}
+% ------------------------------------------------------------
+
+\begin{cycle}[Code reading]\label{cy:c0}
+\textbf{Input.} A computational artifact $\Acal = (\mathrm{src},
+\mathrm{out})$ (Definition~\ref{def:artifact}).
+
+\medskip
+\textbf{Operation.}
+\begin{enumerate}[label=\arabic*.]
+  \item Parse $\mathrm{src}$ to extract: variables, operations,
+        loops, data structures, constants, tolerances.
+  \item Identify the \emph{governing hypothesis}: what equation,
+        operator, or functional is the code approximating.
+  \item Enumerate the \emph{implicit choices}: discretisation
+        scheme, grid, boundary treatment, stopping criterion,
+        floating-point precision.
+  \item Record $\mathrm{out}$ and its structure (which outputs are
+        scalar, which are arrays, which are time series, etc.).
+\end{enumerate}
+
+\medskip
+\textbf{Output.} A structured hypothesis
+\[
+  \Hcal_0 = (\text{governing hypothesis}, \text{implicit choices},
+            \text{output structure})
+\]
+with a provenance record.
+
+\medskip
+\textbf{Success criterion.} $\Hcal_0$ is complete and unambiguous:
+every field is explicit.
+
+\medskip
+\textbf{Failure modes.}
+\begin{itemize}
+  \item Ambiguity in the governing hypothesis: return to input.
+  \item Obfuscated code (no semantic structure recoverable): flag
+        as \STOPEN.
+  \item Multiple incompatible readings: emit all candidates, defer
+        disambiguation to C1.
+\end{itemize}
+
+\medskip
+\textbf{Invariant.} The governing hypothesis must be stated as a
+mathematical relation, not as a procedural description.
+
+\medskip
+\textbf{Transition.} $\to$ C1.
+\end{cycle}
+
+\begin{remark}
+Cycle C0 is the analogue, for code-first analysis, of
+\cite[Step P0]{paperI}. In \cite{paperI}, P0 formalised an
+informal problem; here, C0 formalises an \emph{artifact}. The
+direction of the operation is inverted.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Cycle C1: Model Inference}
+\label{sec:c1}
+% ------------------------------------------------------------
+
+\begin{cycle}[Model inference]\label{cy:c1}
+\textbf{Input.} The hypothesis $\Hcal_0$.
+
+\medskip
+\textbf{Operation.} Construct the inferred model
+\[
+  \Mcal_{\rm imp} = \iota_{\Cd \to \Ge}(\Ocal_\Cd)
+\]
+as a mathematical object: domain, governing equation, boundary
+conditions, functional spaces, and hypotheses.
+
+For each implicit choice in $\Hcal_0$, produce a corresponding
+structural declaration:
+\begin{itemize}
+  \item discretisation scheme $\to$ order of consistency;
+  \item grid $\to$ regularity of the domain;
+  \item boundary treatment $\to$ boundary conditions;
+  \item stopping criterion $\to$ tolerance parameter.
+\end{itemize}
+
+\medskip
+\textbf{Output.} The inferred model $\Mcal_{\rm imp}$ together with
+the hypothesis record $\Hcal_{\rm imp}$ (Definition~\ref{def:inferred-model}).
+
+\medskip
+\textbf{Success criterion.} $\Mcal_{\rm imp}$ is a well-defined
+mathematical object: domain, equation, and conditions are
+unambiguous.
+
+\medskip
+\textbf{Failure modes.}
+\begin{itemize}
+  \item $\Mcal_{\rm imp}$ not well-defined: return to C0 with the
+        specific ambiguity.
+  \item Multiple well-defined candidates: emit each as a separate
+        branch and defer to C2.
+\end{itemize}
+
+\medskip
+\textbf{Invariant.} Every field of $\Mcal_{\rm imp}$ must be
+declared as either inferred with justification or assumed without
+justification. The distinction is recorded via Principle~\ref{pr:no-silent}.
+\end{invariant}
+
+\medskip
+\textbf{Transition.} $\to$ C2.
+\end{cycle}
+
+% ------------------------------------------------------------
+\section{Cycle C2: Classical Theory Identification}
+\label{sec:c2}
+% ------------------------------------------------------------
+
+\begin{cycle}[Classical theory identification]\label{cy:c2}
+\textbf{Input.} The inferred model $\Mcal_{\rm imp}$.
+
+\medskip
+\textbf{Operation.} Search the mathematical literature for the
+object $\Mcal_{\rm imp}$. Determine:
+\begin{enumerate}[label=\arabic*.]
+  \item Whether $\Mcal_{\rm imp}$ is a known object (identified by
+        standard notation and reference).
+  \item What is already known about $\Mcal_{\rm imp}$: spectral
+        theory, existence, uniqueness, regularity, asymptotic
+        behaviour.
+  \item Whether the code's hypotheses are compatible with the
+        classical treatment.
+\end{enumerate}
+
+\medskip
+\textbf{Output.} A classification
+\[
+  \text{status}(\Mcal_{\rm imp}) \in
+  \{\textsc{Known}, \textsc{Variant}, \textsc{New}\},
+\]
+with references for the \textsc{Known} and \textsc{Variant} cases.
+
+\medskip
+\textbf{Success criterion.} The status is determined, and for
+\textsc{Known} cases the reference is identified.
+
+\medskip
+\textbf{Failure modes.}
+\begin{itemize}
+  \item The object cannot be matched to any classical theory: mark
+        as \textsc{New}, proceed to C3.
+  \item The object matches multiple incompatible theories: emit
+        both, defer disambiguation to C3.
+\end{itemize}
+
+\medskip
+\textbf{Invariant.} If the status is \textsc{Known}, the classical
+properties of the object (existence, uniqueness, regularity,
+spectral theory) are inherited automatically and need not be
+reproved.
+
+\medskip
+\textbf{Transition.} $\to$ C3.
+\end{cycle}
+
+\begin{remark}
+Cycle C2 corresponds, in the direct direction of \cite{framework},
+to the identification of the classical model via $\rho_\Cl$. Here
+it is performed \emph{before} the structural layers are built, as a
+search operation.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Cycle C3: Structural Layer Construction}
+\label{sec:c3}
+% ------------------------------------------------------------
+
+\begin{cycle}[Structural layer construction]\label{cy:c3}
+\textbf{Input.} The inferred model $\Mcal_{\rm imp}$.
+
+\medskip
+\textbf{Operation.} Build the structural layers for
+$\Mcal_{\rm imp}$:
+\begin{itemize}
+  \item spectral layer $\Ocal_\Sp$: spectrum, eigenfunctions,
+        spectral measure;
+  \item geometric layer $\Ocal_\Ge$: domain, metric, connection,
+        curvature;
+  \item topological layer $\Ocal_\To$: homology, homotopy, Euler
+        characteristic;
+  \item algebraic layer $\Ocal_\Al$: symmetry group, operator
+        algebra, factorisation;
+  \item variational layer $\Ocal_\Var$: functional, Euler--Lagrange
+        operator, energy law.
+\end{itemize}
+If the spectral layer is not directly available (nonlinear operator),
+apply the Fr\'echet linearisation of \cite[Construction 3.6]{paperI}.
+
+\medskip
+\textbf{Output.} The family
+\[
+  \Rcal_n = \{R_\lambda\}_{\lambda \in \Lam_n}
+\]
+where $\Lam_n \subseteq \Lam^+$ is the set of layers successfully
+constructed.
+
+\medskip
+\textbf{Success criterion.} At least three layers are non-trivial.
+The spectral and variational layers are mandatory when the operator
+admits a variational structure.
+
+\medskip
+\textbf{Failure modes.}
+\begin{itemize}
+  \item Fewer than three layers: flag as \STOPEN, return to C1 to
+        expand the inferred model.
+  \item Spectral emergence required but Fr\'echet linearisation is
+        undefined: flag as \STOBSTR.
+\end{itemize}
+
+\medskip
+\textbf{Invariant.} Every constructed layer must carry a provenance
+record and an epistemic state from $\mathrm{Ep}$
+(Definition~\ref{def:epistemic-states}).
+
+\medskip
+\textbf{Transition.} $\to$ C4.
+\end{cycle}
+
+% ------------------------------------------------------------
+\section{Cycle C4: Independent Re-discretisation}
+\label{sec:c4}
+% ------------------------------------------------------------
+
+\begin{cycle}[Independent re-discretisation]\label{cy:c4}
+\textbf{Input.} The structural layers $\Rcal_n$.
+
+\medskip
+\textbf{Operation.} Build an \emph{independent} numerical scheme
+$\Dcal^\ast$ for $\Mcal_{\rm imp}$, using a method that is
+\emph{not} the one in the original code. For example:
+\begin{itemize}
+  \item if the original code uses finite differences, use spectral
+        methods or finite elements;
+  \item if the original code uses explicit time stepping, use
+        implicit or exponential integrators;
+  \item if the original code uses a specific grid, use an adaptive
+        or unstructured grid.
+\end{itemize}
+Execute $\Dcal^\ast$ and compare its outputs to $\mathrm{out}$.
+
+\medskip
+\textbf{Output.} A comparison record
+\[
+  \mathrm{Comp} = (\mathrm{out}^\ast, \mathrm{out},
+    \text{difference norm}, \text{order of convergence}).
+\]
+
+\medskip
+\textbf{Success criterion.} The two outputs agree to within the
+declared tolerance $\mathcal{T}$ (Definition of $\Pcal_0$ in
+\cite[Step P0]{paperI}).
+
+\medskip
+\textbf{Failure modes.}
+\begin{itemize}
+  \item Discrepancy within $\mathcal{T}$: proceed to C5.
+  \item Discrepancy outside $\mathcal{T}$: classify the discrepancy
+        using the trichotomy of \cite[Theorem 4.3]{paperI}
+        (discretisation / extension / inconsistency). Return to C1
+        with the classification.
+\end{itemize}
+
+\medskip
+\textbf{Invariant.} The scheme $\Dcal^\ast$ must be demonstrably
+different from the scheme of $\mathrm{src}$. A redundant scheme
+(e.g.\ the same method with a different variable name) does not
+satisfy the independence requirement.
+
+\medskip
+\textbf{Transition.} $\to$ C5.
+\end{cycle}
+
+\begin{remark}
+Cycle C4 is where the code is put on trial. The original code has
+been used to \emph{infer} the model; now an independent scheme tests
+whether that inference is correct.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Cycle C5: Cross-Audit}
+\label{sec:c5}
+% ------------------------------------------------------------
+
+\begin{cycle}[Cross-audit]\label{cy:c5}
+\textbf{Input.} The family $\Rcal_n$ and the comparison record
+$\mathrm{Comp}$.
+
+\medskip
+\textbf{Operation.} For every pair $(R_i, R_j)$ of layers, verify
+the coherence relation
+\[
+  (R_i(X), R_j(X)) \in C_{ij}
+  \qquad \forall X \in \Ccal^{(n)},
+\]
+as in \cite[Definition 4.1]{paperII}. Build the audit matrix
+\[
+  \Acal = (a_{ij}), \qquad a_{ij} \in
+  \{\STPASS, \STFAIL, \STUNRES\}.
+\]
+
+\medskip
+\textbf{Output.} The audit matrix $\Acal$ together with
+localisation records for each $\STFAIL$ entry: which pair of
+representations, which condition, which evidence.
+
+\medskip
+\textbf{Success criterion.} All pairs satisfy
+$a_{ij} = \STPASS$.
+
+\medskip
+\textbf{Failure modes.}
+\begin{itemize}
+  \item Some $a_{ij} = \STFAIL$: classify the discrepancy
+        (Type I, II, or III) using \cite[Theorem 4.3]{paperI} and
+        \cite[\S3]{paperII}. Proceed to C6.
+  \item Some $a_{ij} = \STUNRES$: proceed to C6 with an \textsc{Open}
+        tag.
+\end{itemize}
+
+\medskip
+\textbf{Invariant.} The matrix $\Acal$ must be symmetric modulo the
+coherence relation: $a_{ij} = a_{ji}$ whenever the coherence is
+symmetric.
+
+\medskip
+\textbf{Transition.} $\to$ C6.
+\end{cycle}
+
+% ------------------------------------------------------------
+\section{Cycle C6: Code Reconstruction}
+\label{sec:c6}
+% ------------------------------------------------------------
+
+\begin{cycle}[Code reconstruction]\label{cy:c6}
+\textbf{Input.} The family $\Rcal_n$, the audit matrix $\Acal$, and
+the comparison record $\mathrm{Comp}$.
+
+\medskip
+\textbf{Operation.} Attempt to reconstruct the original code from
+the structural layers:
+\[
+  \Dcal^\ast_{\rm rec} = \text{reconstruct}(\Rcal_n, \Acal).
+\]
+Compare $\Dcal^\ast_{\rm rec}$ to the original scheme
+$\Dcal_{\rm orig}$ inferred at C1.
+
+Two comparisons are required:
+\begin{enumerate}[label=\arabic*.]
+  \item \emph{Structural comparison}: does
+        $\Dcal^\ast_{\rm rec}$ use the same order of consistency,
+        the same regularity hypotheses, the same boundary treatment?
+  \item \emph{Output comparison}: are the outputs of
+        $\Dcal^\ast_{\rm rec}$ and $\Dcal_{\rm orig}$ identical to
+        within $\mathcal{T}$?
+\end{enumerate}
+
+\medskip
+\textbf{Output.} A reconstruction record
+\[
+  \mathrm{Rec} = (\Dcal^\ast_{\rm rec},
+    \text{structural match}, \text{output match}).
+\]
+
+\medskip
+\textbf{Success criterion.} Both comparisons succeed. In this
+case, the code is \emph{redundant} in the sense of
+Principle~\ref{pr:redundancy}.
+
+\medskip
+\textbf{Failure modes.}
+\begin{itemize}
+  \item Structural or output mismatch: classify the discrepancy.
+        If Type I or II, return to C3 with the missing layer. If
+        Type III, terminate at \STOBSTR.
+\end{itemize}
+
+\medskip
+\textbf{Invariant.} Reconstruction must be \emph{independent} of
+the original code: the reconstruction procedure cannot consult
+$\mathrm{src}$.
+
+\medskip
+\textbf{Transition.} $\to$ C7 if both comparisons succeed;
+otherwise, return to C3 or terminate at \STOBSTR.
+\end{cycle}
+
+\begin{remark}
+Cycle C6 is the operational test of Principle~\ref{pr:redundancy}.
+If the reconstruction succeeds, the code is certified as a
+redundant consequence of the structure. If it fails, the failure
+localises what part of the structure is not yet captured.
+\end{remark}
+
+% ------------------------------------------------------------
+\section{Cycle C7: Formalization}
+\label{sec:c7}
+% ------------------------------------------------------------
+
+\begin{cycle}[Formalization]\label{cy:c7}
+\textbf{Input.} The complete trace of cycles C0--C6.
+
+\medskip
+\textbf{Operation.} Encode in a proof assistant (Lean~4, Coq,
+Isabelle, or Agda) the fragments of the analysis that admit
+mechanical verification:
+\begin{itemize}
+  \item the definition of the inferred model $\Mcal_{\rm imp}$;
+  \item the well-posedness of the operator;
+  \item the spectral theorem applied to the linearised operator;
+  \item the coherence matrix and its verification;
+  \item the reconstruction theorem, when expressible.
+\end{itemize}
+
+\medskip
+\textbf{Output.} A formal certificate consisting of:
+\begin{itemize}
+  \item source files in the proof assistant's language;
+  \item the list of proof obligations discharged;
+  \item the list of fragments not formalisable, with reasons.
+\end{itemize}
+
+\medskip
+\textbf{Success criterion.} At least the following are formalised:
+\begin{itemize}
+  \item the definition of $\Mcal_{\rm imp}$ and its domain;
+  \item the spectral or variational structure of the linearised
+        operator;
+  \item the coherence relations in the audit matrix $\Acal$.
+\end{itemize}
+
+\medskip
+\textbf{Failure modes.}
+\begin{itemize}
+  \item Fragments not formalisable within the current
+        infrastructure: recorded as $\Omark$.
+  \item Fragments proved false by the assistant: recorded as
+        $\Fmark$, return to C1.
+\end{itemize}
+
+\medskip
+\textbf{Invariant.} The formal certificate must be self-contained:
+a third party can replay the proof without consulting the
+original code.
+
+\medskip
+\textbf{Transition.} $\to$ terminal state.
+\end{cycle}
+
+% ============================================================
+\part{Validity}
+\label{part:validity}
+% ============================================================
+
+\section{The Six Validity Conditions}
+\label{sec:validity}
+
+The protocol's output is a certificate. The certificate is
+\emph{complete} if and only if six conditions hold simultaneously.
+
+\begin{condition}[V1: Reconstruction]\label{cond:v1}
+There exists a scheme $\Dcal^\ast$ such that
+\[
+  \Dcal^\ast(\Mcal_{\rm imp}) \approx \Dcal_{\rm orig}
+\]
+in both structure and output. This is the output of Cycle C6.
+\end{condition}
+
+\begin{condition}[V2: Convergence]\label{cond:v2}
+The outputs of $\Dcal^\ast$ converge to those of
+$\Mcal_{\rm imp}$ with a \emph{demonstrated} rate:
+\[
+  \Norm{u_N - u} \leq C N^{-p},
+\]
+where $C$ and $p$ are proved, not merely estimated. This is the
+content of \cite[Theorem 4.6]{paperI} (Lax--Richtmyer
+consistency-stability-convergence).
+\end{condition}
+
+\begin{condition}[V3: Coherence]\label{cond:v3}
+All pairs of layers satisfy
+\[
+  a_{ij} = \STPASS \qquad \forall (i,j).
+\]
+This is the output of Cycle C5 and the coherence criterion of
+\cite[Definition 4.1]{paperII}.
+\end{condition}
+
+\begin{condition}[V4: Independence]\label{cond:v4}
+The reconstruction is not circular: the object $\Mcal_{\rm imp}$
+is not inferred exclusively from the code. At least one layer
+(typically $\Ocal_\Ge$, $\Ocal_\To$, or $\Ocal_\Al$) provides an
+independent characterisation.
+\end{condition}
+
+\begin{condition}[V5: Auditability]\label{cond:v5}
+Every step of the protocol carries a provenance record and an
+epistemic state from $\mathrm{Ep}$. The full trace is
+reconstructible by a third party. This is the trace-completeness
+principle of \cite[Principle 6.4]{paperIII}.
+\end{condition}
+
+\begin{condition}[V6: Formalization]\label{cond:v6}
+The fragments identified in Cycle C7 have been encoded in a proof
+assistant, and the discharged obligations cover the definitions of
+the inferred model, the structural layers, and the reconstruction.
+\end{condition}
+
+\begin{theorem}[Complete certificate]\label{th:complete}
+The certification document is complete if and only if
+\[
+  V1 \wedge V2 \wedge V3 \wedge V4 \wedge V5 \wedge V6 .
+\]
+\end{theorem}
+
+\begin{proof}
+$(\Rightarrow)$ Suppose the certificate is complete. By definition
+of completeness, the code is redundant (Principle~\ref{pr:redundancy}),
+which requires V1. Convergence is required for the redundancy to be
+meaningful, giving V2. Coherence ensures that the layers impose
+compatible constraints, giving V3. Independence ensures that the
+reconstruction is not an artifact of the code itself, giving V4.
+Traceability and formalisation are the operational realisation of
+auditability (Principle~\ref{inv:provenance}) and of \cite[Level II]{paperIII},
+giving V5 and V6.
+
+$(\Leftarrow)$ Suppose V1--V6 hold. By V1 and V2, the code is
+redundant. By V3 and V4, the structure is coherent and independent.
+By V5 and V6, the trace is auditable and formally verifiable.
+Therefore the certificate is complete.
+\end{proof}
+
+% ------------------------------------------------------------
+\section{Terminal States and the Six-Level Taxonomy}
+\label{sec:terminal}
+% ------------------------------------------------------------
+
+\subsection{Mapping to Paper III}
+
+The three terminal states of the protocol map onto the six-level
+taxonomy of \cite[\S5]{paperIII}:
+
+\begin{center}
+\begin{tabular}{c|l}
+  \toprule
+  Protocol state & Paper III level \\
+  \midrule
+  \STCLOSED (V1--V6) & Level I (complete proof) \\
+  \STCLOSED (V1, V3--V6) & Level II (rigorous formalisation) \\
+  \STCLOSED (V1, V3--V5) & Level IV (structural characterisation) \\
+  \STOPEN & Level V (numerical + limits identified) \\
+  \STOBSTR & Level VI (structural obstruction) \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}
+\textsc{Closed} does not automatically mean Level~I. The
+certificate's level depends on which of V1--V6 hold. Only when all
+six hold is the certificate at Level~I.
+\end{remark}
+
+\subsection{Open Certificates}
+
+An \STOPEN{} certificate is issued when V4 (independence) or V6
+(formalisation) fails but V1, V2, V3, and V5 hold. The certificate
+records:
+\begin{itemize}
+  \item the residual classes $\Ccal^{(\infty)}$;
+  \item the candidate representations that might separate them;
+  \item the specific missing condition (V4 or V6);
+  \item the estimated effort or technique required.
+\end{itemize}
+
+\subsection{Obstructed Certificates}
+
+An \STOBSTR{} certificate is issued when a Type~III rupture
+(\cite[Definition 3.6]{paperII}) is identified. The certificate
+records:
+\begin{itemize}
+  \item the layer $\lambda$ at which the rupture occurs;
+  \item the criterion $j \in \Jset$;
+  \item the residual class $\Ccal^{(\infty)}$;
+  \item the reason no admissible extension of the representation
+        family separates the class.
+\end{itemize}
+
+% ============================================================
+\part{The Certification Document}
+\label{part:certificate}
+% ============================================================
+
+\section{Specification}
+\label{sec:certificate}
+
+The output of the protocol is not a paper. It is a structured
+document called a \emph{certification document}.
+
+\begin{definition}[Certification document]\label{def:cert}
+A certification document is a tuple
+\[
+  \mathfrak{C} = (\mathrm{Code}, \Mcal_{\rm imp}, \Ob_{\rm rec},
+    \Rcal_\infty, \Acal, \Vmat, \Tcal, \mathrm{state}),
+\]
+where:
+\begin{itemize}
+  \item $\mathrm{Code}$ is the source code, unmodified;
+  \item $\Mcal_{\rm imp}$ is the inferred model;
+  \item $\Ob_{\rm rec}$ is the reconstructed continuous object;
+  \item $\Rcal_\infty$ is the final representation family;
+  \item $\Acal$ is the audit matrix;
+  \item $\Vmat$ is the validation matrix;
+  \item $\Tcal$ is the provenance trace;
+  \item $\mathrm{state} \in \{\STCLOSED, \STOPEN, \STOBSTR\}$ is
+        the terminal state.
+\end{itemize}
+\end{definition}
+
+\subsection{Required Sections}
+
+The document contains the following sections, in order:
+
+\begin{enumerate}[label=\textbf{\S\arabic*.}]
+  \item \textbf{Code.} The source code, unmodified, with line
+        numbering for reference.
+  \item \textbf{Inferred model.} The equation, domain, boundary
+        conditions, and hypotheses, with justification.
+  \item \textbf{Reconstructed object.} The continuous object
+        $\Ob_{\rm rec}$ with operator, functional space, and
+        conditions.
+  \item \textbf{Layer analysis.} One subsection per layer: spectral,
+        geometric, topological, algebraic, variational, numerical,
+        analytic.
+  \item \textbf{Independent re-discretisation.} The alternative
+        scheme, its comparison to the original, convergence rate.
+  \item \textbf{Audit matrix.} The matrix $\Acal$ with states.
+  \item \textbf{Validation matrix.} The matrix $\Vmat$ with
+        epistemic states.
+  \item \textbf{Provenance trace.} The directed graph
+        $\Tcal$ with edges from each result to its origin.
+  \item \textbf{Terminal certificate.} The state declaration
+        with justification and level in the taxonomy of
+        \cite{paperIII}.
+\end{enumerate}
+
+\subsection{Self-Containment}
+
+\begin{principle}[Certificate self-containment]\label{pr:self-contained}
+The certification document is \emph{self-contained} if a third
+party can reproduce every step of the analysis from the document
+alone, without access to the original author, the original
+execution, or any additional code beyond $\mathrm{Code}$.
+\end{principle}
+
+Self-containment is the operational criterion of completeness of
+the certificate. It fails if any step requires information not
+present in the document.
+
+% ============================================================
+\part{Worked Cases}
+\label{part:cases}
+% ============================================================
+
+\section{Case 1: Finite Differences for the Dirichlet Laplacian}
+\label{sec:case-closed}
+
+\subsection{The Code}
+
+A code fragment implementing the finite-difference Laplacian on
+$(0,1)$ with Dirichlet boundary conditions:
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+
+def laplacian(N):
+    h = 1.0 / (N + 1)
+    diag = 2.0 * np.ones(N) / h**2
+    off = -1.0 * np.ones(N - 1) / h**2
+    L = np.diag(diag) + np.diag(off, 1) + np.diag(off, -1)
+    return L
+
+def eigenvalues(N):
+    L = laplacian(N)
+    return np.linalg.eigvalsh(L)
+\end{lstlisting}
+
+The output $\mathrm{out}$ is the sorted array of eigenvalues for
+$N = 32, 64, 128, 256$.
+
+\subsection{C0: Code Reading}
+
+Governing hypothesis: the code approximates the operator
+$-d^2/dx^2$ on $(0,1)$ with Dirichlet boundary conditions. Implicit
+choices: central differences of order 2; uniform grid; eigenvalues
+computed via \texttt{eigvalsh}.
+
+\subsection{C1: Model Inference}
+
+$\Mcal_{\rm imp}$: $u \mapsto -u''$ on $H^2(0,1) \cap H_0^1(0,1)$.
+
+\subsection{C2: Classical Theory Identification}
+
+Status: \textsc{Known}. The operator is the Dirichlet Laplacian;
+its spectral theory is classical.
+
+\subsection{C3: Structural Layer Construction}
+
+\begin{itemize}
+  \item Spectral: $\lambda_n = n^2 \pi^2$, $\phi_n(x) = \sin(n \pi x)$.
+  \item Geometric: $M = [0,1]$, $g = dx^2$, $\Delta_g = d^2/dx^2$.
+  \item Topological: $H_0 = \Z$, $H_1 = 0$.
+  \item Algebraic: $L = D^\ast D$, hence $L \succeq 0$.
+  \item Variational: $E[u] = \frac{1}{2}\int u_x^2$, so
+        $L = -\delta E/\delta u$.
+\end{itemize}
+
+\subsection{C4: Independent Re-discretisation}
+
+Scheme: spectral method with Chebyshev polynomials. Outputs agree
+with the finite-difference outputs to $\mathcal{O}(h^2)$.
+
+\subsection{C5: Cross-Audit}
+
+All pairs pass: $a_{ij} = \STPASS$ for all $(i,j)$.
+
+\subsection{C6: Code Reconstruction}
+
+Reconstruction: the finite-difference scheme is recovered from the
+continuous operator via standard second-order discretisation.
+Structural and output comparisons match.
+
+\subsection{C7: Formalization}
+
+The definition of $L$, its self-adjointness, and its spectrum are
+formalised in Lean~4 using Mathlib.
+
+\subsection{Certificate}
+
+Terminal state: \STCLOSED. All of V1--V6 hold. Level in the
+taxonomy: Level~I.
+
+% ------------------------------------------------------------
+\section{Case 2: An Obstructed Code}
+\label{sec:case-obstr}
+
+\subsection{The Code}
+
+A code fragment implementing a diffusion equation with a spurious
+advection term:
+\begin{lstlisting}[language=Python]
+def step(u, dt, h, kappa, epsilon):
+    lap = (np.roll(u, -1) - 2*u + np.roll(u, 1)) / h**2
+    adv = (np.roll(u, -1) - np.roll(u, 1)) / (2*h)
+    return u + dt * (kappa * lap + epsilon * adv)
+\end{lstlisting}
+
+The code claims to solve $u_t = \kappa u_{xx}$ but includes an
+advection term $\varepsilon u_x$.
+
+\subsection{C0--C3}
+
+C0 identifies the extra term $\varepsilon u_x$. C1 infers the
+model $u_t = \kappa u_{xx} + \varepsilon u_x$. C2 classifies it as
+a variant of advection-diffusion. C3 builds the layers.
+
+The spectral layer reveals a constant shift
+$-\varepsilon^2/(4\kappa)$ in the eigenvalues, incompatible with
+pure diffusion. The variational layer reveals that the operator is
+not self-adjoint when $\varepsilon \neq 0$. The geometric layer
+reveals a preferred direction $x \to 1-x$ that breaks the isotropy
+hypothesis.
+
+\subsection{C4--C5}
+
+C4 builds an independent scheme. C5's audit matrix shows a
+\STFAIL{} at $(\Sp, \Al)$: the spectral prediction differs from
+the variational prediction by a term proportional to
+$\varepsilon^2$.
+
+\subsection{C6: Classification}
+
+The discrepancy is Type~III: no admissible extension of the
+representation family can identify the object, because the isotropy
+hypothesis of the problem is incompatible with $\varepsilon \neq 0$.
+
+\subsection{Certificate}
+
+Terminal state: \STOBSTR. The obstruction is localised at the pair
+$(\Sp, \Al)$ under the symmetry constraint of the geometric layer.
+Level in the taxonomy: Level~VI.
+
+% ============================================================
+\part{Backend Architecture}
+\label{part:backend}
+% ============================================================
+
+\section{Division of Labor}
+\label{sec:backend-division}
+
+The protocol is implementation-independent. One instantiating
+backend is a hybrid Python--Rust system.
+
+\begin{itemize}
+  \item \textbf{Python}: mathematical instrumentation. Symbolic
+        (SymPy), numeric (NumPy, SciPy), plotting, external
+        libraries.
+  \item \textbf{Rust}: structural audit. Constraints, coherence
+        checks, provenance, certificate emission.
+\end{itemize}
+
+\subsection{Boundary}
+
+The boundary is a typed structure
+\[
+  \mathrm{RepresentationRecord} = (\text{kind}, \text{data},
+    \text{assumptions}, \text{provenance}, \text{state}).
+\]
+Python produces records; Rust consumes, checks, and emits audit
+results.
+
+\subsection{Cycle Mapping}
+
+\begin{center}
+\begin{tabular}{c l l}
+  \toprule
+  Cycle & Python role & Rust role \\
+  \midrule
+  C0 & parse code & validate schema \\
+  C1 & infer model & store inferred model \\
+  C2 & search literature & store classification \\
+  C3 & compute layers & store representation family \\
+  C4 & re-discretise & compare records \\
+  C5 & --- & build audit matrix \\
+  C6 & --- & attempt reconstruction \\
+  C7 & formalise (Lean) & manage proofs \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Directory Layout}
+
+\begin{lstlisting}[language=bash]
+protocol/
+  core/                  # Rust
+    code_layer.rs
+    inference.rs
+    constraint.rs
+    coherence.rs
+    classification.rs
+    reconstruction.rs
+    certificate.rs
+    provenance.rs
+  python/
+    c0_reading.py
+    c1_inference.py
+    c3_spectral.py
+    c3_variational.py
+    c3_geometric.py
+    c4_rediscretization.py
+  problems/
+    laplacian.py
+    advection_diffusion.py
+  certificates/
+    closed/
+    open/
+    obstructed/
+\end{lstlisting}
+
+% ============================================================
+\part{Closing}
+\label{part:closing}
+% ============================================================
+
+\section{Summary}
+
+The protocol presented in this paper is an operational method for
+analysing mathematical problems whose point of entry is executable
+code. It:
+\begin{itemize}
+  \item treats the code as an artifact, not as a mathematical
+        object;
+  \item reverse-engineers the continuous object that the code
+        approximates;
+  \item validates the approximation via an independent
+        re-discretisation;
+  \item certifies the analysis via six validity conditions
+        V1--V6;
+  \item produces a \emph{certification document} rather than a
+        paper;
+  \item terminates in \STCLOSED, \STOPEN, or \STOBSTR.
+\end{itemize}
+
+The central criterion is \emph{code redundancy}: the code is fully
+analysed when its outputs are predictable from the reconstructed
+structure without execution.
+
+\section{Position Relative to Companion Papers}
+
+\begin{center}
+\begin{tabular}{l l}
+  \toprule
+  Paper & Role in the program \\
+  \midrule
+  \cite{framework} & Metamodel, layers, transitions, reconstruction. \\
+  \cite{paperI}    & Constraining, spectral emergence, trichotomy. \\
+  \cite{paperII}   & Separation, ruptures, coherence, expansion. \\
+  \cite{paperIII}  & Auditability, wear, taxonomy, trace. \\
+  This paper       & Operational protocol for code-first analysis. \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+The five papers form a coherent program:
+\begin{itemize}
+  \item the framework paper defines the mathematical vocabulary;
+  \item Paper~I is the operational core;
+  \item Paper~II is the meta-theoretic counterpart (limits);
+  \item Paper~III is the epistemological foundation;
+  \item this paper is the code-first operational realisation.
+\end{itemize}
+
+\section{Closing Remark}
+
+The protocol does not replace proof, formalisation, or peer review.
+It organises the interaction between an artifact and its
+mathematical interpretation so that the interpretation is explicit,
+auditable, and---when possible---mechanically verifiable. The
+central slogan, in one line:
+
+\begin{quote}
+\emph{The code is the question, not the answer. The protocol is the
+question's formal reconstruction.}
+\end{quote}
+
+% ------------------------------------------------------------
+\appendix
+% ------------------------------------------------------------
+
+\section{Notation Summary}
+\label{app:notation}
+
+\begin{center}
+\begin{tabular}{c l l}
+  \toprule
+  Symbol & Meaning & Reference \\
+  \midrule
+  $\Ob$ & Master object & \cite[Def.~1.1]{framework} \\
+  $\Lam$ & Layer set & \cite[Def.~1.2]{framework} \\
+  $\Lam^+$ & Extended layer set & Def.~\ref{def:extended-layers} \\
+  $\Cd$ & Code layer & Def.~\ref{def:extended-layers} \\
+  $\Acal$ & Computational artifact & Def.~\ref{def:artifact} \\
+  $\Ocal_\Cd$ & Code datum & Def.~\ref{def:code-datum} \\
+  $\iota_{\Cd \to \lambda}$ & Inference morphism & Def.~\ref{def:inference} \\
+  $\Mcal_{\rm imp}$ & Inferred model & Def.~\ref{def:inferred-model} \\
+  $\mathrm{Ep}$ & Extended epistemic states & Def.~\ref{def:epistemic-states} \\
+  $\mathfrak{C}$ & Certification document & Def.~\ref{def:cert} \\
+  V1--V6 & Validity conditions & \S\ref{sec:validity} \\
+  C0--C7 & Protocol cycles & \S\ref{sec:protocol-overview} \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\section{Bibliography}
+\label{app:biblio}
+
+\begin{thebibliography}{99}
+
+\bibitem{framework}
+[Framework paper],
+\emph{A Multirepresentational Construction--Reconstruction
+Methodology for Mathematical Structures}, Parts I--V, 2024.
+
+\bibitem{paperI}
+[Paper I],
+\emph{Structural Constraining and Spectral Emergence: A
+Multirepresentational Methodology for Nonlinear Evolution
+Equations}, 2024.
+
+\bibitem{paperII}
+[Paper II],
+\emph{On the Limits of Structural Constraining: Separation,
+Coherence, and the Emergence of New Representations}, 2024.
+
+\bibitem{paperIII}
+[Paper III],
+\emph{Structural Auditability in Mathematical Construction: A
+Methodological Position}, 2024.
+
+\bibitem{reed-simon}
+M.~Reed, B.~Simon,
+\emph{Methods of Modern Mathematical Physics, Vol.~I: Functional
+Analysis}, Academic Press, 1980.
+
+\bibitem{engl}
+H.~W.~Engl, M.~Hanke, A.~Neubauer,
+\emph{Regularization of Inverse Problems}, Kluwer, 1996.
+
+\bibitem{hairer}
+E.~Hairer, C.~Lubich, G.~Wanner,
+\emph{Geometric Numerical Integration}, Springer, 2006.
+
+\bibitem{lax-rich}
+P.~D.~Lax, R.~D.~Richtmyer,
+Survey of the stability of linear finite difference equations,
+\emph{Comm.~Pure Appl.~Math.}~9 (1956), 267--293.
+
+\bibitem{mathlib}
+The Mathlib Community,
+\emph{Mathlib: A unified library of mathematics formalized in Lean},
+2024.
+
+\end{thebibliography}
+
+\end{document}
