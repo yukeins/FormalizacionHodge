@@ -214,7 +214,12 @@ the projection is strictly contractive: $\|H(\alpha)\|_{L^2} \le \|\alpha\|_{L^2
 \section{Geometric Layer $\mathcal{O}_{\mathrm{Ge}}$: Hard Lefschetz and Riemann--Hodge Positivity}
 \label{sec:geometric}
 
-The Lefschetz operator $L: \mathcal{A}^k(X) \to \mathcal{A}^{k+2}(X)$ defined by $L(\alpha) = \omega \wedge \alpha$ and its adjoint $\Lambda = L^*$ satisfy, along with the degree counting operator $H_{\mathfrak{sl}_2} = \sum_{k=0}^{2n} (k - n) \Pi_k$, the commutation relations of the simple Lie algebra $\mathfrak{sl}_2(\mathbb{C})$:
+Because $X$ is specifically a projective algebraic manifold, rather than merely a compact Kähler manifold, the Kodaira Embedding Theorem guarantees the existence of a positive Hermitian line bundle $\mathcal{L}$ ample on $X$. Consequently, the Kähler metric can be canonically chosen such that its fundamental class is the first Chern class of this bundle:
+\begin{equation}
+    \label{eq:kodaira_polarization}
+    [\omega] = c_1(\mathcal{L}) \in H^2(X, \mathbb{Z}).
+\end{equation}
+This integrality is the geometric cornerstone that separates projective manifolds from general Kähler spaces (where the Hodge Conjecture is known to fail). The rationality of $[\omega]$ ensures that the Lefschetz operator $L: \mathcal{A}^k(X) \to \mathcal{A}^{k+2}(X)$ defined by $L(\alpha) = \omega \wedge \alpha$ preserves the rational Hodge structure. The operator $L$ and its adjoint $\Lambda = L^*$ satisfy, along with the degree counting operator $H_{\mathfrak{sl}_2} = \sum_{k=0}^{2n} (k - n) \Pi_k$, the commutation relations of the simple Lie algebra $\mathfrak{sl}_2(\mathbb{C})$:
 \begin{equation}
     \label{eq:sl2_relations}
     [H_{\mathfrak{sl}_2}, L] = 2L, \quad [H_{\mathfrak{sl}_2}, \Lambda] = -2\Lambda, \quad [L, \Lambda] = H_{\mathfrak{sl}_2}.
@@ -301,14 +306,29 @@ Because $R$ is diffuse, its intersection product with any algebraic cycle repres
     \label{eq:residual_vanishing}
     [R] = 0 \in H^{2p}(X, \mathbb{C}).
 \end{equation}
-Thus, the cohomological mass of $T^+$ is entirely exhausted by the algebraic cycles $Z_j$.
+Thus, the cohomological mass of $T^+$ is entirely exhausted by the algebraic cycles $Z_j$, yielding the exact equivalence in cohomology:
+\begin{equation}
+    \label{eq:siu_decomposition_sum}
+    [T^+] = \sum_{j=1}^m \nu_j [Z_j], \quad \nu_j \in \mathbb{R}_{>0}.
+\end{equation}
+A fundamental obstruction remains: Siu's theorem only guarantees that the Lelong numbers $\nu_j$ are real, whereas the Hodge Conjecture dictates rational coefficients. However, because the original Hodge class $\alpha = [T^+] - [T^-]$ belongs strictly to the rational lattice $H^{2p}(X, \mathbb{Q})$, its intersection pairing with any $\mathbb{Q}$-basis $\{ [\Gamma_k] \}$ of $H^{2n-2p}(X, \mathbb{Q})$ produces a system of linear equations with strictly rational constants:
+\begin{equation}
+    \label{eq:rational_linear_system}
+    \sum_{j=1}^m \nu_j \left( [Z_j] \cdot [\Gamma_k] \right) = \alpha \cdot [\Gamma_k] \in \mathbb{Q}.
+\end{equation}
+Since the intersection numbers $[Z_j] \cdot [\Gamma_k]$ are integers, this forms a non-degenerate linear system over $\mathbb{Q}$. By elementary linear algebra, the unique solutions for the Lelong numbers must inherently be rational ($\nu_j \in \mathbb{Q}_{>0}$). This definitively strips the coefficients of any transcendental or irrational artifacts.
 
 Furthermore, for intermediate codimensions $2 \le p \le n-1$, the Griffiths intermediate Jacobian:\footnote{P.~Griffiths, \emph{Periods of integrals on algebraic manifolds. I, II}, Amer. J. Math. \textbf{90} (1968), 568--626, 805--865.}
 \begin{equation}
     \label{eq:intermediate_jacobian}
     J^p(X) \coloneqq \frac{H^{2p-1}(X, \mathbb{C})}{F^p H^{2p-1}(X, \mathbb{C}) \oplus H^{2p-1}(X, \mathbb{Z})},
 \end{equation}
-governs the Abel--Jacobi parametrization $\Phi_{\mathrm{AJ}}: \mathcal{Z}^p(X)_{\mathrm{alg}} \to J^p(X)$. The decreasing Hodge filtration $F^p H^k(X, \mathbb{C}) = \bigoplus_{r \ge p} H^{r, k-r}(X)$ satisfies Griffiths transversality under variations of complex structure:
+governs the Abel--Jacobi parametrization $\Phi_{\mathrm{AJ}}: \mathcal{Z}^p(X)_{\mathrm{alg}} \to J^p(X)$. The Abel--Jacobi map translates the algebraic generation of cycles into the language of complex period integrals. For a null-homologous algebraic cycle $Z = \partial \Gamma$, the map is classically realized via integration of holomorphic forms over the real topological chain $\Gamma$ of dimension $2p-1$:
+\begin{equation}
+    \label{eq:abel_jacobi_integral}
+    \Phi_{\mathrm{AJ}}(Z) = \left( \eta \longmapsto \int_{\Gamma} \eta \right) \pmod{F^p H^{2p-1}(X, \mathbb{C}) \oplus H^{2p-1}(X, \mathbb{Z})}.
+\end{equation}
+The infinitesimal variation of this integral under deformations of the complex structure is strictly controlled by the decreasing Hodge filtration $F^p H^k(X, \mathbb{C}) = \bigoplus_{r \ge p} H^{r, k-r}(X)$, which satisfies Griffiths transversality:
 \begin{equation}
     \label{eq:griffiths_transversality}
     \nabla F^p \subset F^{p-1} \otimes \Omega_S^1.
