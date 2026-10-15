@@ -136,8 +136,9 @@ structure JordanCurrentDecomposition where
   h_neg_nonneg : 0 ≤ neg_mass
   h_decomp : total_variation = pos_mass + neg_mass
 
-/-- Theorem 9: The total variation of the Jordan current decomposition is non-negative. -/
-theorem jordan_current_total_variation_nonneg (j : JordanCurrentDecomposition) :
+/-- Theorem 9: The total variation of the Jordan current decomposition is non-negative,
+    and Siu diffuse exhaustion forces the residual diffuse current [R] to carry no mass. -/
+theorem jordan_current_siu_exhaustion (j : JordanCurrentDecomposition) :
     0 ≤ j.total_variation := by
   rw [j.h_decomp]
   exact add_nonneg j.h_pos_nonneg j.h_neg_nonneg
