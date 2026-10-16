@@ -9,6 +9,11 @@ import Mathlib.Algebra.Order.Field.Basic
 # The Hodge Conjecture: Core Deductive Structure
 # Multirepresentational Constraining of Pure Complex Hodge Structures
 
+Reference:
+  Zapata, R. S. (2026). De Rham Regularization, Spectral Positivity,
+  and the Cycle Class Map in Hodge Theory. Zenodo.
+  https://doi.org/10.5281/zenodo.23409663
+
 This module formalizes the core deductive architecture of pure Hodge structures:
 1. Spectral Layer (O_Sp): Harmonic forms, Hodge decomposition, Hodge symmetry.
 2. Geometric Layer (O_Ge): Kähler metric, Lefschetz operator L, Riemann-Hodge positivity, sl₂(ℂ) Lie algebra.

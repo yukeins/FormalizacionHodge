@@ -1,6 +1,11 @@
 //! HodgeEngine: High-Precision Verification Suite for Hodge Diamonds,
 //! Kähler Geometry, Riemann-Hodge Bilinear Relations, sl2(C) Lie Algebra,
 //! and Siu Rational Intersection Cycle Resolution.
+//!
+//! Reference:
+//!   Zapata, R. S. (2026). De Rham Regularization, Spectral Positivity,
+//!   and the Cycle Class Map in Hodge Theory. Zenodo.
+//!   https://doi.org/10.5281/zenodo.23409663
 
 pub mod spectral;
 

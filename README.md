@@ -3,6 +3,7 @@
 [![Lean 4 Verification](https://img.shields.io/badge/Lean_4-Mathlib_Verified-blue.svg)](proofs_lean/HodgeConjecture.lean)
 [![Rust Verification](https://img.shields.io/badge/Rust-Deterministic_Engine-orange.svg)](engine_rust/src/main.rs)
 [![Theorems Certified](https://img.shields.io/badge/Theorems_Certified-21_Verified_(0_sorry)-green.svg)](proofs_lean/HodgeConjecture.lean)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23409663.svg)](https://doi.org/10.5281/zenodo.23409663)
 [![License: MIT / Apache-2.0](https://img.shields.io/badge/License-MIT%20%2F%20Apache--2.0-blue.svg)](LICENSE)
 
 An autonomous, operator-theoretic and constructive resolution of the Hodge Conjecture on non-singular complex projective algebraic manifolds, with certified extensions to singular projective varieties (via BBDG perverse sheaves) and non-Archimedean tropical degenerations.
@@ -11,10 +12,24 @@ An autonomous, operator-theoretic and constructive resolution of the Hodge Conje
 
 ## 🏛️ Monograph Overview
 
-- **Title:** *De Rham Regularization, Kähler-Lefschetz Spectral Theory, and the Exact Resolution of the Hodge Conjecture*
+- **Title:** *De Rham Regularization, Spectral Positivity, and the Cycle Class Map in Hodge Theory*
 - **Author:** R. Santiago Z. G.
+- **Permanent Record (Zenodo DOI):** [10.5281/zenodo.23409663](https://doi.org/10.5281/zenodo.23409663)
 - **Publication PDF:** [`monograph/formal_hodge.pdf`](monograph/formal_hodge.pdf) (27 pages, publication-ready)
 - **LaTeX Source:** [`monograph/formal_hodge.tex`](monograph/formal_hodge.tex)
+
+### Citation
+
+```bibtex
+@article{zapata2026hodge,
+  author    = {Zapata, R. Santiago},
+  title     = {De Rham Regularization, Spectral Positivity, and the Cycle Class Map in Hodge Theory},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.23409663},
+  url       = {https://doi.org/10.5281/zenodo.23409663}
+}
+```
 
 ---
 
